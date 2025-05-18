@@ -31,7 +31,13 @@ def add(args: argparse.Namespace):
     # Verify it exists
     for slug in args.mod:
         # TODO replace with get_projects for batching
-        modrinth.get_project(slug)
+        version = modrinth.get_versions(slug)[0]
+
+        # TODO download _all_ versions for the most options... 
+        # Later, be smart about which ones will work based on the data we already know.
+        url, filename = next((f["url"], f["filename"]) for f in version["files"] if f["primary"])
+        modrinth.download_jar(url, filename)
+
         mcproject.add_mod(toml, slug)
 
     mcproject.write_mcproject_toml(toml, args.path)
@@ -70,12 +76,12 @@ def create_parser() -> argparse.ArgumentParser:
 def cli():
     parser = create_parser()
     args = parser.parse_args()
-    try:
-        args.func(args)
-    except AttributeError:
-        print("Error", file=sys.stderr)
-        parser.print_help()
-        sys.exit(1)
+    # try:
+    args.func(args)
+    # except AttributeError:
+    #     print("Error", file=sys.stderr)
+    #     parser.print_help()
+    #     sys.exit(1)
 
 
 if __name__ == "__main__":
