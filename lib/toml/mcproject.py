@@ -29,9 +29,9 @@ def write_mcproject_toml(toml: tomlkit.TOMLDocument, filename: Path):
         tomlkit.dump(toml, f)
 
 
-def add_dependency(toml: tomlkit.TOMLDocument, mod: str):
+def add_mod(toml: tomlkit.TOMLDocument, mod: str):
+    mods = set(toml["project"]["mods"])  # pyright: ignore
+    if mod in mods:
+        print(f"Mod '{mod}' already added.")
+        return
     toml["project"]["mods"].append(mod)  # pyright: ignore
-
-
-def remove_dependency():
-    pass
