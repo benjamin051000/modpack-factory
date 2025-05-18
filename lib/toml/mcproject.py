@@ -2,8 +2,9 @@ from pathlib import Path
 import tomlkit
 
 
-def init_mcproject_toml(directory: Path, force=False):
-    assert directory.is_dir()
+def init_mcproject_toml(path: Path, force=False):
+    if not force and path.exists():
+        raise FileExistsError(path)
 
     doc = tomlkit.document()
     project = tomlkit.table()
@@ -11,27 +12,25 @@ def init_mcproject_toml(directory: Path, force=False):
     project.add("mods", tomlkit.array())
     doc.add("project", project)
 
-    new_path = directory / "mcproject.toml"
-
-    if not force and new_path.exists():
-        raise FileExistsError(new_path)
-
-    with open(new_path, "w") as f:
+    with open(path, "w") as f:
         tomlkit.dump(doc, f)
 
-    return new_path
+    return path
 
 
-def read_mcproject_toml(filename: Path):
+def read_mcproject_toml(filename: Path) -> tomlkit.TOMLDocument:
     with open(filename) as f:
-        pass
+        return tomlkit.load(f)
 
 
-def add_dependency(filename: Path):
-    try:
-        file = read_mcproject_toml(filename)
-    except FileNotFoundError:
-        init_mcproject_toml(filename)
+def write_mcproject_toml(toml: tomlkit.TOMLDocument, filename: Path):
+    toml["project"]["mods"].multiline(True)  # pyright: ignore
+    with open(filename, "w") as f:
+        tomlkit.dump(toml, f)
+
+
+def add_dependency(toml: tomlkit.TOMLDocument, mod: str):
+    toml["project"]["mods"].append(mod)  # pyright: ignore
 
 
 def remove_dependency():
