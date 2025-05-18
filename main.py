@@ -1,5 +1,8 @@
+from lib.sources import modrinth
+
+
 def main():
-    print("Hello from modpack-factory!")
+    print(modrinth.search("gravestones"))
 
 
 if __name__ == "__main__":
