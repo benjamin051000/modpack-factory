@@ -26,10 +26,10 @@ def add(args: argparse.Namespace):
     except FileNotFoundError:
         toml = mcproject.read_mcproject_toml(mcproject.init_mcproject_toml(args.path))
 
-    latest_version = modrinth.get_versions(args.slug)[0]  # 0 is the latest (I think)
-    print(f"Downloading {latest_version["name"]}...")
+    # latest_version = modrinth.get_versions(args.slug)[0]  # 0 is the latest (I think)
+    # print(f"Downloading {latest_version["name"]}...")
 
-    mcproject.add_dependency(toml, args.slug)
+    mcproject.add_mod(toml, args.slug)
     mcproject.write_mcproject_toml(toml, args.path)
 
 
