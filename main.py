@@ -33,10 +33,11 @@ def add(args: argparse.Namespace):
         # TODO replace with get_projects for batching
         version = modrinth.get_versions(slug)[0]
 
+        # TODO don't download it just yet. That can wait for the solver step.
         # TODO download _all_ versions for the most options... 
         # Later, be smart about which ones will work based on the data we already know.
-        url, filename = next((f["url"], f["filename"]) for f in version["files"] if f["primary"])
-        modrinth.download_jar(url, filename)
+        # url, filename = next((f["url"], f["filename"]) for f in version["files"] if f["primary"])
+        # modrinth.download_jar(url, filename)
 
         mcproject.add_mod(toml, slug)
 
