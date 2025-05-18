@@ -18,7 +18,7 @@ def info(args: argparse.Namespace):
     pprint(result)
 
 
-def toml(args: argparse.Namespace):
+def init(args: argparse.Namespace):
     mcproject.init_mcproject_toml(args.path, args.force)
 
 
@@ -58,14 +58,14 @@ def create_parser() -> argparse.ArgumentParser:
     info_cmd.add_argument("slug", help="Slug (from search result) of the mod.")
     info_cmd.set_defaults(func=info)
 
-    toml_cmd = commands.add_parser(
-        "toml", description="Make a new toml file (testing only)."
+    init_cmd = commands.add_parser(
+        "init", description="Make a new toml file (testing only)."
     )
-    toml_cmd.add_argument("--path", type=Path, default=Path("mcproject.toml"))
-    toml_cmd.add_argument(
+    init_cmd.add_argument("--path", type=Path, default=Path("mcproject.toml"))
+    init_cmd.add_argument(
         "--force", action="store_true", help="Overwrite the file if it already exists."
     )
-    toml_cmd.set_defaults(func=toml)
+    init_cmd.set_defaults(func=init)
 
     add_cmd = commands.add_parser("add", description="Add a mod to mcproject.toml.")
     add_cmd.add_argument("--path", type=Path, default=Path("mcproject.toml"))
