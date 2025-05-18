@@ -21,3 +21,5 @@ Modpack Factory is inspired by cargo and uv for dependency management.
 - [ ] shader packs
 - [ ] neo/forge mod support
 - [ ] fabric MANIFEST.MF data for fabric versions?
+- [ ] import an already-made mcproject.toml
+- [ ] incremental SAT solving (when you add a mod to an already-made mcproject.toml)
