@@ -1,4 +1,6 @@
 from lib.sources import modrinth
+from lib.toml import mcproject
+from pathlib import Path
 import sys
 from pprint import pprint
 import argparse
@@ -16,6 +18,10 @@ def info(args: argparse.Namespace):
     pprint(result)
 
 
+def toml(args: argparse.Namespace):
+    mcproject.init_mcproject_toml(args.path, args.force)
+
+
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
 
@@ -30,6 +36,15 @@ def create_parser() -> argparse.ArgumentParser:
     info_cmd.add_argument("slug", help="Slug (from search result) of the mod.")
     info_cmd.set_defaults(func=info)
 
+    toml_cmd = commands.add_parser(
+        "toml", description="Make a new toml file (testing only)."
+    )
+    toml_cmd.add_argument("path", type=Path)
+    toml_cmd.add_argument(
+        "--force", action="store_true", help="Overwrite the file if it already exists."
+    )
+    toml_cmd.set_defaults(func=toml)
+
     return parser
 
 
@@ -39,6 +54,7 @@ def cli():
     try:
         args.func(args)
     except AttributeError:
+        print("Error", file=sys.stderr)
         parser.print_help()
         sys.exit(1)
 
