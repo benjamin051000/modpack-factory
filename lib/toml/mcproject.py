@@ -2,7 +2,7 @@ from pathlib import Path
 import tomlkit
 
 
-def init_mcproject_toml(directory: Path, force: bool):
+def init_mcproject_toml(directory: Path, force=False):
     assert directory.is_dir()
 
     doc = tomlkit.document()
