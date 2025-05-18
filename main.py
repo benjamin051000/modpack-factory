@@ -26,7 +26,10 @@ def add(args: argparse.Namespace):
     except FileNotFoundError:
         toml = mcproject.read_mcproject_toml(mcproject.init_mcproject_toml(args.path))
 
-    mcproject.add_dependency(toml, args.mod)
+    latest_version = modrinth.get_versions(args.slug)[0]  # 0 is the latest (I think)
+    print(f"Downloading {latest_version["name"]}...")
+
+    mcproject.add_dependency(toml, args.slug)
     mcproject.write_mcproject_toml(toml, args.path)
 
 
@@ -58,7 +61,7 @@ def create_parser() -> argparse.ArgumentParser:
     )
     add_cmd.add_argument("path", type=Path, nargs="?", default=Path("mcproject.toml"))
     add_cmd.add_argument(
-        "mod", help="Mod to add to mcproject.toml."
+        "slug", help="Mod to add to mcproject.toml."
     )
     add_cmd.set_defaults(func=add)
     return parser
