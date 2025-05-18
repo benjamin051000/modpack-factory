@@ -1,6 +1,7 @@
 from json import JSONDecodeError
 import sys
 import requests
+from pathlib import Path
 
 API = "https://api.modrinth.com/v2"
 
@@ -25,3 +26,10 @@ def get_projects(slugs: list[str]) -> dict:
 
 def get_versions(slug: str) -> dict:
     return requests.get(f"{API}/project/{slug}/version").json()
+
+def download_jar(url: str, filename: Path):
+    response = requests.get(url, stream=True)
+    with open(filename, "wb") as f:
+        for chunk in response.iter_content(chunk_size=10*1024):  # 10kb
+            f.write(chunk)
+
