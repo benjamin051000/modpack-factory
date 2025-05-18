@@ -9,6 +9,7 @@ def init_mcproject_toml(path: Path, force=False):
     doc = tomlkit.document()
     project = tomlkit.table()
     project.add("name", "my-minecraft-modpack")
+    project.add("minecraft-version", ">=1.20.1")  # TODO fetch this default somehow...
     project.add("mods", tomlkit.array())
     doc.add("project", project)
 
