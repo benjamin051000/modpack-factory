@@ -1,3 +1,5 @@
+from json import JSONDecodeError
+import sys
 import requests
 
 API = "https://api.modrinth.com/v2"
@@ -8,7 +10,11 @@ def search(query: str) -> dict:
 
 
 def get_project(slug: str) -> dict:
-    return requests.get(f"{API}/project/{slug}").json()
+    try:
+        return requests.get(f"{API}/project/{slug}").json()
+    except JSONDecodeError:
+        print(f"Error: Mod '{slug}' not found.", file=sys.stderr)
+        sys.exit(1)
 
 
 def get_projects(slugs: list[str]) -> dict:
