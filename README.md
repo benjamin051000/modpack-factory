@@ -1,8 +1,8 @@
 # Modpack Factory 🏭
-This project is a command-line minecraft modpack creation tool.
+This project is a command-line tool to assist in creating minecraft modpacks.
 
-Its primary purpose is to help you find a working configuration of the mods you supply 
-by determining the proper versions of each mod, minecraft, and even selecting the loader.
+Its primary purpose is to automatically find a working configuration of the mods you request 
+by working out compatible versions of each mod, mod loader, and Minecraft itself.
 
 Under the hood, this tool uses a SAT solver to determine what you need to build your modpack.
 
