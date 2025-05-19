@@ -1,12 +1,14 @@
 from json import JSONDecodeError
 import sys
-import requests
+import aiohttp
 from pathlib import Path
 
-API = "https://api.modrinth.com/v2"
+API = "https://api.modrinth.com/v2/"
+
+# TODO make this into a subclass so we can dispatch to the appropriate one once curseforge is added.
 
 
-def search(query: str) -> dict:
+async def search(query: str) -> dict:
     response = requests.get(f"{API}/search", params={"query": query})
     return response.json()
 
@@ -24,8 +26,9 @@ def get_projects(slugs: list[str]) -> dict:
     return requests.get(f"{API}/projects", params={"ids": formatted_slugs}).json()
 
 
-def get_versions(slug: str) -> dict:
-    return requests.get(f"{API}/project/{slug}/version").json()
+async def get_versions(session: aiohttp.ClientSession, slug: str) -> dict:
+    async with session.get(f"project/{slug}/version") as response:
+        return await response.json()
 
 
 def download_jar(url: str, filename: Path):
