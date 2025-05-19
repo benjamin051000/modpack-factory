@@ -1,9 +1,11 @@
+import asyncio
 from lib.sources import modrinth
 from lib.toml import mcproject
 from pathlib import Path
 from lib.mod.mod import Mod
 from pprint import pprint
 import argparse
+import aiohttp
 
 
 def search(args: argparse.Namespace):
@@ -32,7 +34,7 @@ def add(args: argparse.Namespace):
     for slug in args.mod:
         # TODO replace with get_projects for batching
         # version = modrinth.get_versions(slug)[0]
-        _ = modrinth.get_versions(slug)[0]
+        modrinth.get_project(slug)
 
         # TODO don't download it just yet. That can wait for the solver step.
         # TODO download _all_ versions for the most options...
@@ -48,7 +50,15 @@ def add(args: argparse.Namespace):
 
 def load_all_mods(args: argparse.Namespace):
     toml = mcproject.read_mcproject_toml(args.path)
-    mods: list[Mod] = [Mod.from_slug(slug) for slug in toml["project"]["mods"]]  # pyright: ignore
+
+    async def get_mods():
+        async with aiohttp.ClientSession(modrinth.API) as session:
+            tempmods = [
+                Mod.from_slug(session, slug) for slug in toml["project"]["mods"]
+            ]  # pyright: ignore
+            return await asyncio.gather(*tempmods)
+
+    mods = asyncio.run(get_mods())
 
     for mod in mods:
         print(f"{mod.slug}: {len(mod.versions)} versions")

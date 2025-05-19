@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Literal, Optional
 
+import aiohttp
+
 from lib.sources import modrinth
 from lib.jar.extract import FabricJarConstraints
 
@@ -23,9 +25,11 @@ class ModVersion:
     jar: Optional[FabricJarConstraints]
 
     @classmethod
-    def from_slug(cls, slug: str):  # -> list[Self]: pyright doesn't like this
+    async def from_slug(
+        cls, session: aiohttp.ClientSession, slug: str
+    ):  # -> list[Self]: pyright doesn't like this
         # Fetch data from source
-        versions_json = modrinth.get_versions(slug)
+        versions_json = await modrinth.get_versions(session, slug)
         objects = [
             ModVersion(
                 version_number=v["version_number"],
@@ -54,9 +58,9 @@ class Mod:
     versions: list[ModVersion]
 
     @classmethod
-    def from_slug(cls, slug: str):
+    async def from_slug(cls, session: aiohttp.ClientSession, slug: str):
         # Get info from source
-        return cls(slug, ModVersion.from_slug(slug))
+        return cls(slug, await ModVersion.from_slug(session, slug))
 
 
 if __name__ == "__main__":
