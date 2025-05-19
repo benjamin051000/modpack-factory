@@ -1,4 +1,6 @@
 from pathlib import Path
+from typing import Self, Optional
+from dataclasses import dataclass
 import zipfile
 import json
 
@@ -7,6 +9,24 @@ import json
 # We need to pass the Version info collected from Modrinth versions API
 # which explains which loaders work with this jar. Then, we just have a
 # dict that maps loader name to the file it uses for metadata.
+
+
+@dataclass
+class FabricJarConstraints:
+    """Constraints collected from a Fabric mod's .jar file."""
+
+    depends: Optional[str]
+    breaks: Optional[str]
+    recommends: Optional[str]
+
+    @classmethod
+    def from_jar(cls, path: Path) -> Self:
+        data = extract_fabric(path)
+        return cls(
+            depends=data["depends"],
+            breaks=data["breaks"],
+            recommends=data["recommends"],
+        )
 
 
 def extract_fabric(path: Path) -> dict:
