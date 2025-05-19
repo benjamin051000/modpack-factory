@@ -1,7 +1,6 @@
 from lib.sources import modrinth
 from lib.toml import mcproject
 from pathlib import Path
-import sys
 from lib.mod.mod import Mod
 from pprint import pprint
 import argparse
@@ -32,7 +31,8 @@ def add(args: argparse.Namespace):
     # Verify it exists
     for slug in args.mod:
         # TODO replace with get_projects for batching
-        version = modrinth.get_versions(slug)[0]
+        # version = modrinth.get_versions(slug)[0]
+        _ = modrinth.get_versions(slug)[0]
 
         # TODO don't download it just yet. That can wait for the solver step.
         # TODO download _all_ versions for the most options...
@@ -53,8 +53,6 @@ def load_all_mods(args: argparse.Namespace):
     for mod in mods:
         print(f"{mod.slug}: {len(mod.versions)} versions")
 
-
-    
 
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
