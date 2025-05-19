@@ -19,6 +19,7 @@ def init_mcproject_toml(path: Path, force=False):
     return path
 
 
+# TODO probably map this to a dataclass too
 def read_mcproject_toml(filename: Path) -> tomlkit.TOMLDocument:
     with open(filename) as f:
         return tomlkit.load(f)

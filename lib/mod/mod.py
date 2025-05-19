@@ -19,7 +19,7 @@ class ModVersion:
     game_versions: list[str]
     version_type: Literal["release", "alpha", "beta"]
     loaders: list[str]
-    files: list
+    files: list[ModrinthFile]
     jar: Optional[FabricJarConstraints]
 
     @classmethod
