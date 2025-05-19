@@ -2,6 +2,7 @@ from lib.sources import modrinth
 from lib.toml import mcproject
 from pathlib import Path
 import sys
+from lib.mod.mod import Mod
 from pprint import pprint
 import argparse
 
@@ -45,6 +46,16 @@ def add(args: argparse.Namespace):
     mcproject.write_mcproject_toml(toml, args.path)
 
 
+def load_all_mods(args: argparse.Namespace):
+    toml = mcproject.read_mcproject_toml(args.path)
+    mods: list[Mod] = [Mod.from_slug(slug) for slug in toml["project"]["mods"]]  # pyright: ignore
+
+    for mod in mods:
+        print(f"{mod.slug}: {len(mod.versions)} versions")
+
+
+    
+
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
 
@@ -72,6 +83,11 @@ def create_parser() -> argparse.ArgumentParser:
     add_cmd.add_argument("--path", type=Path, default=Path("mcproject.toml"))
     add_cmd.add_argument("mod", nargs="+", help="Mod to add to mcproject.toml.")
     add_cmd.set_defaults(func=add)
+
+    run_cmd = commands.add_parser("run", description="Load all the mods and solve.")
+    run_cmd.add_argument("--path", type=Path, default=Path("mcproject.toml"))
+    run_cmd.set_defaults(func=load_all_mods)
+
     return parser
 
 
