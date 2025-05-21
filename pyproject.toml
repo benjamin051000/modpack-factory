@@ -8,4 +8,5 @@ dependencies = [
     "aiohttp>=3.11.18",
     "requests>=2.32.3",
     "tomlkit>=0.13.2",
+    "z3-solver>=4.15.0.0",
 ]
