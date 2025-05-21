@@ -10,13 +10,13 @@ API = "https://api.modrinth.com/v2/"
 
 
 def search(query: str) -> dict:
-    response = requests.get(f"{API}/search", params={"query": query})
+    response = requests.get(f"{API}search", params={"query": query})
     return response.json()
 
 
 def get_project(slug: str) -> dict:
     try:
-        return requests.get(f"{API}/project/{slug}").json()
+        return requests.get(f"{API}project/{slug}").json()
     except JSONDecodeError:
         print(f"Error: Mod '{slug}' not found.", file=sys.stderr)
         sys.exit(1)
