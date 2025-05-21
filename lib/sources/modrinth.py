@@ -22,9 +22,11 @@ def get_project(slug: str) -> dict:
         sys.exit(1)
 
 
-def get_projects(slugs: list[str]) -> dict:
+def get_projects(slugs: list[str]) -> list[dict]:
     formatted_slugs = str(slugs).replace("'", '"')  # API requires double-quotes
-    return requests.get(f"{API}/projects", params={"ids": formatted_slugs}).json()
+    # NOTE: This skips ones that don't exist.
+    response = requests.get(f"{API}projects", params={"ids": formatted_slugs})
+    return response.json()
 
 
 async def get_versions(session: aiohttp.ClientSession, slug: str) -> dict:

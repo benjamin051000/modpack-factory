@@ -30,19 +30,10 @@ def add(args: argparse.Namespace):
     except FileNotFoundError:
         toml = mcproject.read_mcproject_toml(mcproject.init_mcproject_toml(args.path))
 
-    # Verify it exists
+    # Verify the mods exist
+    assert len(modrinth.get_projects(args.mod)) == len(args.mod)
+
     for slug in args.mod:
-        # TODO replace with get_projects for batching
-        # version = modrinth.get_versions(slug)[0]
-        modrinth.get_project(slug)
-
-        # TODO don't download it just yet. That can wait for the solver step.
-        # TODO download _all_ versions for the most options...
-        # TODO throw into a subdirectory I guess?
-        # Later, be smart about which ones will work based on the data we already know.
-        # url, filename = next((f["url"], f["filename"]) for f in version["files"] if f["primary"])
-        # modrinth.download_jar(url, filename)
-
         mcproject.add_mod(toml, slug)
 
     mcproject.write_mcproject_toml(toml, args.path)
@@ -62,6 +53,13 @@ def load_all_mods(args: argparse.Namespace):
 
     for mod in mods:
         print(f"{mod.slug}: {len(mod.versions)} versions")
+
+    # TODO don't download it just yet. That can wait for the solver step.
+    # TODO download _all_ versions for the most options...
+    # TODO throw into a subdirectory I guess?
+    # Later, be smart about which ones will work based on the data we already know.
+    # url, filename = next((f["url"], f["filename"]) for f in version["files"] if f["primary"])
+    # modrinth.download_jar(url, filename)
 
 
 def create_parser() -> argparse.ArgumentParser:
