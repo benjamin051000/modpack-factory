@@ -1,8 +1,21 @@
+from typing import Callable
 from lib.mod.mod import Mod
 import z3
 
 
-def resolve_minecraft_version(mods: list[Mod]) -> list[str]:
+def find_all_solutions(s: z3.Solver, block: Callable) -> set:
+    solutions = set()
+    while s.check() == z3.sat:
+        model = s.model()
+        print(model)
+        solutions.add(model)
+        s.add(block(model))
+
+    print(solutions)
+    return solutions
+
+
+def resolve_minecraft_version(mods: list[Mod]) -> set:
     """For a list of mods, determine the list of minecraft versions they all support."""
     s = z3.Solver()
 
@@ -21,8 +34,10 @@ def resolve_minecraft_version(mods: list[Mod]) -> list[str]:
         for mod in mods
     ]
     s.add(*supported_versions)
-    if s.check() == z3.sat:
-        print(s.model())
+
+    return find_all_solutions(
+        s, lambda model: minecraft_version != model[minecraft_version]
+    )
 
 
 # def test_resolve_minecraft_version_simple():
