@@ -25,9 +25,9 @@ class ModVersion:
     jar: Optional[FabricJarConstraints]
 
     @classmethod
-    async def from_slug(
+    async def from_modrinth(
         cls, session: aiohttp.ClientSession, slug: str
-    ):  # -> list[Self]: pyright doesn't like this
+    ) -> list["ModVersion"]:
         # Fetch data from source
         versions_json = await modrinth.get_versions(session, slug)
         objects = [
@@ -58,11 +58,6 @@ class Mod:
     versions: list[ModVersion]
 
     @classmethod
-    async def from_slug(cls, session: aiohttp.ClientSession, slug: str):
+    async def from_modrinth(cls, session: aiohttp.ClientSession, slug: str):
         # Get info from source
-        return cls(slug, await ModVersion.from_slug(session, slug))
-
-
-if __name__ == "__main__":
-    mod = Mod.from_slug("sodium")
-    breakpoint()
+        return cls(slug, await ModVersion.from_modrinth(session, slug))
