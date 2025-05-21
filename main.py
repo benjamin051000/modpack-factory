@@ -45,7 +45,7 @@ def load_all_mods(args: argparse.Namespace):
     async def get_mods():
         async with aiohttp.ClientSession(modrinth.API) as session:
             tempmods = [
-                Mod.from_slug(session, slug) for slug in toml["project"]["mods"]
+                Mod.from_modrinth(session, slug) for slug in toml["project"]["mods"]
             ]  # pyright: ignore
             return await asyncio.gather(*tempmods)
 
