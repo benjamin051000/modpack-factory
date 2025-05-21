@@ -1,4 +1,5 @@
 import asyncio
+from lib.resolve.resolve_mods import resolve_minecraft_version
 from lib.sources import modrinth
 from lib.toml import mcproject
 from pathlib import Path
@@ -60,6 +61,7 @@ def load_all_mods(args: argparse.Namespace):
     # Later, be smart about which ones will work based on the data we already know.
     # url, filename = next((f["url"], f["filename"]) for f in version["files"] if f["primary"])
     # modrinth.download_jar(url, filename)
+    resolve_minecraft_version(mods)
 
 
 def create_parser() -> argparse.ArgumentParser:
