@@ -32,10 +32,14 @@ def add(args: argparse.Namespace):
         toml = mcproject.read_mcproject_toml(mcproject.init_mcproject_toml(args.path))
 
     # Verify the mods exist
-    assert len(modrinth.get_projects(args.mod)) == len(args.mod)
+    mods_info = modrinth.get_projects(args.mod)
+    assert len(mods_info) == len(args.mod), (
+        "One of the mods you entered does not exist."
+    )
 
-    for slug in args.mod:
-        mcproject.add_mod(toml, slug)
+    for mod_info in mods_info:
+        mcproject.add_mod(toml, mod_info["slug"])
+        print(f"Added {mod_info['title']} ({mod_info['slug']})")
 
     mcproject.write_mcproject_toml(toml, args.path)
 
