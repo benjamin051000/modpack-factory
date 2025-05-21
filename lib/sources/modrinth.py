@@ -1,6 +1,7 @@
 from json import JSONDecodeError
 import sys
 import aiohttp
+import requests
 from pathlib import Path
 
 API = "https://api.modrinth.com/v2/"
@@ -8,7 +9,7 @@ API = "https://api.modrinth.com/v2/"
 # TODO make this into a subclass so we can dispatch to the appropriate one once curseforge is added.
 
 
-async def search(query: str) -> dict:
+def search(query: str) -> dict:
     response = requests.get(f"{API}/search", params={"query": query})
     return response.json()
 
