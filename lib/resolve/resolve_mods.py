@@ -4,6 +4,7 @@ import z3
 
 
 def find_all_solutions(s: z3.Solver, block: Callable) -> set:
+    """Find all SAT solutions by blocking previous ones."""
     solutions = set()
     while s.check() == z3.sat:
         model = s.model()
@@ -15,13 +16,11 @@ def find_all_solutions(s: z3.Solver, block: Callable) -> set:
     return solutions
 
 
-def resolve_minecraft_version(mods: list[Mod]) -> set:
+def _gen_game_version_clauses(mods: list[Mod]):
     """For a list of mods, determine the list of minecraft versions they all support."""
-    s = z3.Solver()
-
     minecraft_version = z3.String("minecraft_version")
 
-    supported_versions = [
+    supported_game_versions = [
         # This Or represents all the MC versions a mod can use.
         # TODO: Keep track of which mod versions satisfy.
         z3.Or(
@@ -33,11 +32,25 @@ def resolve_minecraft_version(mods: list[Mod]) -> set:
         )
         for mod in mods
     ]
-    s.add(*supported_versions)
 
-    return find_all_solutions(
-        s, lambda model: minecraft_version != model[minecraft_version]
-    )
+    # Return the list of clauses + the block function.
+    return supported_game_versions, lambda model: minecraft_version != model[
+        minecraft_version
+    ]
+
+
+def _gen_modloader_clauses(mods: list[Mod]):
+    """Generate clauses which test that the mod loader is all the same."""
+    pass
+
+
+def solve_mods(mods: list[Mod]):
+    s = z3.Solver()
+
+    supported_game_versions, game_version_block = _gen_game_version_clauses(mods)
+    s.add(*supported_game_versions)
+
+    find_all_solutions(s, game_version_block)
 
 
 # def test_resolve_minecraft_version_simple():
