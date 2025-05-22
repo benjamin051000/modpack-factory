@@ -1,6 +1,8 @@
-from typing import Callable
-from lib.mod.mod import Mod
+from collections.abc import Callable
+
 import z3
+
+from lib.mod.mod import Mod
 
 
 def find_all_solutions(s: z3.Solver, block: Callable) -> set:

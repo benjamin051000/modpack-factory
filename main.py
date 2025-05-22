@@ -1,12 +1,14 @@
+import argparse
 import asyncio
+from pathlib import Path
+from pprint import pprint
+
+import aiohttp
+
+from lib.mod.mod import Mod
 from lib.resolve.resolve_mods import solve_mods
 from lib.sources import modrinth
 from lib.toml import mcproject
-from pathlib import Path
-from lib.mod.mod import Mod
-from pprint import pprint
-import argparse
-import aiohttp
 
 
 def search(args: argparse.Namespace):

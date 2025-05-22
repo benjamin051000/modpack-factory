@@ -1,11 +1,11 @@
-from dataclasses import dataclass
-from typing import Literal, Optional, Self
 import asyncio
+from dataclasses import dataclass
+from typing import Literal, Self
 
 import aiohttp
 
-from lib.sources import modrinth
 from lib.jar.extract import FabricJarConstraints
+from lib.sources import modrinth
 
 
 @dataclass
@@ -23,7 +23,7 @@ class ModVersion:
     version_type: Literal["release", "alpha", "beta"]
     loaders: list[str]
     files: list[ModrinthFile]
-    jar: Optional[FabricJarConstraints]
+    jar: FabricJarConstraints | None
 
     def __hash__(self) -> int:
         return hash((self.version_number, self.version_type))
