@@ -108,9 +108,17 @@ def solve_mods(mods: list[Mod]):
         solutions.add(model)
         s.add(mc_version != model[mc_version])
 
-    print("Solutions:")
+    print(f"Found {len(solutions)} solutions:")
     for solution in solutions:
-        print(solution)
+        for s in solution:
+            # print(f"Minecraft {solution[mc_version]}")
+            # print(f"{solution[loader]} mod loader")
+            bool_s = solution[s]
+            if z3.is_bool(bool_s):
+                if bool_s:
+                    print(s)
+            else:
+                print(s, solution[s])
         # for variable in solution:
         #     if z3.is_true(variable):
         #         print(variable)
