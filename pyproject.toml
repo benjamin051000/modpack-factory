@@ -16,3 +16,19 @@ dev = [
     "pytest>=8.3.5",
     "pytest-asyncio>=0.26.0",
 ]
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]

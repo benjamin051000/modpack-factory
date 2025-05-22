@@ -1,9 +1,8 @@
-from pathlib import Path
-from typing import Self, Optional
-from dataclasses import dataclass
-import zipfile
 import json
-
+import zipfile
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Self
 
 # TODO eventually we will want to look at neo/forge as well.
 # We need to pass the Version info collected from Modrinth versions API
@@ -15,9 +14,9 @@ import json
 class FabricJarConstraints:
     """Constraints collected from a Fabric mod's .jar file."""
 
-    depends: Optional[str]
-    breaks: Optional[str]
-    recommends: Optional[str]
+    depends: str | None
+    breaks: str | None
+    recommends: str | None
 
     @classmethod
     def from_jar(cls, path: Path) -> Self:

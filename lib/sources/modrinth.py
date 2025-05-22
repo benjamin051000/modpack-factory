@@ -1,8 +1,9 @@
-from json import JSONDecodeError
 import sys
+from json import JSONDecodeError
+from pathlib import Path
+
 import aiohttp
 import requests
-from pathlib import Path
 
 API = "https://api.modrinth.com/v2/"
 
