@@ -44,13 +44,13 @@ def _gen_modloader_clauses(mods: list[Mod]):
     pass
 
 
-def solve_mods(mods: list[Mod]):
-    s = z3.Solver()
-
-    supported_game_versions, game_version_block = _gen_game_version_clauses(mods)
-    s.add(*supported_game_versions)
-
-    find_all_solutions(s, game_version_block)
+# def solve_mods(mods: list[Mod]):
+#     s = z3.Solver()
+#
+#     supported_game_versions, game_version_block = _gen_game_version_clauses(mods)
+#     s.add(*supported_game_versions)
+#
+#     find_all_solutions(s, game_version_block)
 
 
 # def test_resolve_minecraft_version_simple():
@@ -63,3 +63,55 @@ def solve_mods(mods: list[Mod]):
 #     in_list2 = Or([x == StringVal(v) for v in lithium_versions])
 #     s.add(in_list1, in_list2)
 #     breakpoint()
+
+
+def solve_mods(mods: list[Mod]):
+    """From chatgippity"""
+
+    s = z3.Solver()
+
+    # Map each mod release to a Boolean variable.
+    release_vars = {
+        release: z3.Bool(f"{mod.slug}_{release.version_number}")
+        for mod in mods
+        for release in mod.versions
+    }
+
+    # Exactly one release selected per mod.
+    for mod in mods:
+        s.add(z3.AtMost(*[release_vars[r] for r in mod.versions], 1))
+        s.add(z3.AtLeast(*[release_vars[r] for r in mod.versions], 1))
+
+    # If a release is selected, the minecraft version and loader should match it.
+    mc_version = z3.String("mc_version")
+    loader = z3.String("loader")
+    for mod in mods:
+        for release in mod.versions:
+            s.add(
+                z3.Implies(
+                    release_vars[release],
+                    z3.And(
+                        z3.Or(
+                            *[
+                                mc_version == z3.StringVal(v)
+                                for v in release.game_versions
+                            ]
+                        ),
+                        z3.Or(*[loader == z3.StringVal(l) for l in release.loaders]),
+                    ),
+                ),
+            )
+
+    solutions: set[z3.ModelRef] = set()
+    while s.check() == z3.sat:
+        model = s.model()
+        solutions.add(model)
+        s.add(mc_version != model[mc_version])
+
+    print("Solutions:")
+    for solution in solutions:
+        print(solution)
+        # for variable in solution:
+        #     if z3.is_true(variable):
+        #         print(variable)
+        # print('---')

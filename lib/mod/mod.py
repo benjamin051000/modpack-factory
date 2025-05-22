@@ -24,6 +24,9 @@ class ModVersion:
     files: list[ModrinthFile]
     jar: Optional[FabricJarConstraints]
 
+    def __hash__(self) -> int:
+        return hash((self.version_number, self.version_type))
+
     @classmethod
     async def from_modrinth(
         cls, session: aiohttp.ClientSession, slug: str
