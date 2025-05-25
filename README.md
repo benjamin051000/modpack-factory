@@ -14,6 +14,7 @@ Modpack Factory is inspired by cargo and uv for dependency management.
 
 ## To Do
 - [ ] first implementation
+- [ ] group sources (e.g., fabulously optimized) to update independently from additional mods
 - [ ] lockfile
 - [ ] optional dependencies (in fabric.mod.json, for example)
 - [ ] curseforge support
