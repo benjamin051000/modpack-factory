@@ -67,7 +67,7 @@ def _gen_modloader_clauses(mods: list[Mod]):
 #     breakpoint()
 
 
-def solve_mods(mods: list[Mod]):
+def solve_mods(mods: list[Mod]) -> set[z3.ModelRef]:
     """From chatgippity"""
 
     s = z3.Solver()
@@ -85,7 +85,7 @@ def solve_mods(mods: list[Mod]):
         s.add(z3.AtLeast(*[release_vars[r] for r in mod.versions], 1))
 
     # If a release is selected, the minecraft version and loader should match it.
-    mc_version = z3.String("mc_version")
+    mc_version = z3.String("mc_version")  # TODO more user-friendly name?
     loader = z3.String("loader")
     for mod in mods:
         for release in mod.versions:
@@ -99,7 +99,9 @@ def solve_mods(mods: list[Mod]):
                                 for v in release.game_versions
                             ]
                         ),
-                        z3.Or(*[loader == z3.StringVal(l) for l in release.loaders]),
+                        z3.Or(
+                            *[loader == z3.StringVal(ldr) for ldr in release.loaders]
+                        ),
                     ),
                 ),
             )
@@ -108,20 +110,11 @@ def solve_mods(mods: list[Mod]):
     while s.check() == z3.sat:
         model = s.model()
         solutions.add(model)
+        # BUG this isn't correct. It needs to accomodate all aspects (e.g., loader)
         s.add(mc_version != model[mc_version])
 
-    print(f"Found {len(solutions)} solutions:")
-    for solution in solutions:
-        for s in solution:
-            # print(f"Minecraft {solution[mc_version]}")
-            # print(f"{solution[loader]} mod loader")
-            bool_s = solution[s]
-            if z3.is_bool(bool_s):
-                if bool_s:
-                    print(s)
-            else:
-                print(s, solution[s])
-        # for variable in solution:
-        #     if z3.is_true(variable):
-        #         print(variable)
-        # print('---')
+    return solutions
+    # for variable in solution:
+    #     if z3.is_true(variable):
+    #         print(variable)
+    # print('---')
