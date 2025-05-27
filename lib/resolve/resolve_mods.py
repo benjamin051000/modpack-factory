@@ -41,32 +41,6 @@ def _gen_game_version_clauses(mods: list[Mod]):
     ]
 
 
-def _gen_modloader_clauses(mods: list[Mod]):
-    """Generate clauses which test that the mod loader is all the same."""
-    pass
-
-
-# def solve_mods(mods: list[Mod]):
-#     s = z3.Solver()
-#
-#     supported_game_versions, game_version_block = _gen_game_version_clauses(mods)
-#     s.add(*supported_game_versions)
-#
-#     find_all_solutions(s, game_version_block)
-
-
-# def test_resolve_minecraft_version_simple():
-#     sodium_versions = ["1.20.4", "1.20.1", "1.21.0"]
-#     lithium_versions = ["1.20.0", "1.20.1", "1.21.0"]
-#
-#     x = String("x")
-#     s = Solver()
-#     in_list1 = Or([x == StringVal(v) for v in sodium_versions])
-#     in_list2 = Or([x == StringVal(v) for v in lithium_versions])
-#     s.add(in_list1, in_list2)
-#     breakpoint()
-
-
 def solve_mods(mods: list[Mod]) -> set[z3.ModelRef]:
     """From chatgippity"""
 
@@ -114,7 +88,3 @@ def solve_mods(mods: list[Mod]) -> set[z3.ModelRef]:
         s.add(mc_version != model[mc_version])
 
     return solutions
-    # for variable in solution:
-    #     if z3.is_true(variable):
-    #         print(variable)
-    # print('---')
