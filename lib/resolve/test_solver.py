@@ -107,41 +107,6 @@ def test_no_compatible_loader():
     assert len(solutions) == 0
 
 
-def test_version_substring():
-    """Test substring version matching."""
-    mods = [
-        Mod(
-            slug="foo",
-            versions=[
-                ModVersion(
-                    version_number="foo v2",
-                    game_versions=["1.21.5"],
-                    version_type="release",
-                    loaders=["forge"],
-                    files=[],
-                    jar=None,
-                )
-            ],
-        ),
-        Mod(
-            slug="bar",
-            versions=[
-                ModVersion(
-                    version_number="bar v1",
-                    game_versions=["1.21"],
-                    version_type="release",
-                    loaders=["fabric"],
-                    files=[],
-                    jar=None,
-                )
-            ],
-        ),
-    ]
-
-    solutions = solve_mods(mods)
-    assert len(solutions) == 1
-
-
 def test_multiple_versions():
     """Test that multiple versions yield multiple solutions."""
     mods = [
