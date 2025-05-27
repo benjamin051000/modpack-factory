@@ -4,6 +4,7 @@ from pathlib import Path
 from pprint import pprint
 
 import aiohttp
+import z3
 
 from lib.mod.mod import Mod
 from lib.resolve.resolve_mods import solve_mods
@@ -60,14 +61,29 @@ def load_all_mods(args: argparse.Namespace):
 
     for mod in mods:
         print(f"{mod.slug}: {len(mod.versions)} versions")
+        for version in mod.versions:
+            print("\t", version.game_versions)
 
     # TODO don't download it just yet. That can wait for the solver step.
     # TODO download _all_ versions for the most options...
     # TODO throw into a subdirectory I guess?
     # Later, be smart about which ones will work based on the data we already know.
-    # url, filename = next((f["url"], f["filename"]) for f in version["files"] if f["primary"])
+    # url, filename = next(
+    #     (f["url"], f["filename"]) for f in version["files"] if f["primary"]
+    # )
     # modrinth.download_jar(url, filename)
-    solve_mods(mods)
+    solutions = solve_mods(mods)
+    print(f"Found {len(solutions)} solutions:")
+    for solution in solutions:
+        for s in solution:
+            # print(f"Minecraft {solution[mc_version]}")
+            # print(f"{solution[loader]} mod loader")
+            bool_s = solution[s]
+            if z3.is_bool(bool_s):
+                if bool_s:
+                    print(s)
+            else:
+                print(s, solution[s])
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -76,7 +92,9 @@ def create_parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers()
 
     search_cmd = commands.add_parser("search", description="Search for a mod.")
-    # search_group.add_argument("--from", help="Specify a source (e.g., Modrinth, Curseforge)")
+    # search_group.add_argument(
+    #     "--from", help="Specify a source (e.g., Modrinth, Curseforge)"
+    # )
     search_cmd.add_argument("query", help="Query to search the source for.")
     search_cmd.set_defaults(func=search)
 
