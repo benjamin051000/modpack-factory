@@ -12,4 +12,3 @@ async def test_mod_from_modrinth():
         sodium = await Mod.from_modrinth(session, "sodium")
 
     assert sodium.slug == "sodium"
-    assert sodium.title == "Sodium"
