@@ -4,7 +4,6 @@ from pathlib import Path
 from pprint import pprint
 
 import aiohttp
-import z3
 
 from lib.mod.mod import Mod
 from lib.resolve.resolve_mods import solve_mods
@@ -72,18 +71,26 @@ def load_all_mods(args: argparse.Namespace):
     #     (f["url"], f["filename"]) for f in version["files"] if f["primary"]
     # )
     # modrinth.download_jar(url, filename)
-    solutions = solve_mods(mods)
-    print(f"Found {len(solutions)} solutions:")
-    for solution in solutions:
-        for s in solution:
-            # print(f"Minecraft {solution[mc_version]}")
-            # print(f"{solution[loader]} mod loader")
-            bool_s = solution[s]
-            if z3.is_bool(bool_s):
-                if bool_s:
-                    print(s)
-            else:
-                print(s, solution[s])
+    selected_stuff = solve_mods(mods)
+    # print(f"Found {len(solutions)} solutions:")
+    # for solution in solutions:
+    #     for s in solution:
+    #         # print(f"Minecraft {solution[mc_version]}")
+    #         # print(f"{solution[loader]} mod loader")
+    #         bool_s = solution[s]
+    #         if z3.is_bool(bool_s):
+    #             if bool_s:
+    #                 print(s)
+    #         else:
+    #             print(s, solution[s])
+
+    print(f"Selected minecraft version: {selected_stuff['mc_version']}")
+    print(f"Selected mod loader: {selected_stuff['loader']}")
+    print("Mods:")
+    for mod in selected_stuff["mods"]:
+        print(f"- {mod.slug} ({mod.version_number})")
+
+    # locked_mods = lock.lock()
 
 
 def create_parser() -> argparse.ArgumentParser:
