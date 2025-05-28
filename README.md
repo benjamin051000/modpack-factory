@@ -1,4 +1,11 @@
 # Modpack Factory 🏭
+
+> [!CAUTION]
+> This tool currently makes a large number of modrinth API requests. Use at your own discretion and be prepared to be rate-limited!
+
+> [!NOTE]
+> This tool is currently in a pre-alpha state. Do not use this for real modpacks yet!
+
 This project is a command-line tool to assist in creating minecraft modpacks.
 
 Its primary purpose is to automatically find a working configuration of the mods you request 
@@ -12,17 +19,82 @@ Modpack Factory is inspired by cargo and uv for dependency management.
 - Creates mcproject.toml, which tracks your modpack's mods
 - Uses SAT solving to determine versions of Minecraft, loader, and mods, given a list of mods
 
+## Usage
+
+### 1. Discover mods
+
+Use the `search` command to find mods by name:
+
+```
+❯ uv run main.py search sodium
+Results:
+Sodium (sodium)
+Sodium Extra (sodium-extra)
+Sodium Shadowy Path Blocks (sodium-shadowy-path-blocks)
+Sodium Dynamic Lights (sodium-dynamic-lights)
+Sodium Options API (sodium-options-api)
+Sodium Extras (sodium-extras)
+Sodium Options Mod Compat (sodium-options-mod-compat)
+Sodium Leaf Culling (sodiumleafculling)
+Sodium Plus (sodiumplus)
+Sodium/Rubidium Occlusion Culling Fix (occlusion-culling-fix-sodium)
+```
+
+<!-- Get more information about them with the `info` command: -->
+<!-- ``` -->
+<!-- uv run main.py info sodium -->
+<!-- ``` -->
+
+### 2. Add mods to your project
+
+```
+❯ uv run main.py add sodium
+Added Sodium (sodium)
+Selected minecraft version: 1.21.5
+Selected mod loader: neoforge
+Mods:
+- sodium (mc1.21.5-0.6.11-neoforge)
+```
+
+Notice that two new files have been created, `mcproject.toml` and `lock.toml`:
+
+```toml
+# mcproject.toml
+[project]
+name = "my-minecraft-modpack"
+minecraft-version = ">=1.20.1"
+mods = [
+    "sodium",
+]
+```
+
+```toml
+# lock.toml
+[[mod]]
+slug = "sodium"
+version_number = "mc1.21.5-0.6.11-neoforge"
+url = "https://cdn.modrinth.com/data/AANobbMI/versions/jv9JbDp8/sodium-neoforge-0.6.11%2Bmc1.21.5.jar"
+```
+These files keep track of the mods you intend on including in your modpack.
+
+As you add more mods, the tool will automatically determine the version of minecraft, mod loader, and version of each added mod required to play.
+
 ## To Do
 - [x] first implementation
 - [ ] group sources (e.g., fabulously optimized) to update independently from additional mods
 - [x] lockfile
+- [ ] specify minecraft version constraints in mcproject.toml
+- [ ] specify mod constraints in mcproject.toml
+- [ ] specify loader constraints in mcproject.toml
 - [ ] optional dependencies (in fabric.mod.json, for example)
 - [ ] curseforge support
 - [ ] resource packs
 - [ ] shader packs
-- [ ] neo/forge mod support
 - [ ] fabric MANIFEST.MF data for fabric versions?
-- [ ] import an already-made mcproject.toml
-- [ ] incremental SAT solving (when you add a mod to an already-made mcproject.toml)
+- [ ] neo/forge mod support
+- [x] import an already-made mcproject.toml
+- [x] incremental SAT solving (when you add a mod to an already-made mcproject.toml)
 - [ ] Give multiple solutions to choose from
 - [ ] Assist with upgrading mods
+- [ ] launch minecraft?
+- [ ] export to Prism launcher
