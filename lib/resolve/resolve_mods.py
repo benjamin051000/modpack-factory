@@ -88,7 +88,7 @@ def solve_mods(mods: list[Mod]):
         # BUG this isn't correct. It needs to accomodate all aspects (e.g., loader)
         # s.add(mc_version != model[mc_version])
     else:
-        raise
+        raise Exception("No solution found.")
 
     backwards_map = {v: k for k, v in release_vars.items()}
     selected_stuff = {

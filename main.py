@@ -8,7 +8,7 @@ import aiohttp
 from lib.mod.mod import Mod
 from lib.resolve.resolve_mods import solve_mods
 from lib.sources import modrinth
-from lib.toml import mcproject
+from lib.toml import lock, mcproject
 
 
 def search(args: argparse.Namespace):
@@ -87,10 +87,12 @@ def load_all_mods(args: argparse.Namespace):
     print(f"Selected minecraft version: {selected_stuff['mc_version']}")
     print(f"Selected mod loader: {selected_stuff['loader']}")
     print("Mods:")
-    for mod in selected_stuff["mods"]:
+    mods = selected_stuff["mods"]
+    for mod in mods:
         print(f"- {mod.slug} ({mod.version_number})")
 
-    # locked_mods = lock.lock()
+    locked_mods = lock.lock(mods)
+    lock.write_lockfile(locked_mods, Path("lock.toml"))
 
 
 def create_parser() -> argparse.ArgumentParser:
