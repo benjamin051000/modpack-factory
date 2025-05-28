@@ -60,10 +60,10 @@ def load_all_mods(args: argparse.Namespace):
 
     mods = asyncio.run(get_mods())
 
-    for mod in mods:
-        print(f"{mod.slug}: {len(mod.versions)} versions")
-        for version in mod.versions:
-            print("\t", version.game_versions)
+    # for mod in mods:
+    #     print(f"{mod.slug}: {len(mod.versions)} versions")
+    #     for version in mod.versions:
+    #         print("\t", version.game_versions)
 
     # TODO don't download it just yet. That can wait for the solver step.
     # TODO download _all_ versions for the most options...
