@@ -41,7 +41,7 @@ def _gen_game_version_clauses(mods: list[Mod]):
     ]
 
 
-def solve_mods(mods: list[Mod]) -> set[z3.ModelRef]:
+def solve_mods(mods: list[Mod]):
     """From chatgippity"""
 
     s = z3.Solver()
@@ -80,11 +80,33 @@ def solve_mods(mods: list[Mod]) -> set[z3.ModelRef]:
                 ),
             )
 
-    solutions: set[z3.ModelRef] = set()
-    while s.check() == z3.sat:
-        model = s.model()
-        solutions.add(model)
+    # solutions: set[z3.ModelRef] = set()
+    # while s.check() == z3.sat:
+    if s.check() == z3.sat:
+        solution = s.model()
+        # solutions.add(model)
         # BUG this isn't correct. It needs to accomodate all aspects (e.g., loader)
-        s.add(mc_version != model[mc_version])
+        # s.add(mc_version != model[mc_version])
+    else:
+        raise
 
-    return solutions
+    backwards_map = {v: k for k, v in release_vars.items()}
+    selected_stuff = {
+        "mods": [],
+        "loader": "",
+        "mc_version": "",
+    }
+
+    # for solution in solutions:
+    for s in solution:
+        # assert isinstance(s, z3.FuncDeclRef)
+        variable = s()
+        value = solution[s]
+
+        if z3.is_bool(value):
+            if z3.is_true(value):
+                selected_stuff["mods"].append(backwards_map[variable])
+        elif z3.is_string(value):
+            selected_stuff[variable.decl().name()] = value.as_string()
+
+    return selected_stuff
