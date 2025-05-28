@@ -16,6 +16,7 @@ class ModrinthFile:
 
 @dataclass
 class ModVersion:
+    slug: str
     version_number: str
     # dependencies: ?
     game_versions: list[str]
@@ -35,6 +36,7 @@ class ModVersion:
         versions_json = await modrinth.get_versions(session, slug)
         objects = [
             ModVersion(
+                slug=slug,
                 version_number=v["version_number"],
                 game_versions=v["game_versions"],
                 version_type=v["version_type"],
