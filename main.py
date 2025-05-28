@@ -45,6 +45,8 @@ def add(args: argparse.Namespace):
 
     mcproject.write_mcproject_toml(toml, args.path)
 
+    load_all_mods(args)
+
 
 def load_all_mods(args: argparse.Namespace):
     toml = mcproject.read_mcproject_toml(args.path)
