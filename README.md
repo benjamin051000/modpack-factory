@@ -13,9 +13,9 @@ Modpack Factory is inspired by cargo and uv for dependency management.
 - Uses SAT solving to determine versions of Minecraft, loader, and mods, given a list of mods
 
 ## To Do
-- [ ] first implementation
+- [x] first implementation
 - [ ] group sources (e.g., fabulously optimized) to update independently from additional mods
-- [ ] lockfile
+- [x] lockfile
 - [ ] optional dependencies (in fabric.mod.json, for example)
 - [ ] curseforge support
 - [ ] resource packs
