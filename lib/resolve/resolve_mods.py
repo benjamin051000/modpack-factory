@@ -41,6 +41,10 @@ def _gen_game_version_clauses(mods: list[Mod]):
     ]
 
 
+class NoSolutionError(Exception):
+    """Could not find a solution."""
+
+
 def solve_mods(mods: list[Mod]):
     """From chatgippity"""
 
@@ -88,7 +92,7 @@ def solve_mods(mods: list[Mod]):
         # BUG this isn't correct. It needs to accomodate all aspects (e.g., loader)
         # s.add(mc_version != model[mc_version])
     else:
-        raise Exception("No solution found.")
+        raise NoSolutionError
 
     backwards_map = {v: k for k, v in release_vars.items()}
     selected_stuff = {

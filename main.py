@@ -1,54 +1,66 @@
 import argparse
 import asyncio
+import sys
 from pathlib import Path
 from pprint import pprint
 
 import aiohttp
 
 from lib.mod.mod import Mod
-from lib.resolve.resolve_mods import solve_mods
+from lib.resolve.resolve_mods import NoSolutionError, solve_mods
 from lib.sources import modrinth
 from lib.toml import lock, mcproject
 
 
-def search(args: argparse.Namespace):
+def search(args: argparse.Namespace) -> None:
     results = modrinth.search(args.query)
     print("Results:")
     for result in results["hits"]:
         print(f"{result['title']} ({result['slug']})")
 
 
-def info(args: argparse.Namespace):
+def info(args: argparse.Namespace) -> None:
     result = modrinth.get_project(args.slug)
     pprint(result)
 
 
-def init(args: argparse.Namespace):
+def init(args: argparse.Namespace) -> None:
     mcproject.init_mcproject_toml(args.path, args.force)
 
 
-def add(args: argparse.Namespace):
+def add(args: argparse.Namespace) -> None:
     try:
         toml = mcproject.read_mcproject_toml(args.path)
     except FileNotFoundError:
         toml = mcproject.read_mcproject_toml(mcproject.init_mcproject_toml(args.path))
 
     # Verify the mods exist
+    print(f"Getting info for {','.join(args.mod)}...")
     mods_info = modrinth.get_projects(args.mod)
     assert len(mods_info) == len(args.mod), (
         "One of the mods you entered does not exist."
     )
 
+    print("Finding a compatible set of mods...")
+    try:
+        load_all_mods(args)
+    except NoSolutionError:
+        print(
+            f"Error: No solution found when trying to add {','.join(args.mod)}.",
+            file=sys.stderr,
+        )
+        return
+
     for mod_info in mods_info:
-        mcproject.add_mod(toml, mod_info["slug"])
-        print(f"Added {mod_info['title']} ({mod_info['slug']})")
+        if mcproject.add_mod(toml, mod_info["slug"]):
+            print(f"Added {mod_info['title']} ({mod_info['slug']})")
+        else:
+            print(f"{mod_info['title']} ({mod_info['slug']}) already added.")
 
     mcproject.write_mcproject_toml(toml, args.path)
 
-    load_all_mods(args)
 
-
-def load_all_mods(args: argparse.Namespace):
+def load_all_mods(args: argparse.Namespace) -> None:
     toml = mcproject.read_mcproject_toml(args.path)
 
     async def get_mods():
@@ -134,7 +146,7 @@ def create_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def cli():
+def cli() -> None:
     parser = create_parser()
     args = parser.parse_args()
     # try:
