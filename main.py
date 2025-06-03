@@ -41,6 +41,14 @@ def add(args: argparse.Namespace) -> None:
         "One of the mods you entered does not exist."
     )
 
+    for mod_info in mods_info:
+        if mcproject.add_mod(toml, mod_info["slug"]):
+            print(f"Added {mod_info['title']} ({mod_info['slug']})")
+        else:
+            print(f"{mod_info['title']} ({mod_info['slug']}) already added.")
+
+    mcproject.write_mcproject_toml(toml, args.path)
+
     print("Finding a compatible set of mods...")
     try:
         load_all_mods(args)
@@ -51,13 +59,13 @@ def add(args: argparse.Namespace) -> None:
         )
         return
 
-    for mod_info in mods_info:
-        if mcproject.add_mod(toml, mod_info["slug"]):
-            print(f"Added {mod_info['title']} ({mod_info['slug']})")
-        else:
-            print(f"{mod_info['title']} ({mod_info['slug']}) already added.")
-
-    mcproject.write_mcproject_toml(toml, args.path)
+    # for mod_info in mods_info:
+    #     if mcproject.add_mod(toml, mod_info["slug"]):
+    #         print(f"Added {mod_info['title']} ({mod_info['slug']})")
+    #     else:
+    #         print(f"{mod_info['title']} ({mod_info['slug']}) already added.")
+    #
+    # mcproject.write_mcproject_toml(toml, args.path)
 
 
 def load_all_mods(args: argparse.Namespace) -> None:
