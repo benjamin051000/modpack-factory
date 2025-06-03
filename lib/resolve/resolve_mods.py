@@ -2,7 +2,7 @@ from collections.abc import Callable
 
 import z3
 
-from lib.mod.mod import Mod
+from lib.mod.mod import Mod, ModVersion
 
 
 def find_all_solutions(s: z3.Solver, block: Callable) -> set:
@@ -45,7 +45,7 @@ class NoSolutionError(Exception):
     """Could not find a solution."""
 
 
-def solve_mods(mods: list[Mod]):
+def solve_mods(mods: list[Mod]) -> tuple[str, str, list[ModVersion]]:
     """From chatgippity"""
 
     s = z3.Solver()
@@ -95,11 +95,10 @@ def solve_mods(mods: list[Mod]):
         raise NoSolutionError
 
     backwards_map = {v: k for k, v in release_vars.items()}
-    selected_stuff = {
-        "mods": [],
-        "loader": "",
-        "mc_version": "",
-    }
+
+    selected_mods: list[ModVersion] = []
+    selected_loader = ""
+    selected_mc_version = ""
 
     # for solution in solutions:
     for s in solution:
@@ -109,8 +108,14 @@ def solve_mods(mods: list[Mod]):
 
         if z3.is_bool(value):
             if z3.is_true(value):
-                selected_stuff["mods"].append(backwards_map[variable])
+                selected_mods.append(backwards_map[variable])
         elif z3.is_string(value):
-            selected_stuff[variable.decl().name()] = value.as_string()
+            name = variable.decl().name()
+            if name == "loader":
+                selected_loader = value.as_string()
+            elif name == "mc_version":
+                selected_mc_version = value.as_string()
+            else:
+                raise RuntimeError("Unreachable!")
 
-    return selected_stuff
+    return selected_mc_version, selected_loader, selected_mods

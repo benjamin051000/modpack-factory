@@ -10,6 +10,7 @@ FILENAME = "modpack.lock"
 def write_lockfile(toml: tomlkit.TOMLDocument, filename: Path):
     with open(filename, "w") as f:
         tomlkit.dump(toml, f)
+    print(f"{filename} created.")
 
 
 # def read_lockfile(filename: Path) -> tomlkit.TOMLDocument:

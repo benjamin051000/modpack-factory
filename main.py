@@ -9,7 +9,17 @@ import aiohttp
 from lib.mod.mod import Mod
 from lib.resolve.resolve_mods import NoSolutionError, solve_mods
 from lib.sources import modrinth
-from lib.toml import lock, mcproject
+from lib.toml import lock as lockfile
+from lib.toml import mcproject
+
+# TODO don't download it just yet. That can wait for the solver step.
+# TODO download _all_ versions for the most options...
+# TODO throw into a subdirectory I guess?
+# Later, be smart about which ones will work based on the data we already know.
+# url, filename = next(
+#     (f["url"], f["filename"]) for f in version["files"] if f["primary"]
+# )
+# modrinth.download_jar(url, filename)
 
 
 def search(args: argparse.Namespace) -> None:
@@ -28,12 +38,13 @@ def init(args: argparse.Namespace) -> None:
     mcproject.init_mcproject_toml(args.path, args.force)
 
 
-def add(args: argparse.Namespace) -> None:
-    try:
-        toml = mcproject.read_mcproject_toml(args.path)
-    except FileNotFoundError:
-        toml = mcproject.read_mcproject_toml(mcproject.init_mcproject_toml(args.path))
+async def get_mods(slugs: list[str]):
+    async with aiohttp.ClientSession(modrinth.API) as session:
+        tempmods = [Mod.from_modrinth(session, slug) for slug in slugs]  # pyright: ignore
+        return await asyncio.gather(*tempmods)
 
+
+def add(args: argparse.Namespace) -> None:
     # Verify the mods exist
     print(f"Getting info for {','.join(args.mod)}...")
     mods_info = modrinth.get_projects(args.mod)
@@ -41,17 +52,22 @@ def add(args: argparse.Namespace) -> None:
         "One of the mods you entered does not exist."
     )
 
+    try:
+        toml = mcproject.read_mcproject_toml(args.path)
+    except FileNotFoundError:
+        toml = mcproject.read_mcproject_toml(mcproject.init_mcproject_toml(args.path))
+
     for mod_info in mods_info:
         if mcproject.add_mod(toml, mod_info["slug"]):
             print(f"Added {mod_info['title']} ({mod_info['slug']})")
         else:
             print(f"{mod_info['title']} ({mod_info['slug']}) already added.")
 
-    mcproject.write_mcproject_toml(toml, args.path)
+    mods = asyncio.run(get_mods(toml["project"]["mods"]))
 
     print("Finding a compatible set of mods...")
     try:
-        load_all_mods(args)
+        lock_mods(args.path, mods)
     except NoSolutionError:
         print(
             f"Error: No solution found when trying to add {','.join(args.mod)}.",
@@ -59,62 +75,29 @@ def add(args: argparse.Namespace) -> None:
         )
         return
 
-    # for mod_info in mods_info:
-    #     if mcproject.add_mod(toml, mod_info["slug"]):
-    #         print(f"Added {mod_info['title']} ({mod_info['slug']})")
-    #     else:
-    #         print(f"{mod_info['title']} ({mod_info['slug']}) already added.")
-    #
-    # mcproject.write_mcproject_toml(toml, args.path)
+    mcproject.write_mcproject_toml(toml, args.path)
 
 
-def load_all_mods(args: argparse.Namespace) -> None:
+def lock(args: argparse.Namespace) -> None:
     toml = mcproject.read_mcproject_toml(args.path)
 
-    async def get_mods():
-        async with aiohttp.ClientSession(modrinth.API) as session:
-            tempmods = [
-                Mod.from_modrinth(session, slug) for slug in toml["project"]["mods"]
-            ]  # pyright: ignore
-            return await asyncio.gather(*tempmods)
+    mods = asyncio.run(get_mods(toml["project"]["mods"]))
 
-    mods = asyncio.run(get_mods())
+    lock_mods(args.path, mods)
 
-    # for mod in mods:
-    #     print(f"{mod.slug}: {len(mod.versions)} versions")
-    #     for version in mod.versions:
-    #         print("\t", version.game_versions)
 
-    # TODO don't download it just yet. That can wait for the solver step.
-    # TODO download _all_ versions for the most options...
-    # TODO throw into a subdirectory I guess?
-    # Later, be smart about which ones will work based on the data we already know.
-    # url, filename = next(
-    #     (f["url"], f["filename"]) for f in version["files"] if f["primary"]
-    # )
-    # modrinth.download_jar(url, filename)
-    selected_stuff = solve_mods(mods)
-    # print(f"Found {len(solutions)} solutions:")
-    # for solution in solutions:
-    #     for s in solution:
-    #         # print(f"Minecraft {solution[mc_version]}")
-    #         # print(f"{solution[loader]} mod loader")
-    #         bool_s = solution[s]
-    #         if z3.is_bool(bool_s):
-    #             if bool_s:
-    #                 print(s)
-    #         else:
-    #             print(s, solution[s])
+def lock_mods(path: Path, mods: list[Mod]):
+    selected_mc_version, selected_loader, selected_mods = solve_mods(mods)
 
-    print(f"Selected minecraft version: {selected_stuff['mc_version']}")
-    print(f"Selected mod loader: {selected_stuff['loader']}")
+    print(f"Selected minecraft version: {selected_mc_version}")
+    print(f"Selected mod loader: {selected_loader}")
     print("Mods:")
-    mods = selected_stuff["mods"]
-    for mod in mods:
+    for mod in selected_mods:
         print(f"- {mod.slug} ({mod.version_number})")
 
-    locked_mods = lock.lock(mods)
-    lock.write_lockfile(locked_mods, Path("lock.toml"))
+    locked_mods = lockfile.lock(selected_mods)
+    lock_filename = f"{path.stem}.lock.toml"
+    lockfile.write_lockfile(locked_mods, Path(lock_filename))
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -147,9 +130,9 @@ def create_parser() -> argparse.ArgumentParser:
     add_cmd.add_argument("mod", nargs="+", help="Mod to add to mcproject.toml.")
     add_cmd.set_defaults(func=add)
 
-    run_cmd = commands.add_parser("run", description="Load all the mods and solve.")
+    run_cmd = commands.add_parser("lock", description="Load all the mods and solve.")
     run_cmd.add_argument("--path", type=Path, default=Path("mcproject.toml"))
-    run_cmd.set_defaults(func=load_all_mods)
+    run_cmd.set_defaults(func=lock)
 
     return parser
 
