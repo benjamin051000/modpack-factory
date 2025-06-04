@@ -7,7 +7,7 @@ from pprint import pprint
 import aiohttp
 
 from lib.mod.mod import Mod
-from lib.resolve.resolve_mods import NoSolutionError, solve_mods
+from lib.solver.solver import NoSolutionError, solve_mods
 from lib.sources import modrinth
 from lib.toml import lock as lockfile
 from lib.toml import mcproject

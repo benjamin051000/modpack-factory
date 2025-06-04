@@ -1,7 +1,7 @@
 import pytest
 
 from lib.mod.mod import Mod, ModVersion
-from lib.resolve.resolve_mods import NoSolutionError, solve_mods
+from lib.solver.solver import NoSolutionError, solve_mods
 
 
 def test_simple_resolve():
