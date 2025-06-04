@@ -52,7 +52,11 @@ def solve_mods(mods: list[Mod]) -> tuple[str, str, list[ModVersion]]:
 
     # Map each mod release to a Boolean variable.
     release_vars = {
-        release: z3.Bool(f"{mod.slug}_{release.version_number}")
+        release: z3.Bool(
+            # NOTE TODO research this: do duplicate names mess up the solver?
+            # Maybe they end up being the same variable?
+            f"{mod.slug}_{release.version_number}_{','.join(release.loaders)}_{','.join(release.game_versions)}"
+        )
         for mod in mods
         for release in mod.versions
     }
