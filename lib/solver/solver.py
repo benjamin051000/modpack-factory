@@ -47,7 +47,7 @@ class NoSolutionError(Exception):
 
 
 def solve_mods(
-    mods: list[Mod], mc_version_constraint: MinecraftVersionConstraint
+    mods: list[Mod], mc_version_constraint: MinecraftVersionConstraint, dump_model=False
 ) -> tuple[str, str, list[ModVersion]]:
     """From chatgippity"""
 
@@ -58,7 +58,7 @@ def solve_mods(
         release: z3.Bool(
             # NOTE TODO research this: do duplicate names mess up the solver?
             # Maybe they end up being the same variable?
-            f"{mod.slug}_{release.version_number}_{','.join(release.loaders)}_{','.join(str(release.game_versions))}"
+            f"{mod.slug}_{release.version_number}_{','.join(release.loaders)}_{','.join([str(gv) for gv in release.game_versions])}"
         )
         for mod in mods
         for release in mod.versions
@@ -97,6 +97,10 @@ def solve_mods(
                 ),
             )
 
+    if dump_model:
+        for a in s.assertions():
+            print(a)
+        exit()
     # solutions: set[z3.ModelRef] = set()
     # while s.check() == z3.sat:
     if s.check() == z3.sat:

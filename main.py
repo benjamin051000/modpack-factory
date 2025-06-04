@@ -94,11 +94,18 @@ def lock(args: argparse.Namespace) -> None:
         toml["project"]["minecraft-version"]
     )
 
-    lock_mods(args.path, mods, mc_version)
+    lock_mods(args.path, mods, mc_version, args.dump_model)
 
 
-def lock_mods(path: Path, mods: list[Mod], mc_version: MinecraftVersionConstraint):
-    selected_mc_version, selected_loader, selected_mods = solve_mods(mods, mc_version)
+def lock_mods(
+    path: Path,
+    mods: list[Mod],
+    mc_version: MinecraftVersionConstraint,
+    dump_model: bool = False,
+):
+    selected_mc_version, selected_loader, selected_mods = solve_mods(
+        mods, mc_version, dump_model
+    )
 
     print(f"Selected minecraft version: {selected_mc_version}")
     print(f"Selected mod loader: {selected_loader}")
@@ -143,6 +150,12 @@ def create_parser() -> argparse.ArgumentParser:
 
     run_cmd = commands.add_parser("lock", description="Load all the mods and solve.")
     run_cmd.add_argument("--path", type=Path, default=Path("mcproject.toml"))
+    run_cmd.add_argument(
+        "--dump-model",
+        action="store_true",
+        required=False,
+        help="Dump solver constraints.",
+    )
     run_cmd.set_defaults(func=lock)
 
     return parser
