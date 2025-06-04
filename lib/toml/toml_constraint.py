@@ -1,7 +1,10 @@
 import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import Self
+from typing import Self, cast
+
+import z3
+from z3 import ArithRef, BoolRef
 
 # This is gonna be weird
 # Most mods follow a sort-of semantic versioning
@@ -54,6 +57,44 @@ class MinecraftVersionConstraint:
             )
 
         raise ValueError
+
+    # def z3_gt(self, major: ArithRef, minor: ArithRef, patch: ArithRef) -> BoolRef:
+    #     expression = z3.Or(
+    #         major > self.version.major,
+    #         z3.And(major == self.version.major, minor > self.version.minor),
+    #         z3.And(
+    #             major == self.version.major,
+    #             minor == self.version.minor,
+    #             patch > self.version.patch,
+    #         ),
+    #     )
+    #
+    #     return cast(BoolRef, expression)
+
+    def z3_eq(self, major: ArithRef, minor: ArithRef, patch: ArithRef) -> BoolRef:
+        """Create a z3 boolean expression checking for equality with
+        major.minor.patch boolean variables.
+        """
+        expression = z3.And(
+            major == self.version.major,
+            minor == self.version.minor,
+            patch == self.version.patch,
+        )
+        return cast(BoolRef, expression)
+
+    def z3_ge(self, major: ArithRef, minor: ArithRef, patch: ArithRef) -> BoolRef:
+        # Unfortunately, since these are overloaded operators, there is not likely
+        # a way to combine these gt/ge functions. :(
+        expression = z3.Or(
+            major >= self.version.major,
+            z3.And(major == self.version.major, minor >= self.version.minor),
+            z3.And(
+                major == self.version.major,
+                minor == self.version.minor,
+                patch >= self.version.patch,
+            ),
+        )
+        return cast(BoolRef, expression)
 
     def __str__(self) -> str:
         return f"{self.relationship}{self.version}"

@@ -3,6 +3,7 @@ from collections.abc import Callable
 import z3
 
 from lib.mod.mod import Mod, ModVersion
+from lib.toml.toml_constraint import MinecraftVersionConstraint
 
 
 def find_all_solutions(s: z3.Solver, block: Callable) -> set:
@@ -45,7 +46,9 @@ class NoSolutionError(Exception):
     """Could not find a solution."""
 
 
-def solve_mods(mods: list[Mod]) -> tuple[str, str, list[ModVersion]]:
+def solve_mods(
+    mods: list[Mod], mc_version_constraint: MinecraftVersionConstraint
+) -> tuple[str, str, list[ModVersion]]:
     """From chatgippity"""
 
     s = z3.Solver()
@@ -55,7 +58,7 @@ def solve_mods(mods: list[Mod]) -> tuple[str, str, list[ModVersion]]:
         release: z3.Bool(
             # NOTE TODO research this: do duplicate names mess up the solver?
             # Maybe they end up being the same variable?
-            f"{mod.slug}_{release.version_number}_{','.join(release.loaders)}_{','.join(release.game_versions)}"
+            f"{mod.slug}_{release.version_number}_{','.join(release.loaders)}_{','.join(str(release.game_versions))}"
         )
         for mod in mods
         for release in mod.versions
@@ -67,8 +70,14 @@ def solve_mods(mods: list[Mod]) -> tuple[str, str, list[ModVersion]]:
         s.add(z3.AtLeast(*[release_vars[r] for r in mod.versions], 1))
 
     # If a release is selected, the minecraft version and loader should match it.
-    mc_version = z3.String("mc_version")  # TODO more user-friendly name?
+    mc_major = z3.Int("mc_major")
+    mc_minor = z3.Int("mc_minor")
+    mc_patch = z3.Int("mc_patch")
+
+    s.add(mc_version_constraint.z3_ge(mc_major, mc_minor, mc_patch))
+
     loader = z3.String("loader")
+
     for mod in mods:
         for release in mod.versions:
             s.add(
@@ -77,7 +86,7 @@ def solve_mods(mods: list[Mod]) -> tuple[str, str, list[ModVersion]]:
                     z3.And(
                         z3.Or(
                             *[
-                                mc_version == z3.StringVal(v)
+                                v.z3_eq(mc_major, mc_minor, mc_patch)
                                 for v in release.game_versions
                             ]
                         ),

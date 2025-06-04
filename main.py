@@ -11,6 +11,7 @@ from lib.solver.solver import NoSolutionError, solve_mods
 from lib.sources import modrinth
 from lib.toml import lock as lockfile
 from lib.toml import mcproject
+from lib.toml.toml_constraint import MinecraftVersionConstraint
 
 # TODO don't download it just yet. That can wait for the solver step.
 # TODO download _all_ versions for the most options...
@@ -65,9 +66,13 @@ def add(args: argparse.Namespace) -> None:
 
     mods = asyncio.run(get_mods(toml["project"]["mods"]))
 
+    mc_version = MinecraftVersionConstraint.from_str(
+        toml["project"]["minecraft-version"]
+    )
+
     print("Finding a compatible set of mods...")
     try:
-        lock_mods(args.path, mods)
+        lock_mods(args.path, mods, mc_version)
     except NoSolutionError:
         print(
             f"Error: No solution found when trying to add {','.join(args.mod)}.",
@@ -79,15 +84,21 @@ def add(args: argparse.Namespace) -> None:
 
 
 def lock(args: argparse.Namespace) -> None:
-    toml = mcproject.read_mcproject_toml(args.path)
+    try:
+        toml = mcproject.read_mcproject_toml(args.path)
+    except FileNotFoundError:
+        toml = mcproject.read_mcproject_toml(mcproject.init_mcproject_toml(args.path))
 
     mods = asyncio.run(get_mods(toml["project"]["mods"]))
+    mc_version = MinecraftVersionConstraint.from_str(
+        toml["project"]["minecraft-version"]
+    )
 
-    lock_mods(args.path, mods)
+    lock_mods(args.path, mods, mc_version)
 
 
-def lock_mods(path: Path, mods: list[Mod]):
-    selected_mc_version, selected_loader, selected_mods = solve_mods(mods)
+def lock_mods(path: Path, mods: list[Mod], mc_version: MinecraftVersionConstraint):
+    selected_mc_version, selected_loader, selected_mods = solve_mods(mods, mc_version)
 
     print(f"Selected minecraft version: {selected_mc_version}")
     print(f"Selected mod loader: {selected_loader}")
