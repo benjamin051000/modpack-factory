@@ -13,7 +13,7 @@ def test_mcversion_simple():
 def test_minecraftversionconstant_simple():
     v = MinecraftVersionConstraint.from_str("1.2.5")
     assert v.version == MCVersion(1, 2, 5)
-    assert v.relationship is None
+    assert v.relationship == ""
 
     # Test omitted zero
     v = MinecraftVersionConstraint.from_str("1.20")
@@ -54,3 +54,11 @@ def test_minecraftversionconstant_bad_input():
 
     with pytest.raises(ValueError):
         MinecraftVersionConstraint.from_str(">>1.20.1")
+
+
+def test_minecraftversionconstant_tostring():
+    strings = ["==1.2.5", "<1.2", "1.20.5", ">=1.21", "<=1.18.6"]
+
+    for string in strings:
+        v = MinecraftVersionConstraint.from_str(string)
+        assert str(v) == string

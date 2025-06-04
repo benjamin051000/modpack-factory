@@ -2,15 +2,20 @@ from pathlib import Path
 
 import tomlkit
 
+from lib.toml.toml_constraint import MinecraftVersionConstraint
+
 
 def init_mcproject_toml(path: Path, force=False):
-    if not force and path.exists():
+    if path.exists() and not force:
         raise FileExistsError(path)
 
     doc = tomlkit.document()
     project = tomlkit.table()
     project.add("name", "my-minecraft-modpack")
-    project.add("minecraft-version", ">=1.20.1")  # TODO fetch this default somehow...
+
+    mc_version = MinecraftVersionConstraint.from_str(">=1.20.1")
+    project.add("minecraft-version", str(mc_version))
+
     project.add("mods", tomlkit.array())
     doc.add("project", project)
 
