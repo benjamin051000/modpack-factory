@@ -1,0 +1,234 @@
+[[mod]]
+slug = "capes"
+version_number = "1.5.4+1.21"
+url = "https://cdn.modrinth.com/data/89Wsn8GD/versions/6SzVPVR4/capes-1.5.4%2B1.21-fabric.jar"
+
+[[mod]]
+slug = "distanthorizons"
+version_number = "2.1.2-a-1.21"
+url = "https://cdn.modrinth.com/data/uCdwusMi/versions/NCz4yZ3v/DistantHorizons-2.1.2-a-1.21-neo-fabric.jar"
+
+[[mod]]
+slug = "main-menu-credits"
+version_number = "1.2.0"
+url = "https://cdn.modrinth.com/data/qJDfP7WN/versions/eUN0SbET/main-menu-credits-1.2.0.jar"
+
+[[mod]]
+slug = "language-reload"
+version_number = "1.7.3+1.21.1"
+url = "https://cdn.modrinth.com/data/uLbm7CG6/versions/ow8QLah9/language-reload-1.7.3%2B1.21.1.jar"
+
+[[mod]]
+slug = "moreculling"
+version_number = "1.0.6"
+url = "https://cdn.modrinth.com/data/51shyZVL/versions/1V6UtDhN/moreculling-fabric-1.21.1-1.0.6.jar"
+
+[[mod]]
+slug = "ebe"
+version_number = "0.10.2+1.21"
+url = "https://cdn.modrinth.com/data/OVuFYfre/versions/HBZAPs3u/enhancedblockentities-0.10.2%2B1.21.jar"
+
+[[mod]]
+slug = "lithium"
+version_number = "mc1.21-0.12.5"
+url = "https://cdn.modrinth.com/data/gvQqBUqZ/versions/OC4JOVBe/lithium-fabric-mc1.21-0.12.5.jar"
+
+[[mod]]
+slug = "e4mc"
+version_number = "5.3.1-fabric"
+url = "https://cdn.modrinth.com/data/qANg5Jrr/versions/71uPp5Hx/e4mc_minecraft-fabric-5.3.1.jar"
+
+[[mod]]
+slug = "rrls"
+version_number = "5.0.10+mc1.21.1-fabric"
+url = "https://cdn.modrinth.com/data/ZP7xHXtw/versions/FDyKvCJ2/rrls-5.0.10%2Bmc1.21.1-fabric.jar"
+
+[[mod]]
+slug = "entity-model-features"
+version_number = "2.4.1"
+url = "https://cdn.modrinth.com/data/4I1XuqiY/versions/9t01xL7K/entity_model_features_fabric_1.21.1-2.4.1.jar"
+
+[[mod]]
+slug = "ferrite-core"
+version_number = "7.0.0-fabric"
+url = "https://cdn.modrinth.com/data/uXXizFIs/versions/wmIZ4wP4/ferritecore-7.0.0-fabric.jar"
+
+[[mod]]
+slug = "sodium"
+version_number = "mc1.21.1-0.6.13-fabric"
+url = "https://cdn.modrinth.com/data/AANobbMI/versions/u1OEbNKx/sodium-fabric-0.6.13%2Bmc1.21.1.jar"
+
+[[mod]]
+slug = "better-mount-hud"
+version_number = "1.2.4"
+url = "https://cdn.modrinth.com/data/kqJFAPU9/versions/yyJushgo/bettermounthud-1.2.4.jar"
+
+[[mod]]
+slug = "yacl"
+version_number = "3.6.6+1.21.1-fabric"
+url = "https://cdn.modrinth.com/data/1eAoo2KR/versions/equv2TRU/yet_another_config_lib_v3-3.6.6%2B1.21.1-fabric.jar"
+
+[[mod]]
+slug = "dynamic-fps"
+version_number = "3.9.4"
+url = "https://cdn.modrinth.com/data/LQ3K71Q1/versions/ampsorYv/dynamic-fps-3.9.4%2Bminecraft-1.21.0-fabric.jar"
+
+[[mod]]
+slug = "fabrishot"
+version_number = "1.14.1"
+url = "https://cdn.modrinth.com/data/3qsfQtE9/versions/HfdXLVRy/fabrishot-1.14.1.jar"
+
+[[mod]]
+slug = "modernfix"
+version_number = "5.19.1+mc1.21"
+url = "https://cdn.modrinth.com/data/nmDcB62a/versions/i8GSONFm/modernfix-fabric-5.19.1%2Bmc1.21.jar"
+
+[[mod]]
+slug = "controlify"
+version_number = "2.1.1"
+url = "https://cdn.modrinth.com/data/DOUdJVEm/versions/wT6VbNSv/controlify-2.1.1%2B1.21-fabric.jar"
+
+[[mod]]
+slug = "modelfix"
+version_number = "1.21-1.6"
+url = "https://cdn.modrinth.com/data/QdG47OkI/versions/FUZo6yCk/modelfix-1.21-1.6-fabric.jar"
+
+[[mod]]
+slug = "sodium-extra"
+version_number = "mc1.21.1-0.6.0+fabric"
+url = "https://cdn.modrinth.com/data/PtjYWJkn/versions/anDafurZ/sodium-extra-fabric-0.6.0%2Bmc1.21.1.jar"
+
+[[mod]]
+slug = "xaeros-minimap"
+version_number = "25.2.6_Fabric_1.21"
+url = "https://cdn.modrinth.com/data/1bokaNcj/versions/BKURGnp1/Xaeros_Minimap_25.2.6_Fabric_1.21.jar"
+
+[[mod]]
+slug = "iris"
+version_number = "1.8.8+1.21.1-fabric"
+url = "https://cdn.modrinth.com/data/YL57xq9U/versions/zsoi0dso/iris-fabric-1.8.8%2Bmc1.21.1.jar"
+
+[[mod]]
+slug = "lambdynamiclights"
+version_number = "4.1.2+1.21.1"
+url = "https://cdn.modrinth.com/data/yBW8D80W/versions/kuX6nw8R/lambdynamiclights-4.1.2%2B1.21.1.jar"
+
+[[mod]]
+slug = "fabric-api"
+version_number = "0.102.0+1.21"
+url = "https://cdn.modrinth.com/data/P7dR8mSH/versions/oGwyXeEI/fabric-api-0.102.0%2B1.21.jar"
+
+[[mod]]
+slug = "continuity"
+version_number = "3.0.0-beta.5+1.21"
+url = "https://cdn.modrinth.com/data/1IjD5062/versions/NksUpFjf/continuity-3.0.0-beta.5%2B1.21.jar"
+
+[[mod]]
+slug = "forge-config-api-port"
+version_number = "v21.0.8-1.21-Fabric"
+url = "https://cdn.modrinth.com/data/ohNO6lps/versions/GOreNSW6/ForgeConfigAPIPort-v21.0.8-1.21-Fabric.jar"
+
+[[mod]]
+slug = "puzzle"
+version_number = "2.0.1-fabric"
+url = "https://cdn.modrinth.com/data/3IuO68q1/versions/TMFxzCSV/puzzle-fabric-2.0.1%2B1.21.jar"
+
+[[mod]]
+slug = "entitytexturefeatures"
+version_number = "6.2"
+url = "https://cdn.modrinth.com/data/BVzZfTc1/versions/BoF2n3m7/entity_texture_features_fabric_1.21-6.2.jar"
+
+[[mod]]
+slug = "modmenu"
+version_number = "11.0.3"
+url = "https://cdn.modrinth.com/data/mOgUt4GM/versions/YIfqIJ8q/modmenu-11.0.3.jar"
+
+[[mod]]
+slug = "reeses-sodium-options"
+version_number = "mc1.21.4-1.8.3+fabric"
+url = "https://cdn.modrinth.com/data/Bh37bMuy/versions/KoUrx3jJ/reeses-sodium-options-fabric-1.8.3%2Bmc1.21.4.jar"
+
+[[mod]]
+slug = "cubes-without-borders"
+version_number = "2.1.1+1.21"
+url = "https://cdn.modrinth.com/data/ETlrkaYF/versions/fbzkv9Iu/cubes-without-borders-2.1.1%2B1.21.jar"
+
+[[mod]]
+slug = "mixintrace"
+version_number = "1.1.1+1.17"
+url = "https://cdn.modrinth.com/data/sGmHWmeL/versions/1.1.1%2B1.17/mixintrace-1.1.1%2B1.17.jar"
+
+[[mod]]
+slug = "entityculling"
+version_number = "1.7.4"
+url = "https://cdn.modrinth.com/data/NNAgCjsB/versions/eKX1ek3L/entityculling-fabric-1.7.4-mc1.21.jar"
+
+[[mod]]
+slug = "debugify"
+version_number = "1.21+1.0"
+url = "https://cdn.modrinth.com/data/QwxR6Gcd/versions/mOk69fib/Debugify-1.21%2B1.0.jar"
+
+[[mod]]
+slug = "immediatelyfast"
+version_number = "1.6.5+1.21.1-fabric"
+url = "https://cdn.modrinth.com/data/5ZwdcRci/versions/UDgEo3mK/ImmediatelyFast-Fabric-1.6.5%2B1.21.1.jar"
+
+[[mod]]
+slug = "xaeros-world-map"
+version_number = "1.39.9_Fabric_1.21"
+url = "https://cdn.modrinth.com/data/NcUtCpym/versions/3XtBvLkH/XaerosWorldMap_1.39.9_Fabric_1.21.jar"
+
+[[mod]]
+slug = "no-chat-reports"
+version_number = "Fabric-1.21.1-v2.9.1"
+url = "https://cdn.modrinth.com/data/qQyHxfxd/versions/D8K0KJXM/NoChatReports-FABRIC-1.21.1-v2.9.1.jar"
+
+[[mod]]
+slug = "morechathistory"
+version_number = "1.3.1"
+url = "https://cdn.modrinth.com/data/8qkXwOnk/versions/3siYJiWG/morechathistory-1.3.1.jar"
+
+[[mod]]
+slug = "fabric-language-kotlin"
+version_number = "1.13.3+kotlin.2.1.21"
+url = "https://cdn.modrinth.com/data/Ha28R6CL/versions/iqWDz8qt/fabric-language-kotlin-1.13.3%2Bkotlin.2.1.21.jar"
+
+[[mod]]
+slug = "bettergrassify"
+version_number = "1.3.4+fabric.1.21.1"
+url = "https://cdn.modrinth.com/data/m5T5xmUy/versions/ymcZ9Mml/BetterGrassify-1.3.4%2Bfabric.1.21.1.jar"
+
+[[mod]]
+slug = "cloth-config"
+version_number = "15.0.140+fabric"
+url = "https://cdn.modrinth.com/data/9s6osm5g/versions/HpMb5wGb/cloth-config-15.0.140-fabric.jar"
+
+[[mod]]
+slug = "fastquit"
+version_number = "3.0.0+1.20.6"
+url = "https://cdn.modrinth.com/data/x1hIzbuY/versions/dIGKewCo/fastquit-3.0.0%2B1.20.6.jar"
+
+[[mod]]
+slug = "polytone"
+version_number = "1.21-3.3.8"
+url = "https://cdn.modrinth.com/data/3qAYkBMB/versions/PPzpEEaj/polytone-1.21-3.3.8-fabric.jar"
+
+[[mod]]
+slug = "yosbr"
+version_number = "0.1.2"
+url = "https://cdn.modrinth.com/data/WwbubTsV/versions/KMOzdYko/yosbr-0.1.2.jar"
+
+[[mod]]
+slug = "paginatedadvancements"
+version_number = "2.5.1"
+url = "https://cdn.modrinth.com/data/pJogNFap/versions/fQnpir9a/paginatedadvancements-2.5.1.jar"
+
+[[mod]]
+slug = "zoomify"
+version_number = "2.14.2+1.21.1"
+url = "https://cdn.modrinth.com/data/w7ThoJFB/versions/mGFci27z/Zoomify-2.14.2%2B1.21.1.jar"
+
+[[mod]]
+slug = "optigui"
+version_number = "2.3.0-beta.6.1-modrinth+1.21"
+url = "https://cdn.modrinth.com/data/JuksLGBQ/versions/Zu9vDPeQ/optigui-2.3.0-beta.6.1-modrinth%2B1.21.jar"
