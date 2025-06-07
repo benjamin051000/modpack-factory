@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from textwrap import dedent
 
 import z3
 
@@ -60,7 +61,12 @@ def solve_mods(
         release: z3.Bool(
             # NOTE TODO research this: do duplicate names mess up the solver?
             # Maybe they end up being the same variable?
-            f"{mod.slug}_{release.version_number}_{','.join(release.loaders)}_{','.join([str(gv) for gv in release.game_versions])}"
+            dedent(
+                f"""\
+                {mod.slug}_{release.version_number}_
+                {",".join(release.loaders)}_
+                {",".join([str(gv) for gv in release.game_versions])}"""
+            ).replace("\n", "")
         )
         for mod in mods
         for release in mod.versions
