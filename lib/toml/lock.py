@@ -30,7 +30,11 @@ def lock(mc_version: MCVersion, mods: list[ModVersion]) -> tomlkit.TOMLDocument:
                 {
                     "slug": mod.slug,
                     "version_number": mod.version_number,
-                    "url": next(file.url for file in mod.files if file.primary),
+                    "url": next(
+                        file.url
+                        for file in mod.files
+                        if file.primary or len(mod.files) == 1
+                    ),
                 }
             )
         )
