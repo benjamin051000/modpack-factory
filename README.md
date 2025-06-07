@@ -89,7 +89,7 @@ See [examples/](https://github.com/benjamin051000/modpack-factory/tree/main/exam
 - [x] lockfile
 - [x] lock an already-made mcproject.toml
 - [x] add a new mod to an existing mcproject.toml
-- [ ] specify minecraft version constraints in mcproject.toml
+- [x] specify minecraft version constraints in mcproject.toml
 - [ ] specify mod constraints in mcproject.toml
 - [ ] specify loader constraints in mcproject.toml
 - [ ] group sources (e.g., fabulously optimized) to update independently from additional mods
@@ -103,3 +103,4 @@ See [examples/](https://github.com/benjamin051000/modpack-factory/tree/main/exam
 - [ ] Assist with upgrading mods
 - [ ] launch minecraft?
 - [ ] export to Prism launcher
+- [ ] support minecraft classic/alpha/beta/snapshot versions
