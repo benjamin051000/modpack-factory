@@ -3,6 +3,7 @@ from pathlib import Path
 import tomlkit
 
 from lib.mod.mod import ModVersion
+from lib.toml.toml_constraint import MCVersion
 
 FILENAME = "modpack.lock"
 
@@ -18,9 +19,10 @@ def write_lockfile(toml: tomlkit.TOMLDocument, filename: Path):
 #         return tomlkit.load(f)
 
 
-def lock(mods: list[ModVersion]) -> tomlkit.TOMLDocument:
+def lock(mc_version: MCVersion, mods: list[ModVersion]) -> tomlkit.TOMLDocument:
     """Generate the locked TOML."""
     doc = tomlkit.document()
+    doc.add("minecraft-version", str(mc_version))
     for mod in mods:
         aot = tomlkit.aot()
         aot.append(

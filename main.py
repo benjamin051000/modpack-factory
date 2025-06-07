@@ -5,6 +5,7 @@ from pathlib import Path
 from pprint import pprint
 
 import aiohttp
+import tomlkit
 
 from lib.mod.mod import Mod
 from lib.solver.solver import NoSolutionError, solve_mods
@@ -66,9 +67,12 @@ def add(args: argparse.Namespace) -> None:
 
     mods = asyncio.run(get_mods(toml["project"]["mods"]))
 
-    mc_version = MinecraftVersionConstraint.from_str(
-        toml["project"]["minecraft-version"]
-    )
+    try:
+        mc_version = MinecraftVersionConstraint.from_str(
+            toml["project"]["minecraft-version"]
+        )
+    except tomlkit.exceptions.NonExistentKey:
+        mc_version = None
 
     print("Finding a compatible set of mods...")
     try:
@@ -90,9 +94,12 @@ def lock(args: argparse.Namespace) -> None:
         toml = mcproject.read_mcproject_toml(mcproject.init_mcproject_toml(args.path))
 
     mods = asyncio.run(get_mods(toml["project"]["mods"]))
-    mc_version = MinecraftVersionConstraint.from_str(
-        toml["project"]["minecraft-version"]
-    )
+    try:
+        mc_version = MinecraftVersionConstraint.from_str(
+            toml["project"]["minecraft-version"]
+        )
+    except tomlkit.exceptions.NonExistentKey:
+        mc_version = None
 
     lock_mods(args.path, mods, mc_version, args.dump_model)
 
@@ -100,7 +107,7 @@ def lock(args: argparse.Namespace) -> None:
 def lock_mods(
     path: Path,
     mods: list[Mod],
-    mc_version: MinecraftVersionConstraint,
+    mc_version: MinecraftVersionConstraint | None,
     dump_model: bool = False,
 ):
     selected_mc_version, selected_loader, selected_mods = solve_mods(
@@ -113,7 +120,7 @@ def lock_mods(
     for mod in selected_mods:
         print(f"- {mod.slug} ({mod.version_number})")
 
-    locked_mods = lockfile.lock(selected_mods)
+    locked_mods = lockfile.lock(selected_mc_version, selected_mods)
     lock_filename = f"{path.stem}.lock.toml"
     lockfile.write_lockfile(locked_mods, Path(lock_filename))
 

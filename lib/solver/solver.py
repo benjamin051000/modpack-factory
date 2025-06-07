@@ -47,7 +47,9 @@ class NoSolutionError(Exception):
 
 
 def solve_mods(
-    mods: list[Mod], mc_version_constraint: MinecraftVersionConstraint, dump_model=False
+    mods: list[Mod],
+    mc_version_constraint: MinecraftVersionConstraint | None,
+    dump_model=False,
 ) -> tuple[MCVersion, str, list[ModVersion]]:
     """From chatgippity"""
 
@@ -74,7 +76,9 @@ def solve_mods(
     mc_minor = z3.Int("mc_minor")
     mc_patch = z3.Int("mc_patch")
 
-    s.add(mc_version_constraint.version.z3_ge(mc_major, mc_minor, mc_patch))
+    if mc_version_constraint:
+        assert mc_version_constraint.relationship == "", ">= not yet supported"
+        s.add(mc_version_constraint.version.z3_ge(mc_major, mc_minor, mc_patch))
 
     loader = z3.String("loader")
 
