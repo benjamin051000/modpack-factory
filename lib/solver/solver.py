@@ -65,7 +65,7 @@ def solve_mods(
                 f"""\
                 {mod.slug}_{release.version_number}_
                 {",".join(release.loaders)}_
-                {",".join([str(gv) for gv in release.game_versions])}"""
+                ({release.id})"""
             ).replace("\n", "")
         )
         for mod in mods

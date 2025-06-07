@@ -24,6 +24,7 @@ class ModVersion:
     version_type: Literal["release", "alpha", "beta"]
     loaders: list[str]
     files: list[ModrinthFile]
+    id: str
     jar: FabricJarConstraints | None
 
     def __hash__(self) -> int:
@@ -42,6 +43,7 @@ class ModVersion:
                 game_versions=[MCVersion.from_str(s) for s in v["game_versions"]],
                 version_type=v["version_type"],
                 loaders=v["loaders"],
+                id=v["id"],
                 files=[
                     ModrinthFile(
                         url=f["url"],
