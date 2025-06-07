@@ -3,7 +3,7 @@ from collections.abc import Callable
 import z3
 
 from lib.mod.mod import Mod, ModVersion
-from lib.toml.toml_constraint import MinecraftVersionConstraint
+from lib.toml.toml_constraint import MCVersion, MinecraftVersionConstraint
 
 
 def find_all_solutions(s: z3.Solver, block: Callable) -> set:
@@ -48,7 +48,7 @@ class NoSolutionError(Exception):
 
 def solve_mods(
     mods: list[Mod], mc_version_constraint: MinecraftVersionConstraint, dump_model=False
-) -> tuple[str, str, list[ModVersion]]:
+) -> tuple[MCVersion, str, list[ModVersion]]:
     """From chatgippity"""
 
     s = z3.Solver()
@@ -114,8 +114,13 @@ def solve_mods(
     backwards_map = {v: k for k, v in release_vars.items()}
 
     selected_mods: list[ModVersion] = []
-    selected_loader = ""
-    selected_mc_version = ""
+    selected_loader = solution[loader].as_string()
+
+    selected_mc_version = MCVersion(
+        solution[mc_major].as_long(),
+        solution[mc_minor].as_long(),
+        solution[mc_patch].as_long(),
+    )
 
     # for solution in solutions:
     for s in solution:
@@ -123,16 +128,7 @@ def solve_mods(
         variable = s()
         value = solution[s]
 
-        if z3.is_bool(value):
-            if z3.is_true(value):
-                selected_mods.append(backwards_map[variable])
-        elif z3.is_string(value):
-            name = variable.decl().name()
-            if name == "loader":
-                selected_loader = value.as_string()
-            elif name == "mc_version":
-                selected_mc_version = value.as_string()
-            else:
-                raise RuntimeError("Unreachable!")
+        if z3.is_bool(value) and z3.is_true(value):
+            selected_mods.append(backwards_map[variable])
 
     return selected_mc_version, selected_loader, selected_mods
