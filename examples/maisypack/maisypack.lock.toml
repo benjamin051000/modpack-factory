@@ -1,0 +1,856 @@
+minecraft-version = "1.20.1"
+
+[[mod]]
+slug = "libx"
+version_number = "1.20.1-5.0.14"
+url = "https://cdn.modrinth.com/data/qEH6GYul/versions/YHTMDq85/LibX-1.20.1-5.0.14.jar"
+
+[[mod]]
+slug = "yungs-better-mineshafts"
+version_number = "1.20-Forge-4.0.4"
+url = "https://cdn.modrinth.com/data/HjmxVlSr/versions/kVO57zxB/YungsBetterMineshafts-1.20-Forge-4.0.4.jar"
+
+[[mod]]
+slug = "createaddition"
+version_number = "1.20.1-1.3.1"
+url = "https://cdn.modrinth.com/data/kU1G12Nn/versions/SecVSw22/createaddition-1.20.1-1.3.1.jar"
+
+[[mod]]
+slug = "yungs-better-strongholds"
+version_number = "1.20-Forge-4.0.3"
+url = "https://cdn.modrinth.com/data/kidLKymU/versions/rwiShgsc/YungsBetterStrongholds-1.20-Forge-4.0.3.jar"
+
+[[mod]]
+slug = "twilight-delight"
+version_number = "2.0.15"
+url = "https://cdn.modrinth.com/data/d6cSefpO/versions/M1q9VmFx/twilightdelight-2.0.15.jar"
+
+[[mod]]
+slug = "irons-spells-n-spellbooks"
+version_number = "1.20.1-3.4.0.9"
+url = "https://cdn.modrinth.com/data/s4OWxYQQ/versions/9dM8iFPD/irons_spellbooks-1.20.1-3.4.0.9.jar"
+
+[[mod]]
+slug = "do-a-barrel-roll"
+version_number = "3.5.6+1.20.1-forge"
+url = "https://cdn.modrinth.com/data/6FtRfnLg/versions/VH8QpKA5/do_a_barrel_roll-forge-3.5.6%2B1.20.1.jar"
+
+[[mod]]
+slug = "chat-heads"
+version_number = "0.13.18"
+url = "https://cdn.modrinth.com/data/Wb5oqrBJ/versions/45EJNtBe/chat_heads-0.13.18-forge-1.20.jar"
+
+[[mod]]
+slug = "lootr"
+version_number = "0.7.35.90"
+url = "https://cdn.modrinth.com/data/EltpO5cN/versions/uZTpIy1Z/lootr-forge-1.20-0.7.35.90.jar"
+
+[[mod]]
+slug = "bosses-of-mass-destruction-forge"
+version_number = "1.1.2"
+url = "https://cdn.modrinth.com/data/hFUzfDsn/versions/2Kw4xPhp/BOMD-Forge-1.20.1-1.1.2.jar"
+
+[[mod]]
+slug = "nethers-delight"
+version_number = "1.20.1-4.0"
+url = "https://cdn.modrinth.com/data/Vv0RM7WN/versions/MTDQhZd2/nethersdelight-1.20.1-4.0.jar"
+
+[[mod]]
+slug = "just-enough-archaeology"
+version_number = "1.20.1-1.0.5"
+url = "https://cdn.modrinth.com/data/K0LQpdmm/versions/KXRCsq14/jearchaeology-1.20.1-1.0.5.jar"
+
+[[mod]]
+slug = "ctov-immersive-engineering-compat"
+version_number = "2.0+mod"
+url = "https://cdn.modrinth.com/data/Zi15pXgt/versions/6zcErTq1/ctov-immersive-engineering-compat-2.0.jar"
+
+[[mod]]
+slug = "better-third-person"
+version_number = "1.9.0"
+url = "https://cdn.modrinth.com/data/G1s2WpNo/versions/XkYduFuv/BetterThirdPerson-Forge-1.20-1.9.0.jar"
+
+[[mod]]
+slug = "ceramic-bucket"
+version_number = "1.20.1-4.1.0.0"
+url = "https://cdn.modrinth.com/data/M9G5zpf1/versions/eLl35whr/ceramicbucket-1.20.1-4.1.0.0.jar"
+
+[[mod]]
+slug = "patchouli"
+version_number = "1.20.1-84.1-forge"
+url = "https://cdn.modrinth.com/data/nU0bVIaL/versions/8Qyw08ld/Patchouli-1.20.1-84.1-FORGE.jar"
+
+[[mod]]
+slug = "yungs-better-jungle-temples"
+version_number = "1.20-Forge-2.0.5"
+url = "https://cdn.modrinth.com/data/z9Ve58Ih/versions/CXQc6EnZ/YungsBetterJungleTemples-1.20-Forge-2.0.5.jar"
+
+[[mod]]
+slug = "e4mc"
+version_number = "5.3.1-forge"
+url = "https://cdn.modrinth.com/data/qANg5Jrr/versions/LH3YCVlF/e4mc_minecraft-forge-5.3.1.jar"
+
+[[mod]]
+slug = "visuality-forge"
+version_number = "2.0.2"
+url = "https://cdn.modrinth.com/data/z13R7Et1/versions/MyhpSYT4/visuality-forge-2.0.2.jar"
+
+[[mod]]
+slug = "chefs-delight"
+version_number = "1.0.3-forge-1.20.1"
+url = "https://cdn.modrinth.com/data/pvcsfne4/versions/5tGfF2Ok/chefs-delight-1.0.3-forge-1.20.1.jar"
+
+[[mod]]
+slug = "alternate-current"
+version_number = "forge-mc1.20-1.7.0"
+url = "https://cdn.modrinth.com/data/r0v8vy1s/versions/kC6SY4Zp/alternate_current-mc1.20-1.7.0.jar"
+
+[[mod]]
+slug = "better-advancements"
+version_number = "0.4.2.25"
+url = "https://cdn.modrinth.com/data/Q2OqKxDG/versions/NS5G3ENg/BetterAdvancements-NeoForge-1.20.1-0.4.2.25.jar"
+
+[[mod]]
+slug = "lets-do-beachparty"
+version_number = "2.0.2"
+url = "https://cdn.modrinth.com/data/GyKzAh3l/versions/7OYiNblZ/letsdo-beachparty-forge-2.0.2.jar"
+
+[[mod]]
+slug = "pick-up-notifier"
+version_number = "v8.0.0-1.20.1-Forge"
+url = "https://cdn.modrinth.com/data/ZX66K16c/versions/LojgSWbd/PickUpNotifier-v8.0.0-1.20.1-Forge.jar"
+
+[[mod]]
+slug = "waystones-teleport-pets"
+version_number = "1.2"
+url = "https://cdn.modrinth.com/data/VaCl9OtG/versions/Yh4b40rs/WaystonesTeleportPets-1.20-1.20.1--1.2.jar"
+
+[[mod]]
+slug = "terralith"
+version_number = "2.5.4"
+url = "https://cdn.modrinth.com/data/8oi3bsk5/versions/WeYhEb5d/Terralith_1.20.x_v2.5.4.jar"
+
+[[mod]]
+slug = "chalk-mod"
+version_number = "1.6.5"
+url = "https://cdn.modrinth.com/data/YWGP4Y1d/versions/HA8yrJaB/chalk-1.20.1-1.6.5.jar"
+
+[[mod]]
+slug = "oculus"
+version_number = "1.20.1-1.8.0"
+url = "https://cdn.modrinth.com/data/GchcoXML/versions/iQ1SwGc3/oculus-mc1.20.1-1.8.0.jar"
+
+[[mod]]
+slug = "l_enders-cataclysm"
+version_number = "2.65"
+url = "https://cdn.modrinth.com/data/46KJle7n/versions/a4mPtmjF/L_Enders_Cataclysm%201.20.1-2.66.jar"
+
+[[mod]]
+slug = "yungs-extras"
+version_number = "1.20-Forge-4.0.3"
+url = "https://cdn.modrinth.com/data/ZYgyPyfq/versions/h4m8J7w8/YungsExtras-1.20-Forge-4.0.3.jar"
+
+[[mod]]
+slug = "ice-and-fire-dragons"
+version_number = "2.1.13-1.20.1-beta-5"
+url = "https://cdn.modrinth.com/data/LVnvHVBp/versions/EzN8KQYF/iceandfire-2.1.13-1.20.1-beta-5.jar"
+
+[[mod]]
+slug = "mouse-tweaks"
+version_number = "1.20.1-2.25.1-forge"
+url = "https://cdn.modrinth.com/data/aC3cM3Vq/versions/7JVXOe3K/MouseTweaks-forge-mc1.20.1-2.25.1.jar"
+
+[[mod]]
+slug = "ct-overhaul-village"
+version_number = "3.4.14"
+url = "https://cdn.modrinth.com/data/fgmhI8kH/versions/o7mg6MeV/%5Bforge%5Dctov-3.4.14.jar"
+
+[[mod]]
+slug = "cloth-config"
+version_number = "11.1.136+forge"
+url = "https://cdn.modrinth.com/data/9s6osm5g/versions/t8TXrZvZ/cloth-config-11.1.136-forge.jar"
+
+[[mod]]
+slug = "quark-oddities"
+version_number = "1.20.1"
+url = "https://cdn.modrinth.com/data/qeEEslrN/versions/NrzERFzz/QuarkOddities-1.20.1.jar"
+
+[[mod]]
+slug = "guard-villagers"
+version_number = "1.20.1-1.6.10"
+url = "https://cdn.modrinth.com/data/H1sntfo8/versions/SPPdFnqa/guardvillagers-1.20.1-1.6.10.jar"
+
+[[mod]]
+slug = "terrablender"
+version_number = "3.0.1.10"
+url = "https://cdn.modrinth.com/data/kkmrDlKT/versions/zGconCHG/TerraBlender-forge-1.20.1-3.0.1.10.jar"
+
+[[mod]]
+slug = "lionfish-api"
+version_number = "2.4"
+url = "https://cdn.modrinth.com/data/FoVacERa/versions/KZh3Mkcu/lionfishapi-2.4.jar"
+
+[[mod]]
+slug = "useful-slime"
+version_number = "1.8.1"
+url = "https://cdn.modrinth.com/data/CzM6C1W0/versions/lfj2AZFK/UsefulSlime-forge-1.20.1-1.8.1.jar"
+
+[[mod]]
+slug = "memoryleakfix"
+version_number = "v1.1.5"
+url = "https://cdn.modrinth.com/data/NRjRiSSD/versions/3w0IxNtk/memoryleakfix-forge-1.17%2B-1.1.5.jar"
+
+[[mod]]
+slug = "plushie"
+version_number = "1.4.0"
+url = "https://cdn.modrinth.com/data/hsOK0gUP/versions/lioWGH5B/plushies-1.4.0-forge.jar"
+
+[[mod]]
+slug = "lets-do-herbalbrews"
+version_number = "1.0.12"
+url = "https://cdn.modrinth.com/data/Eh11TaTm/versions/qKfEj2BA/letsdo-herbalbrews-forge-1.0.12.jar"
+
+[[mod]]
+slug = "xaeros-world-map"
+version_number = "1.39.9_Forge_1.20"
+url = "https://cdn.modrinth.com/data/NcUtCpym/versions/yCVWJ9aK/XaerosWorldMap_1.39.9_Forge_1.20.jar"
+
+[[mod]]
+slug = "just-enough-effect-descriptions-jeed"
+version_number = "1.20-2.2.5"
+url = "https://cdn.modrinth.com/data/EO27GKs1/versions/jHYonbva/jeed-1.20-2.2.5.jar"
+
+[[mod]]
+slug = "xaeros-minimap"
+version_number = "25.2.6_Forge_1.20"
+url = "https://cdn.modrinth.com/data/1bokaNcj/versions/k73HMiDN/Xaeros_Minimap_25.2.6_Forge_1.20.jar"
+
+[[mod]]
+slug = "ars-creo"
+version_number = "4.0.1"
+url = "https://cdn.modrinth.com/data/fZ324GMc/versions/IBTmGXNV/ars_creo-1.20.1-4.0.1.jar"
+
+[[mod]]
+slug = "the-one-probe"
+version_number = "1.20.1-10.0.3"
+url = "https://cdn.modrinth.com/data/Eyw0UxEx/versions/r7iv0zP9/theoneprobe-1.20.1-10.0.3.jar"
+
+[[mod]]
+slug = "lets-do-bakery"
+version_number = "1.1.15"
+url = "https://cdn.modrinth.com/data/WFwYiVoG/versions/Jo8EwiDR/letsdo-bakery-forge-1.1.15.jar"
+
+[[mod]]
+slug = "zeta"
+version_number = "1.20.1-1.0-28"
+url = "https://cdn.modrinth.com/data/MVARlG2f/versions/mJDm9MPg/Zeta-1.0-28.jar"
+
+[[mod]]
+slug = "ae2"
+version_number = "15.4.4"
+url = "https://cdn.modrinth.com/data/XxWD5pD3/versions/ACZsejkY/appliedenergistics2-forge-15.4.4.jar"
+
+[[mod]]
+slug = "ai-improvements"
+version_number = "0.5.2"
+url = "https://cdn.modrinth.com/data/DSVgwcji/versions/eJihmpNQ/AI-Improvements-1.20-0.5.2.jar"
+
+[[mod]]
+slug = "miners-delight"
+version_number = "1.20.1-1.2.3"
+url = "https://cdn.modrinth.com/data/qMxbM4BQ/versions/loZ09szX/miners_delight-1.20.1-1.2.3.jar"
+
+[[mod]]
+slug = "trashslot"
+version_number = "15.1.1+forge-1.20"
+url = "https://cdn.modrinth.com/data/vRYk0bv7/versions/fugZlKHM/trashslot-forge-1.20-15.1.1.jar"
+
+[[mod]]
+slug = "create-new-age"
+version_number = "1.1.4"
+url = "https://cdn.modrinth.com/data/FTeXqI9v/versions/8pm2JUQy/create-new-age-forge-1.20.1-1.1.4.jar"
+
+[[mod]]
+slug = "yungs-better-dungeons"
+version_number = "1.20-Forge-4.0.4"
+url = "https://cdn.modrinth.com/data/o1C1Dkj5/versions/kPiQ6v4q/YungsBetterDungeons-1.20-Forge-4.0.4.jar"
+
+[[mod]]
+slug = "puzzles-lib"
+version_number = "v8.1.32-1.20.1-Forge"
+url = "https://cdn.modrinth.com/data/QAGBst4M/versions/YFZdsqXl/PuzzlesLib-v8.1.32-1.20.1-Forge.jar"
+
+[[mod]]
+slug = "distanthorizons"
+version_number = "2.3.2-b-1.20.1"
+url = "https://cdn.modrinth.com/data/uCdwusMi/versions/vSDePnsB/DistantHorizons-fabric-forge-2.3.2-b-1.20.1.jar"
+
+[[mod]]
+slug = "just-enough-professions-jep"
+version_number = "3.0.1"
+url = "https://cdn.modrinth.com/data/kB56GtWA/versions/ANKVJC3T/JustEnoughProfessions-forge-1.20.1-3.0.1.jar"
+
+[[mod]]
+slug = "curios"
+version_number = "5.14.1+1.20.1"
+url = "https://cdn.modrinth.com/data/vvuO3ImH/versions/IPQlZkz1/curios-forge-5.14.1%2B1.20.1.jar"
+
+[[mod]]
+slug = "totw-modded"
+version_number = "1.0.5"
+url = "https://cdn.modrinth.com/data/54eqfZSC/versions/kYlLoQ9i/totw_modded-forge-1.20.1-1.0.5.jar"
+
+[[mod]]
+slug = "upcycle!"
+version_number = "v.1.1.0"
+url = "https://cdn.modrinth.com/data/MiQPF2hD/versions/hThHwFZk/Upcycle-1.20.x-%28v.1.1.0%29.jar"
+
+[[mod]]
+slug = "sound-physics-remastered"
+version_number = "forge-1.20.1-1.4.13"
+url = "https://cdn.modrinth.com/data/qyVF9oeo/versions/fqgMU03D/sound-physics-remastered-forge-1.20.1-1.4.13.jar"
+
+[[mod]]
+slug = "regions-unexplored"
+version_number = "F-0.5.6+1.20.1"
+url = "https://cdn.modrinth.com/data/Tkikq67H/versions/XTrgsfIB/RegionsUnexploredForge-0.5.6%2B1.20.1.jar"
+
+[[mod]]
+slug = "ctov-farmers-delight-compat"
+version_number = "2.1+mod"
+url = "https://cdn.modrinth.com/data/CdRC4fyI/versions/qWJ0YcQq/ctov-farmers-delight-compat-2.1.jar"
+
+[[mod]]
+slug = "not-enough-animations"
+version_number = "1.9.3"
+url = "https://cdn.modrinth.com/data/MPCX6s5C/versions/a2Q3t34g/notenoughanimations-forge-1.9.3-mc1.20.1.jar"
+
+[[mod]]
+slug = "crafting-tweaks"
+version_number = "18.2.5+forge-1.20.1"
+url = "https://cdn.modrinth.com/data/DMu0oBKf/versions/toAiSZzl/craftingtweaks-forge-1.20.1-18.2.5.jar"
+
+[[mod]]
+slug = "cerbons-api"
+version_number = "1.1.0"
+url = "https://cdn.modrinth.com/data/GkIc6rRo/versions/XWZQbKsr/CerbonsAPI-Forge-1.20.1-1.1.0.jar"
+
+[[mod]]
+slug = "immediatelyfast"
+version_number = "1.5.0+1.20.4-forge"
+url = "https://cdn.modrinth.com/data/5ZwdcRci/versions/xNaL38Bs/ImmediatelyFast-Forge-1.5.0%2B1.20.4.jar"
+
+[[mod]]
+slug = "cristel-lib"
+version_number = "1.1.6-forge"
+url = "https://cdn.modrinth.com/data/cl223EMc/versions/DOsSK4NK/cristellib-1.1.6-forge.jar"
+
+[[mod]]
+slug = "botarium"
+version_number = "2.3.4"
+url = "https://cdn.modrinth.com/data/2u6LRnMa/versions/O7D6FTfW/botarium-forge-1.20.1-2.3.4.jar"
+
+[[mod]]
+slug = "supermartijn642s-config-lib"
+version_number = "1.1.8-forge-mc1.20"
+url = "https://cdn.modrinth.com/data/LN9BxssP/versions/ZKor79dR/supermartijn642configlib-1.1.8-forge-mc1.20.jar"
+
+[[mod]]
+slug = "yungs-better-desert-temples"
+version_number = "1.20-Forge-3.0.3"
+url = "https://cdn.modrinth.com/data/XNlO7sBv/versions/lRK2ZA9U/YungsBetterDesertTemples-1.20-Forge-3.0.3.jar"
+
+[[mod]]
+slug = "entityculling"
+version_number = "1.7.4"
+url = "https://cdn.modrinth.com/data/NNAgCjsB/versions/kMC7OLoZ/entityculling-forge-1.7.4-mc1.20.1.jar"
+
+[[mod]]
+slug = "exposure"
+version_number = "1.7.15"
+url = "https://cdn.modrinth.com/data/hB899VmG/versions/GxlCCDbA/exposure-1.20.1-1.7.15-forge.jar"
+
+[[mod]]
+slug = "appleskin"
+version_number = "2.5.1+mc1.20.1"
+url = "https://cdn.modrinth.com/data/EsAfCjCV/versions/XdXDExVF/appleskin-forge-mc1.20.1-2.5.1.jar"
+
+[[mod]]
+slug = "noisium"
+version_number = "2.3.0+mc1.20-1.20.1"
+url = "https://cdn.modrinth.com/data/KuNKN7d2/versions/gbYUKrDP/noisium-forge-2.3.0%2Bmc1.20-1.20.1.jar"
+
+[[mod]]
+slug = "lets-do-candlelight"
+version_number = "1.2.13"
+url = "https://cdn.modrinth.com/data/mPND0Adp/versions/ImuP9F4N/letsdo-candlelight-forge-1.2.13.jar"
+
+[[mod]]
+slug = "resourceful-config"
+version_number = "2.1.3"
+url = "https://cdn.modrinth.com/data/M1953qlQ/versions/DERs8u7v/resourcefulconfig-forge-1.20.1-2.1.3.jar"
+
+[[mod]]
+slug = "tree-harvester"
+version_number = "1.20.1-9.1-fabric+forge+neo"
+url = "https://cdn.modrinth.com/data/abooMhox/versions/EQYmDYvI/treeharvester-1.20.1-9.1.jar"
+
+[[mod]]
+slug = "create-central-kitchen"
+version_number = "1.3.10"
+url = "https://cdn.modrinth.com/data/btq68HMO/versions/DJzXKkKg/create_central_kitchen-1.20.1-for-create-0.5.1.f-1.3.10.jar"
+
+[[mod]]
+slug = "canary"
+version_number = "mc1.20.1-0.3.3"
+url = "https://cdn.modrinth.com/data/qa2H4BS9/versions/lauzXB0n/canary-mc1.20.1-0.3.3.jar"
+
+[[mod]]
+slug = "citadel"
+version_number = "2.6.1"
+url = "https://cdn.modrinth.com/data/jJfV67b1/versions/a7H8TGhJ/citadel-2.6.1-1.20.1.jar"
+
+[[mod]]
+slug = "twilight-forest-the-lost-blocks"
+version_number = "1.20.1-1.5.0"
+url = "https://cdn.modrinth.com/data/TyYh3b27/versions/GcmbYVPP/TF_Lost_Blocks-1.20.1-1.5.0.jar"
+
+[[mod]]
+slug = "balm"
+version_number = "7.3.31+forge-1.20.1"
+url = "https://cdn.modrinth.com/data/MBAkmtvl/versions/jxGSAI51/balm-forge-1.20.1-7.3.31-all.jar"
+
+[[mod]]
+slug = "destroy"
+version_number = "1.20.1-0.1.1"
+url = "https://cdn.modrinth.com/data/uY7EYHum/versions/qHMCRXlk/destroy-1.20.1-0.1.1.jar"
+
+[[mod]]
+slug = "when-dungeons-arise"
+version_number = "2.1.57-1.20.1"
+url = "https://cdn.modrinth.com/data/8DfbfASn/versions/wiCQJUDT/DungeonsArise-1.20.1-2.1.57-release.jar"
+
+[[mod]]
+slug = "towns-and-towers"
+version_number = "1.12"
+url = "https://cdn.modrinth.com/data/DjLobEOy/versions/7ZwnSrVW/Towns-and-Towers-1.12-Fabric%2BForge.jar"
+
+[[mod]]
+slug = "vegan-delight"
+version_number = "1.4.0-forge"
+url = "https://cdn.modrinth.com/data/Na8nA0jA/versions/wuSN5dei/vegandelight-1.4.jar"
+
+[[mod]]
+slug = "ctov-irons-spells-n-spellbooks-compat"
+version_number = "1.2+mod"
+url = "https://cdn.modrinth.com/data/B8XiXauo/versions/o57gj0aQ/ctov-irons-spells-n-spellbooks-compat-1.2.jar"
+
+[[mod]]
+slug = "ad-astra"
+version_number = "1.15.20"
+url = "https://cdn.modrinth.com/data/3ufwT9JF/versions/Qf7QFXk2/ad_astra-forge-1.20.1-1.15.20.jar"
+
+[[mod]]
+slug = "cofh-core"
+version_number = "11.0.2"
+url = "https://cdn.modrinth.com/data/OWSRM4vD/versions/kglS53Hd/cofh_core-1.20.1-11.0.2.56.jar"
+
+[[mod]]
+slug = "festive-delight"
+version_number = "1.3.0"
+url = "https://cdn.modrinth.com/data/AsUUCoXX/versions/ZyfDn5n8/Festive_Delight_1.3_Forge_1.20.1.jar"
+
+[[mod]]
+slug = "caelus"
+version_number = "3.2.0+1.20.1"
+url = "https://cdn.modrinth.com/data/40FYwb4z/versions/mRry0DgY/caelus-forge-3.2.0%2B1.20.1.jar"
+
+[[mod]]
+slug = "bucketlib"
+version_number = "1.20.1-2.3.7.0"
+url = "https://cdn.modrinth.com/data/DItE655o/versions/bEavSTpp/bucketlib-1.20.1-2.3.7.0.jar"
+
+[[mod]]
+slug = "better-archeology"
+version_number = "1.2.1-1.20.1"
+url = "https://cdn.modrinth.com/data/zCh7omyG/versions/vsqxpUo3/betterarcheology-1.2.1-1.20.1.jar"
+
+[[mod]]
+slug = "create"
+version_number = "1.20.1-6.0.5"
+url = "https://cdn.modrinth.com/data/LNytGWDc/versions/Ju7BfP9E/create-1.20.1-6.0.5.jar"
+
+[[mod]]
+slug = "nullscape"
+version_number = "1.2.8"
+url = "https://cdn.modrinth.com/data/LPjGiSO4/versions/QsRKydVt/Nullscape_1.20.x_v1.2.8.jar"
+
+[[mod]]
+slug = "create-oppenheimered"
+version_number = "1.0.5"
+url = "https://cdn.modrinth.com/data/7qOxePw2/versions/WEGRWbrc/create_oppenheimered-1.0.5.jar"
+
+[[mod]]
+slug = "easy-anvils"
+version_number = "v8.0.2-1.20.1-Forge"
+url = "https://cdn.modrinth.com/data/OZBR5JT5/versions/4pRdDqEb/EasyAnvils-v8.0.2-1.20.1-Forge.jar"
+
+[[mod]]
+slug = "quark"
+version_number = "1.20.1-4.0-462"
+url = "https://cdn.modrinth.com/data/qnQsVE2z/versions/DijQLauD/Quark-4.0-462.jar"
+
+[[mod]]
+slug = "kotlin-for-forge"
+version_number = "4.11.0"
+url = "https://cdn.modrinth.com/data/ordsPcFz/versions/hmeyC41q/kotlinforforge-4.11.0-all.jar"
+
+[[mod]]
+slug = "deep-aether"
+version_number = "1.20.1-1.1.6.1"
+url = "https://cdn.modrinth.com/data/gcHIih5B/versions/GRVPlvqU/deep_aether-1.20.1-1.1.6.1.jar"
+
+[[mod]]
+slug = "better-f3"
+version_number = "1.20.1-1.0"
+url = "https://cdn.modrinth.com/data/V8TerSIX/versions/mqn0XAIr/betterf3-1.20.1-1.0.jar"
+
+[[mod]]
+slug = "justenoughbreeding"
+version_number = "1.5.0"
+url = "https://cdn.modrinth.com/data/9Pk89J3g/versions/TGUwLPfr/justenoughbreeding-forge-1.20-1.20.1-1.5.0.jar"
+
+[[mod]]
+slug = "waystones"
+version_number = "14.1.13+forge-1.20.1"
+url = "https://cdn.modrinth.com/data/LOpKHB2A/versions/8Mw54W1S/waystones-forge-1.20.1-14.1.13.jar"
+
+[[mod]]
+slug = "yungs-better-nether-fortresses"
+version_number = "1.20-Forge-2.0.6"
+url = "https://cdn.modrinth.com/data/Z2mXHnxP/versions/2nUEz0zq/YungsBetterNetherFortresses-1.20-Forge-2.0.6.jar"
+
+[[mod]]
+slug = "breezy"
+version_number = "1.2.1"
+url = "https://cdn.modrinth.com/data/AiTMEFuN/versions/OdC1sTZl/breezy-1.20.1-1.2.1.jar"
+
+[[mod]]
+slug = "easy-shulker-boxes"
+version_number = "v8.0.2-1.20.1-Forge"
+url = "https://cdn.modrinth.com/data/gA5euN8S/versions/BG9Ajkjd/EasyShulkerBoxes-v8.0.2-1.20.1-Forge.jar"
+
+[[mod]]
+slug = "collective"
+version_number = "1.20.1-8.3-fabric+forge+neo"
+url = "https://cdn.modrinth.com/data/e0M1UDsY/versions/P0uRrvF9/collective-1.20.1-8.3.jar"
+
+[[mod]]
+slug = "smartbrainlib"
+version_number = "1.15"
+url = "https://cdn.modrinth.com/data/PuyPazRT/versions/YkeJNm33/SmartBrainLib-forge-1.20.1-1.15.jar"
+
+[[mod]]
+slug = "immersive-ui"
+version_number = "0.3.0"
+url = "https://cdn.modrinth.com/data/9wv7LuMc/versions/YbO8SNFq/ImmersiveUI-FORGE-0.3.0.jar"
+
+[[mod]]
+slug = "octo-lib"
+version_number = "0.5.0.1"
+url = "https://cdn.modrinth.com/data/RH2KUdKJ/versions/HZ7KmyXp/OctoLib-FORGE-0.5.0.1%2B1.20.1.jar"
+
+[[mod]]
+slug = "modonomicon"
+version_number = "1.20.1-1.77.6"
+url = "https://cdn.modrinth.com/data/692GClaE/versions/IakYFAI7/modonomicon-1.20.1-forge-1.77.6.jar"
+
+[[mod]]
+slug = "insanelib"
+version_number = "1.21.2"
+url = "https://cdn.modrinth.com/data/USZyvOJq/versions/IKmqI6YH/insanelib-1.21.2.jar"
+
+[[mod]]
+slug = "playeranimator"
+version_number = "1.0.2-rc1+1.20-forge"
+url = "https://cdn.modrinth.com/data/gedNE4y2/versions/xe2EVE6q/player-animation-lib-forge-1.0.2-rc1%2B1.20.jar"
+
+[[mod]]
+slug = "oceans-delight"
+version_number = "1.0.2-1.20"
+url = "https://cdn.modrinth.com/data/DGiq4ZSW/versions/9jLLNENb/oceansdelight-1.0.2-1.20.jar"
+
+[[mod]]
+slug = "coffee-delight"
+version_number = "1.5.1"
+url = "https://cdn.modrinth.com/data/jn1HiMrY/versions/Lgx0crUI/CoffeeDelight-Forge-1.20.1-1.5.1.jar"
+
+[[mod]]
+slug = "wits"
+version_number = "1.1.0+1.20.1-forge"
+url = "https://cdn.modrinth.com/data/AVo2esap/versions/KdWVlCUM/wits-1.1.0%2B1.20.1-forge.jar"
+
+[[mod]]
+slug = "jei"
+version_number = "15.20.0.112"
+url = "https://cdn.modrinth.com/data/u6dRKJwZ/versions/4r3Kp7U7/jei-1.20.1-forge-15.20.0.112.jar"
+
+[[mod]]
+slug = "blood-magic"
+version_number = "1.20.1-3.3.3-45"
+url = "https://cdn.modrinth.com/data/PbNc6qBY/versions/KoL2JNWd/bloodmagic-1.20.1-3.3.3-45.jar"
+
+[[mod]]
+slug = "the-lost-castle"
+version_number = "1.0.3"
+url = "https://cdn.modrinth.com/data/FGlHZl7X/versions/hbZaVz0H/tlc_forge-1.0.3-R-1.20.X.jar"
+
+[[mod]]
+slug = "lets-do-meadow"
+version_number = "1.3.25"
+url = "https://cdn.modrinth.com/data/ra7o6Sl7/versions/phZQOZzG/letsdo-meadow-forge-1.3.25.jar"
+
+[[mod]]
+slug = "do-api"
+version_number = "1.2.15"
+url = "https://cdn.modrinth.com/data/4XJZeZbM/versions/uEaTMht9/letsdo-API-forge-1.2.15-forge.jar"
+
+[[mod]]
+slug = "xaeros-minimap-world-map-waystones-compatibility-forge"
+version_number = "1.0"
+url = "https://cdn.modrinth.com/data/7mLhyqIY/versions/flkS2tex/xaeros_waystones_compability-1.19.2-1.20.1--1.0.jar"
+
+[[mod]]
+slug = "aeroblender"
+version_number = "1.20.1-1.0.1-neoforge"
+url = "https://cdn.modrinth.com/data/1eaq94ok/versions/Q9Ek6EKB/aeroblender-1.20.1-1.0.1-neoforge.jar"
+
+[[mod]]
+slug = "open-parties-and-claims"
+version_number = "forge-1.20.1-0.24.0"
+url = "https://cdn.modrinth.com/data/gF3BGWvG/versions/pRiZtdXR/open-parties-and-claims-forge-1.20.1-0.24.0.jar"
+
+[[mod]]
+slug = "just-enough-resources-jer"
+version_number = "1.4.0.247"
+url = "https://cdn.modrinth.com/data/uEfK2CXF/versions/jW52tbTk/JustEnoughResources-1.20.1-1.4.0.247.jar"
+
+[[mod]]
+slug = "connector"
+version_number = "1.0.0-beta.46+1.20.1"
+url = "https://cdn.modrinth.com/data/u58R1TMW/versions/e8hSZ4vp/Connector-1.0.0-beta.46%2B1.20.1.jar"
+
+[[mod]]
+slug = "easy-magic"
+version_number = "v8.0.1-1.20.1-Forge"
+url = "https://cdn.modrinth.com/data/9hx3AbJM/versions/W2xPEG9I/EasyMagic-v8.0.1-1.20.1-Forge.jar"
+
+[[mod]]
+slug = "alexs-caves"
+version_number = "2.0.2"
+url = "https://cdn.modrinth.com/data/U6GY0xp0/versions/lC8HHXOF/alexscaves-2.0.2.jar"
+
+[[mod]]
+slug = "create-steam-n-rails"
+version_number = "1.6.7+forge-mc1.20.1"
+url = "https://cdn.modrinth.com/data/ZzjhlDgM/versions/pklcGSDf/Steam_Rails-1.6.7%2Bforge-mc1.20.1.jar"
+
+[[mod]]
+slug = "notenoughcrashes"
+version_number = "4.4.9+1.20.1-forge"
+url = "https://cdn.modrinth.com/data/yM94ont6/versions/6XEwkJBV/notenoughcrashes-4.4.9%2B1.20.1-forge.jar"
+
+[[mod]]
+slug = "ctov-chefs-delight-compat"
+version_number = "2.0+mod"
+url = "https://cdn.modrinth.com/data/6PJbKvJH/versions/MVTYiQSv/ctov-chefs-delight-compat-2.0.jar"
+
+[[mod]]
+slug = "architectury-api"
+version_number = "9.2.14+forge"
+url = "https://cdn.modrinth.com/data/lhGA9TYQ/versions/1MKTLiiG/architectury-9.2.14-forge.jar"
+
+[[mod]]
+slug = "ars-ocultas"
+version_number = "1.20.1-1.2.2"
+url = "https://cdn.modrinth.com/data/Tsw8vbks/versions/si2iOQut/ars_ocultas-1.20.1-1.2.2-all.jar"
+
+[[mod]]
+slug = "yungs-better-ocean-monuments"
+version_number = "1.20-Forge-3.0.4"
+url = "https://cdn.modrinth.com/data/3dT9sgt4/versions/SN4iZ7wf/YungsBetterOceanMonuments-1.20-Forge-3.0.4.jar"
+
+[[mod]]
+slug = "tome-of-blood-rebirth"
+version_number = "1.20.1-0.4.4"
+url = "https://cdn.modrinth.com/data/W5NORTN9/versions/E1ra6iYX/tomeofblood-1.20.1-0.4.4-all.jar"
+
+[[mod]]
+slug = "yungs-bridges"
+version_number = "1.20-Forge-4.0.3"
+url = "https://cdn.modrinth.com/data/Ht4BfYp6/versions/KgO1gfM2/YungsBridges-1.20-Forge-4.0.3.jar"
+
+[[mod]]
+slug = "ends-delight"
+version_number = "2.5.1+forge.1.20.1"
+url = "https://cdn.modrinth.com/data/yHN0njMr/versions/GNLxPpR2/ends_delight-2.5.1%2Bforge.1.20.1.jar"
+
+[[mod]]
+slug = "resourceful-lib"
+version_number = "2.1.29"
+url = "https://cdn.modrinth.com/data/G1hIVOrD/versions/OhsHaCcW/resourcefullib-forge-1.20.1-2.1.29.jar"
+
+[[mod]]
+slug = "remove-terralith-intro-message"
+version_number = "1.1+mod"
+url = "https://cdn.modrinth.com/data/sk4iFZGy/versions/Ad77N3iX/remove-terralith-intro-message-1.1.jar"
+
+[[mod]]
+slug = "rubidium-extra"
+version_number = "0.5.4.4+mc1.20.1-build.131"
+url = "https://cdn.modrinth.com/data/oY2B1pjg/versions/F06DXCMX/rubidium-extra-0.5.4.4%2Bmc1.20.1-build.131.jar"
+
+[[mod]]
+slug = "archers-paradox"
+version_number = "5.0.0"
+url = "https://cdn.modrinth.com/data/euzGeN6k/versions/mucZ9uPP/archers_paradox-1.20.1-5.0.0.17.jar"
+
+[[mod]]
+slug = "ars-nouveau"
+version_number = "4.12.6"
+url = "https://cdn.modrinth.com/data/TKB6INcv/versions/5FicuxZm/ars_nouveau-1.20.1-4.12.6-all.jar"
+
+[[mod]]
+slug = "ctov-beautify-compat"
+version_number = "2.0+mod"
+url = "https://cdn.modrinth.com/data/iunZDj0l/versions/elBmQR7P/ctov-beautify-compat-2.0.jar"
+
+[[mod]]
+slug = "common-network"
+version_number = "1.0.5-1.20.1"
+url = "https://cdn.modrinth.com/data/HIuqnQpi/versions/FMfO8Pme/common-networking-forge-1.0.5-1.20.1.jar"
+
+[[mod]]
+slug = "aether"
+version_number = "1.20.1-1.5.2-neoforge"
+url = "https://cdn.modrinth.com/data/YhmgMVyu/versions/2411kUqF/aether-1.20.1-1.5.2-neoforge.jar"
+
+[[mod]]
+slug = "saturn"
+version_number = "mc1.20.1-0.1.3"
+url = "https://cdn.modrinth.com/data/2eT495vq/versions/Yx85DYaG/saturn-mc1.20.1-0.1.3.jar"
+
+[[mod]]
+slug = "occultism"
+version_number = "1.20.1-1.141.4"
+url = "https://cdn.modrinth.com/data/sbJh4AZw/versions/AYukkDMX/occultism-1.20.1-1.141.4.jar"
+
+[[mod]]
+slug = "forgified-fabric-api"
+version_number = "0.92.2+1.11.12+1.20.1"
+url = "https://cdn.modrinth.com/data/Aqlf1Shp/versions/qzoL6HjK/fabric-api-0.92.2%2B1.11.12%2B1.20.1.jar"
+
+[[mod]]
+slug = "immersiveengineering"
+version_number = "10.2.0-183"
+url = "https://cdn.modrinth.com/data/tIm2nV03/versions/WUzj4tgJ/ImmersiveEngineering-1.20.1-10.2.0-183.jar"
+
+[[mod]]
+slug = "lets-do-nethervinery"
+version_number = "1.2.17"
+url = "https://cdn.modrinth.com/data/4TTDxtOx/versions/YR6PRb3b/letsdo-nethervinery-forge-1.2.17.jar"
+
+[[mod]]
+slug = "create-big-cannons"
+version_number = "5.9.0"
+url = "https://cdn.modrinth.com/data/GWp4jCJj/versions/ZOkFGRwq/createbigcannons-5.9.0%2Bmc.1.20.1-forge.jar"
+
+[[mod]]
+slug = "terralith-biome-saplings"
+version_number = "1.1.0c+mod"
+url = "https://cdn.modrinth.com/data/CYGkXnUb/versions/nb8lLMAv/terralith-biome-saplings-1.1.0c.jar"
+
+[[mod]]
+slug = "travelersbackpack"
+version_number = "1.20.1-9.1.38"
+url = "https://cdn.modrinth.com/data/rlloIFEV/versions/B8moaK1y/travelersbackpack-forge-1.20.1-9.1.38.jar"
+
+[[mod]]
+slug = "gravestone-mod"
+version_number = "forge-1.20.1-1.0.24"
+url = "https://cdn.modrinth.com/data/RYtXKJPr/versions/YuF7RHRe/gravestone-forge-1.20.1-1.0.24.jar"
+
+[[mod]]
+slug = "lets-do-vinery"
+version_number = "1.4.39"
+url = "https://cdn.modrinth.com/data/1DWmBJVA/versions/YpD6ue8A/letsdo-vinery-forge-1.4.39.jar"
+
+[[mod]]
+slug = "progressive-bosses"
+version_number = "4.3.4"
+url = "https://cdn.modrinth.com/data/Zxspe0HA/versions/apcJQquL/progressivebosses-4.3.4.jar"
+
+[[mod]]
+slug = "structure-gel-api"
+version_number = "2.16.2"
+url = "https://cdn.modrinth.com/data/T8TGycIQ/versions/xavY0MZc/structure_gel-1.20.1-2.16.2.jar"
+
+[[mod]]
+slug = "lithostitched"
+version_number = "1.4.8-forge-1.20"
+url = "https://cdn.modrinth.com/data/XaDC71GB/versions/GlnFzC0w/lithostitched-forge-1.20.1-1.4.8.jar"
+
+[[mod]]
+slug = "embeddium"
+version_number = "0.3.31+mc1.20.1"
+url = "https://cdn.modrinth.com/data/sk9rgfiA/versions/UTbfe5d1/embeddium-0.3.31%2Bmc1.20.1.jar"
+
+[[mod]]
+slug = "incendium"
+version_number = "5.3.5"
+url = "https://cdn.modrinth.com/data/ZVzW5oNS/versions/uUqarp2H/Incendium_1.20.x_v5.3.5.jar"
+
+[[mod]]
+slug = "no-chat-reports"
+version_number = "Forge-1.20.1-v2.2.2"
+url = "https://cdn.modrinth.com/data/qQyHxfxd/versions/ksEG6N5E/NoChatReports-FORGE-1.20.1-v2.2.2.jar"
+
+[[mod]]
+slug = "blue-skies"
+version_number = "1.3.31"
+url = "https://cdn.modrinth.com/data/DOSy3C4M/versions/YGq4rvX4/blue_skies-1.20.1-1.3.31.jar"
+
+[[mod]]
+slug = "yungs-better-witch-huts"
+version_number = "1.20-Forge-3.0.3"
+url = "https://cdn.modrinth.com/data/t5FRdP87/versions/mwlYB7rq/YungsBetterWitchHuts-1.20-Forge-3.0.3.jar"
+
+[[mod]]
+slug = "create-wizardry"
+version_number = "0.2.3"
+url = "https://cdn.modrinth.com/data/OeGdeWEj/versions/BUK0p8gn/create_wizardry-0.2.3-forge-1.20.1.jar"
+
+[[mod]]
+slug = "yungs-api"
+version_number = "1.20-Forge-4.0.6"
+url = "https://cdn.modrinth.com/data/Ua7DFN59/versions/PJOYAmAs/YungsApi-1.20-Forge-4.0.6.jar"
+
+[[mod]]
+slug = "bellsandwhistles"
+version_number = "0.4.5-1.20.x"
+url = "https://cdn.modrinth.com/data/gJ5afkVv/versions/kW8DoegV/bellsandwhistles-0.4.5-1.20.x-Create6.0%2B.jar"
+
+[[mod]]
+slug = "aether-lost-content"
+version_number = "1.2.3"
+url = "https://cdn.modrinth.com/data/lr2r2Dpz/versions/PVl7uKx1/lost_aether_content-1.20.1-1.2.3.jar"
+
+[[mod]]
+slug = "better-beds-reforged"
+version_number = "1.0.0"
+url = "https://cdn.modrinth.com/data/2Uy4abLr/versions/LXz6Mw0I/BetterBeds-1.0.0.jar"
+
+[[mod]]
+slug = "morechathistory-reforged"
+version_number = "1.0.0"
+url = "https://cdn.modrinth.com/data/wOIKNYYX/versions/iywAuBD2/morechathistory-1.0.0.jar"
