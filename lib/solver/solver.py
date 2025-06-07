@@ -112,7 +112,6 @@ def solve_mods(
     if dump_model:
         for a in s.assertions():
             print(a)
-        exit()
     # solutions: set[z3.ModelRef] = set()
     # while s.check() == z3.sat:
     if s.check() == z3.sat:
@@ -122,6 +121,11 @@ def solve_mods(
         # s.add(mc_version != model[mc_version])
     else:
         raise NoSolutionError
+
+    if dump_model:
+        print("sat")
+        print("--dump-model passed, stopping now")
+        exit()
 
     backwards_map = {v: k for k, v in release_vars.items()}
 
