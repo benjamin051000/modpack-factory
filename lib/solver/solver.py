@@ -74,7 +74,7 @@ def solve_mods(
     mc_minor = z3.Int("mc_minor")
     mc_patch = z3.Int("mc_patch")
 
-    s.add(mc_version_constraint.z3_ge(mc_major, mc_minor, mc_patch))
+    s.add(mc_version_constraint.version.z3_ge(mc_major, mc_minor, mc_patch))
 
     loader = z3.String("loader")
 

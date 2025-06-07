@@ -5,7 +5,7 @@ import aiohttp
 
 from lib.jar.extract import FabricJarConstraints
 from lib.sources import modrinth
-from lib.toml.toml_constraint import MinecraftVersionConstraint
+from lib.toml.toml_constraint import MCVersion
 
 
 @dataclass
@@ -20,7 +20,7 @@ class ModVersion:
     slug: str
     version_number: str
     # dependencies: ?
-    game_versions: list[MinecraftVersionConstraint]
+    game_versions: list[MCVersion]
     version_type: Literal["release", "alpha", "beta"]
     loaders: list[str]
     files: list[ModrinthFile]
@@ -39,9 +39,7 @@ class ModVersion:
             ModVersion(
                 slug=slug,
                 version_number=v["version_number"],
-                game_versions=[
-                    MinecraftVersionConstraint.from_str(s) for s in v["game_versions"]
-                ],
+                game_versions=[MCVersion.from_str(s) for s in v["game_versions"]],
                 version_type=v["version_type"],
                 loaders=v["loaders"],
                 files=[

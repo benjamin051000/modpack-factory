@@ -23,14 +23,46 @@ class Relationship(Enum):
 class MCVersion:
     major: int
     minor: int
-    patch: int
+    patch: int = 0
+
+    @classmethod
+    def from_str(cls, value: str) -> Self:
+        """Create an MCVersion from a string, like '1.20.1'.
+        For strings like '1.20', the patch is defaulted to 0.
+        """
+        return cls(*[int(v) for v in value.split(".")])
 
     def __str__(self) -> str:
-        # NOTE: .0 is typically omitted from the str.
         if self.patch == 0:
+            # Minecraft convention is to omit the patch when it's 0.
             return f"{self.major}.{self.minor}"
         else:
             return f"{self.major}.{self.minor}.{self.patch}"
+
+    def z3_eq(self, major: ArithRef, minor: ArithRef, patch: ArithRef) -> BoolRef:
+        """Create a z3 boolean expression checking for equality with
+        major.minor.patch boolean variables.
+        """
+        expression = z3.And(
+            major == self.major,
+            minor == self.minor,
+            patch == self.patch,
+        )
+        return cast(BoolRef, expression)
+
+    def z3_ge(self, major: ArithRef, minor: ArithRef, patch: ArithRef) -> BoolRef:
+        # Unfortunately, since these are overloaded operators, there is not likely
+        # a way to combine these gt/ge functions. :(
+        expression = z3.Or(
+            major >= self.major,
+            z3.And(major == self.major, minor >= self.minor),
+            z3.And(
+                major == self.major,
+                minor == self.minor,
+                patch >= self.patch,
+            ),
+        )
+        return cast(BoolRef, expression)
 
 
 @dataclass
@@ -48,6 +80,7 @@ class MinecraftVersionConstraint:
         match = cls.PATTERN.fullmatch(value)
         if match:
             return cls(
+                # TODO use its from_str
                 version=MCVersion(
                     major=int(match["maj"]),
                     minor=int(match["min"]),
@@ -57,44 +90,6 @@ class MinecraftVersionConstraint:
             )
 
         raise ValueError
-
-    # def z3_gt(self, major: ArithRef, minor: ArithRef, patch: ArithRef) -> BoolRef:
-    #     expression = z3.Or(
-    #         major > self.version.major,
-    #         z3.And(major == self.version.major, minor > self.version.minor),
-    #         z3.And(
-    #             major == self.version.major,
-    #             minor == self.version.minor,
-    #             patch > self.version.patch,
-    #         ),
-    #     )
-    #
-    #     return cast(BoolRef, expression)
-
-    def z3_eq(self, major: ArithRef, minor: ArithRef, patch: ArithRef) -> BoolRef:
-        """Create a z3 boolean expression checking for equality with
-        major.minor.patch boolean variables.
-        """
-        expression = z3.And(
-            major == self.version.major,
-            minor == self.version.minor,
-            patch == self.version.patch,
-        )
-        return cast(BoolRef, expression)
-
-    def z3_ge(self, major: ArithRef, minor: ArithRef, patch: ArithRef) -> BoolRef:
-        # Unfortunately, since these are overloaded operators, there is not likely
-        # a way to combine these gt/ge functions. :(
-        expression = z3.Or(
-            major >= self.version.major,
-            z3.And(major == self.version.major, minor >= self.version.minor),
-            z3.And(
-                major == self.version.major,
-                minor == self.version.minor,
-                patch >= self.version.patch,
-            ),
-        )
-        return cast(BoolRef, expression)
 
     def __str__(self) -> str:
         return f"{self.relationship}{self.version}"
