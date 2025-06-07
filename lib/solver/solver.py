@@ -77,8 +77,10 @@ def solve_mods(
     mc_patch = z3.Int("mc_patch")
 
     if mc_version_constraint:
-        assert mc_version_constraint.relationship == "", ">= not yet supported"
-        s.add(mc_version_constraint.version.z3_ge(mc_major, mc_minor, mc_patch))
+        if mc_version_constraint.relationship == ">=":
+            s.add(mc_version_constraint.version.z3_ge(mc_major, mc_minor, mc_patch))
+        elif mc_version_constraint.relationship == "":
+            s.add(mc_version_constraint.version.z3_eq(mc_major, mc_minor, mc_patch))
 
     loader = z3.String("loader")
 
