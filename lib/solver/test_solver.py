@@ -2,6 +2,7 @@ import pytest
 
 from lib.mod.mod import Mod, ModVersion
 from lib.solver.solver import NoSolutionError, solve_mods
+from lib.toml.toml_constraint import MCVersion
 
 
 def test_simple_resolve():
@@ -13,11 +14,13 @@ def test_simple_resolve():
                 ModVersion(
                     slug="foo",
                     version_number="foo v2",
-                    game_versions=["1.21.5"],
+                    game_versions=[MCVersion.from_str("1.21.5")],
                     version_type="release",
                     loaders=["forge"],
                     files=[],
+                    id="",
                     jar=None,
+                    dependencies=[],
                 )
             ],
         ),
@@ -27,18 +30,20 @@ def test_simple_resolve():
                 ModVersion(
                     slug="bar",
                     version_number="bar v1",
-                    game_versions=["1.21.5"],
+                    game_versions=[MCVersion.from_str("1.21.5")],
                     version_type="release",
                     loaders=["forge"],
                     files=[],
+                    id="",
                     jar=None,
+                    dependencies=[],
                 )
             ],
         ),
     ]
 
     selected_mc_version, selected_loader, selected_mods = solve_mods(mods)
-    assert selected_mc_version == "1.21.5"
+    assert selected_mc_version == MCVersion.from_str("1.21.5")
     assert selected_loader == "forge"
     assert len(selected_mods) == 2
 
@@ -52,11 +57,13 @@ def test_no_compatible_version():
                 ModVersion(
                     slug="foo",
                     version_number="foo v2",
-                    game_versions=["1.21.5"],
+                    game_versions=[MCVersion.from_str("1.21.5")],
                     version_type="release",
                     loaders=["forge"],
                     files=[],
+                    id="",
                     jar=None,
+                    dependencies=[],
                 )
             ],
         ),
@@ -66,11 +73,13 @@ def test_no_compatible_version():
                 ModVersion(
                     slug="bar",
                     version_number="bar v1",
-                    game_versions=["1.21.4"],
+                    game_versions=[MCVersion.from_str("1.21.4")],
                     version_type="release",
                     loaders=["forge"],
                     files=[],
+                    id="",
                     jar=None,
+                    dependencies=[],
                 )
             ],
         ),
@@ -89,11 +98,13 @@ def test_no_compatible_loader():
                 ModVersion(
                     slug="foo",
                     version_number="foo v2",
-                    game_versions=["1.21.5"],
+                    game_versions=[MCVersion.from_str("1.21.5")],
                     version_type="release",
                     loaders=["forge"],
                     files=[],
+                    id="",
                     jar=None,
+                    dependencies=[],
                 )
             ],
         ),
@@ -103,11 +114,13 @@ def test_no_compatible_loader():
                 ModVersion(
                     slug="bar",
                     version_number="bar v1",
-                    game_versions=["1.21.5"],
+                    game_versions=[MCVersion.from_str("1.21.5")],
                     version_type="release",
                     loaders=["fabric"],
                     files=[],
+                    id="",
                     jar=None,
+                    dependencies=[],
                 )
             ],
         ),

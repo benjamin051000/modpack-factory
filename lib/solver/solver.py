@@ -49,7 +49,7 @@ class NoSolutionError(Exception):
 
 def solve_mods(
     mods: list[Mod],
-    mc_version_constraint: MinecraftVersionConstraint | None,
+    mc_version_constraint: MinecraftVersionConstraint | None = None,
     dump_model=False,
 ) -> tuple[MCVersion, str, list[ModVersion]]:
     """From chatgippity"""
