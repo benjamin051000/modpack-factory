@@ -130,6 +130,53 @@ def test_no_compatible_loader():
         solve_mods(mods)
 
 
+def test_simple_dependency():
+    """Test one mod that has a required dependency."""
+    dependency = Mod(
+        slug="bar",
+        versions=[
+            ModVersion(
+                slug="bar",
+                version_number="bar v1",
+                game_versions=[MCVersion.from_str("1.21.5")],
+                version_type="release",
+                loaders=["forge"],
+                files=[],
+                id="",
+                jar=None,
+                dependencies=[],
+            )
+        ],
+    )
+
+    mods = [
+        Mod(
+            slug="foo",
+            versions=[
+                ModVersion(
+                    slug="foo",
+                    version_number="foo v2",
+                    game_versions=[MCVersion.from_str("1.21.5")],
+                    version_type="release",
+                    loaders=["forge"],
+                    files=[],
+                    id="",
+                    jar=None,
+                    dependencies=[dependency],
+                )
+            ],
+        ),
+    ]
+
+    selected_mc_version, selected_loader, selected_mods = solve_mods(mods)
+    assert selected_mc_version == MCVersion.from_str("1.21.5")
+    assert selected_loader == "forge"
+    assert len(selected_mods) == 2
+
+
+# TODO test when the dependency is in mods[] (same level as its dependent)
+# TODO test two mods that share a dependency
+
 # def test_multiple_versions():
 #     """Test that multiple versions yield multiple solutions."""
 #     mods = [
