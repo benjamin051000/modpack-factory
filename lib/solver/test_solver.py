@@ -1,7 +1,7 @@
 import pytest
 
 from lib.mod.mod import Mod, ModVersion
-from lib.solver.solver import NoSolutionError, solve_mods
+from lib.solver.solver import NoSolutionError, get_all_mods, solve_mods
 from lib.toml.toml_constraint import MCVersion
 
 
@@ -130,6 +130,48 @@ def test_no_compatible_loader():
         solve_mods(mods)
 
 
+def test_dependency_dfs():
+    """Test one mod that has a required dependency."""
+    dependency = Mod(
+        slug="bar",
+        versions=[
+            ModVersion(
+                slug="bar",
+                version_number="bar v1",
+                game_versions=[MCVersion.from_str("1.21.5")],
+                version_type="release",
+                loaders=["forge"],
+                files=[],
+                id="",
+                jar=None,
+                dependencies=[],
+            )
+        ],
+    )
+
+    mods = [
+        Mod(
+            slug="foo",
+            versions=[
+                ModVersion(
+                    slug="foo",
+                    version_number="foo v2",
+                    game_versions=[MCVersion.from_str("1.21.5")],
+                    version_type="release",
+                    loaders=["forge"],
+                    files=[],
+                    id="",
+                    jar=None,
+                    dependencies=[dependency],
+                )
+            ],
+        ),
+    ]
+
+    all_mods = get_all_mods(mods)
+    assert len(all_mods) == 2
+
+
 def test_simple_dependency():
     """Test one mod that has a required dependency."""
     dependency = Mod(
@@ -172,6 +214,8 @@ def test_simple_dependency():
     assert selected_mc_version == MCVersion.from_str("1.21.5")
     assert selected_loader == "forge"
     assert len(selected_mods) == 2
+    assert dependency.versions[0] in selected_mods
+    assert mods[0].versions[0] in selected_mods
 
 
 # TODO test when the dependency is in mods[] (same level as its dependent)

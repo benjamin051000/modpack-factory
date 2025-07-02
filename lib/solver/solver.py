@@ -47,6 +47,27 @@ class NoSolutionError(Exception):
     """Could not find a solution."""
 
 
+def get_all_mods(root_mods: list[Mod]) -> list[Mod]:
+    """Recursively get all mod releases, and their dependencies' releases."""
+
+    visited: list[Mod] = []
+
+    # Do a depth-first search to get all the ModVersions.
+    def dfs(root_mod: Mod) -> None:
+        if root_mod not in visited:
+            visited.append(root_mod)
+
+            for version in root_mod.versions:
+                # Get all its dependencies, too
+                for dependency in version.dependencies:
+                    dfs(dependency)
+
+    for root_mod in root_mods:
+        dfs(root_mod)
+
+    return visited
+
+
 def solve_mods(
     mods: list[Mod],
     mc_version_constraint: MinecraftVersionConstraint | None = None,
@@ -56,6 +77,8 @@ def solve_mods(
 
     s = z3.Solver()
 
+    all_mods = get_all_mods(mods)
+
     # Map each mod release to a Boolean variable.
     release_vars = {
         release: z3.Bool(
@@ -63,17 +86,17 @@ def solve_mods(
             # Maybe they end up being the same variable?
             dedent(
                 f"""\
-                {mod.slug}_{release.version_number}_
+                {release.slug}_{release.version_number}_
                 {",".join(release.loaders)}_
                 ({release.id})"""
             ).replace("\n", "")
         )
-        for mod in mods
+        for mod in all_mods
         for release in mod.versions
     }
 
     # Exactly one release selected per mod.
-    for mod in mods:
+    for mod in all_mods:
         s.add(z3.AtMost(*[release_vars[r] for r in mod.versions], 1))
         s.add(z3.AtLeast(*[release_vars[r] for r in mod.versions], 1))
 
@@ -90,7 +113,7 @@ def solve_mods(
 
     loader = z3.String("loader")
 
-    for mod in mods:
+    for mod in all_mods:
         for release in mod.versions:
             s.add(
                 z3.Implies(
