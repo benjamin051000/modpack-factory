@@ -77,8 +77,6 @@ def solve_mods(
 
     s = z3.Solver()
 
-    all_mods = get_all_mods(mods)
-
     # Map each mod release to a Boolean variable.
     release_vars = {
         release: z3.Bool(
@@ -91,12 +89,12 @@ def solve_mods(
                 ({release.id})"""
             ).replace("\n", "")
         )
-        for mod in all_mods
+        for mod in mods
         for release in mod.versions
     }
 
     # Exactly one release selected per mod.
-    for mod in all_mods:
+    for mod in mods:
         s.add(z3.AtMost(*[release_vars[r] for r in mod.versions], 1))
         s.add(z3.AtLeast(*[release_vars[r] for r in mod.versions], 1))
 
@@ -113,7 +111,7 @@ def solve_mods(
 
     loader = z3.String("loader")
 
-    for mod in all_mods:
+    for mod in mods:
         for release in mod.versions:
             s.add(
                 z3.Implies(

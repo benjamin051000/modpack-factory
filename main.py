@@ -8,7 +8,7 @@ import aiohttp
 import tomlkit
 
 from lib.mod.mod import Mod
-from lib.solver.solver import NoSolutionError, solve_mods
+from lib.solver.solver import NoSolutionError, get_all_mods, solve_mods
 from lib.sources import modrinth
 from lib.toml import lock as lockfile
 from lib.toml import mcproject
@@ -61,11 +61,13 @@ def add(args: argparse.Namespace) -> None:
 
     for mod_info in mods_info:
         if mcproject.add_mod(toml, mod_info["slug"]):
-            print(f"Added {mod_info['title']} ({mod_info['slug']})")
+            print(f"Adding {mod_info['title']} ({mod_info['slug']})")
         else:
             print(f"{mod_info['title']} ({mod_info['slug']}) already added.")
 
     mods = asyncio.run(get_mods(toml["project"]["mods"]))
+
+    mods_and_deps = get_all_mods(mods)
 
     try:
         mc_version = MinecraftVersionConstraint.from_str(
@@ -76,7 +78,7 @@ def add(args: argparse.Namespace) -> None:
 
     print("Finding a compatible set of mods...")
     try:
-        lock_mods(args.path, mods, mc_version)
+        lock_mods(args.path, mods_and_deps, mc_version)
     except NoSolutionError:
         print(
             f"Error: No solution found when trying to add {','.join(args.mod)}.",
@@ -101,6 +103,7 @@ def lock(args: argparse.Namespace) -> None:
     except tomlkit.exceptions.NonExistentKey:
         mc_version = None
 
+    # TODO get_all_mods
     lock_mods(args.path, mods, mc_version, args.dump_model)
 
 

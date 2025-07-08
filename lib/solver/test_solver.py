@@ -172,6 +172,7 @@ def test_dependency_dfs():
     assert len(all_mods) == 2
 
 
+# TODO is this still a useful test now that get_all_mods is pulled out of solve_mods?
 def test_simple_dependency():
     """Test one mod that has a required dependency."""
     dependency = Mod(
@@ -210,7 +211,8 @@ def test_simple_dependency():
         ),
     ]
 
-    selected_mc_version, selected_loader, selected_mods = solve_mods(mods)
+    all_mods = get_all_mods(mods)
+    selected_mc_version, selected_loader, selected_mods = solve_mods(all_mods)
     assert selected_mc_version == MCVersion.from_str("1.21.5")
     assert selected_loader == "forge"
     assert len(selected_mods) == 2
