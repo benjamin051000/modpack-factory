@@ -24,6 +24,11 @@ def get_project(slug: str) -> dict:
         sys.exit(1)
 
 
+async def get_project_async(session: aiohttp.ClientSession, slug_or_id: str) -> dict:
+    async with session.get(f"project/{slug_or_id}") as response:
+        return await response.json()
+
+
 def get_projects(slugs: list[str]) -> list[dict]:
     formatted_slugs = str(slugs).replace("'", '"')  # API requires double-quotes
     # NOTE: This skips ones that don't exist.

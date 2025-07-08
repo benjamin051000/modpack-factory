@@ -80,6 +80,8 @@ class Mod:
     versions: list[ModVersion]
 
     @classmethod
-    async def from_modrinth(cls, session: aiohttp.ClientSession, slug: str):
+    async def from_modrinth(cls, session: aiohttp.ClientSession, slug_or_id: str):
         # Get info from source
+        # Ensure we have the real slug, not the id.
+        slug = (await modrinth.get_project_async(session, slug_or_id))["slug"]
         return cls(slug, await ModVersion.from_modrinth(session, slug))
