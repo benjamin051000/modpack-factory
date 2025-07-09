@@ -103,8 +103,8 @@ def lock(args: argparse.Namespace) -> None:
     except tomlkit.exceptions.NonExistentKey:
         mc_version = None
 
-    # TODO get_all_mods
-    lock_mods(args.path, mods, mc_version, args.dump_model)
+    all_mods = get_all_mods(mods)
+    lock_mods(args.path, all_mods, mc_version, args.dump_model)
 
 
 def lock_mods(
