@@ -40,6 +40,17 @@ def get_projects(slugs: list[str]) -> list[dict]:
     return response.json()
 
 
+async def get_projects_async(
+    session: aiohttp.ClientSession, slugs: list[str]
+) -> list[dict]:
+    formatted_slugs = str(slugs).replace("'", '"')  # API requires double-quotes
+    async with (
+        rate_limit,
+        session.get("projects", params={"ids": formatted_slugs}) as response,
+    ):
+        return await response.json()
+
+
 async def get_version(session: aiohttp.ClientSession, slug: str) -> list:
     async with rate_limit, session.get(f"project/{slug}/version") as response:
         versions_json = await response.json()

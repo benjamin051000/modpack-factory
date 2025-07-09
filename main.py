@@ -40,6 +40,7 @@ def init(args: argparse.Namespace) -> None:
     mcproject.init_mcproject_toml(args.path, args.force)
 
 
+# TODO this thing is killing our rate limit. Switch to new batched methods
 async def get_mods(slugs: list[str]):
     async with aiohttp.ClientSession(modrinth.API) as session:
         tempmods = [Mod.from_modrinth(session, slug) for slug in slugs]  # pyright: ignore
