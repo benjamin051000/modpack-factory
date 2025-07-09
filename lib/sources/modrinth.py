@@ -40,7 +40,7 @@ def get_projects(slugs: list[str]) -> list[dict]:
     return response.json()
 
 
-async def get_versions(session: aiohttp.ClientSession, slug: str) -> list:
+async def get_version(session: aiohttp.ClientSession, slug: str) -> list:
     async with rate_limit, session.get(f"project/{slug}/version") as response:
         versions_json = await response.json()
 
@@ -61,6 +61,16 @@ async def get_versions(session: aiohttp.ClientSession, slug: str) -> list:
     filtered_versions_json = [v for v in versions_json if len(v["game_versions"])]
 
     return filtered_versions_json
+
+
+async def get_versions(session: aiohttp.ClientSession, version_ids: list[str]) -> list:
+    formatted_ids = str(version_ids).replace("'", '"')
+    async with (
+        rate_limit,
+        session.get("versions", params={"ids": formatted_ids}) as response,
+    ):
+        versions: list = await response.json()
+    return versions
 
 
 def download_jar(url: str, filename: Path):

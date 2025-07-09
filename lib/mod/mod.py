@@ -37,7 +37,7 @@ class ModVersion:
         cls, session: aiohttp.ClientSession, slug: str
     ) -> list[Self]:
         # Fetch data from source
-        versions_json = await modrinth.get_versions(session, slug)
+        versions_json = await modrinth.get_version(session, slug)
 
         dependency_lists: list[list[Mod]] = []
         # TODO wait on them all at once

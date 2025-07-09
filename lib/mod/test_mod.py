@@ -12,11 +12,3 @@ async def test_mod_from_modrinth():
         sodium = await Mod.from_modrinth(session, "sodium")
 
     assert sodium.slug == "sodium"
-
-
-@pytest.mark.asyncio
-async def test_get_project_async():
-    async with aiohttp.ClientSession(API).get("project/sodium") as response:
-        json = await response.json()
-
-    assert json["slug"] == "sodium"
