@@ -1,9 +1,8 @@
 import aiohttp
 import pytest
 
+from lib.mod.mod import Mod
 from lib.sources.modrinth import API
-
-from .mod import Mod
 
 
 @pytest.mark.asyncio

@@ -85,3 +85,35 @@ class Mod:
         # Ensure we have the real slug, not the id.
         slug = (await modrinth.get_project_async(session, slug_or_id))["slug"]
         return cls(slug, await ModVersion.from_modrinth(session, slug))
+
+
+async def get_mods_batched(session: aiohttp.ClientSession, slugs: list[str]) -> list:
+    mods_json = await modrinth.get_projects_async(session, slugs)
+    all_versions: list[str] = [
+        version for mod_json in mods_json for version in mod_json["versions"]
+    ]
+
+    versions_json = await modrinth.get_versions_batched(session, all_versions)
+    # These can be connected like so:
+    # i, j: int
+    # versions_json[i]['project_id'] == mods_json[j]['id']
+    # You just have to search through both to find them
+    dependencies = [
+        dep for version_json in versions_json for dep in version_json["dependencies"]
+    ]
+    required_dependencies_ids = {
+        dep["project_id"]
+        for dep in dependencies
+        if dep["dependency_type"] == "required"
+    }
+
+    # Base case: No dependencies
+    if not required_dependencies_ids:
+        return mods_json
+
+    else:
+        return mods_json + await get_mods_batched(
+            session, list(required_dependencies_ids)
+        )
+    # TODO len(versions_json) < len(all_versions)... why?
+    # Some aren't showing up with versions I guess

@@ -1,4 +1,6 @@
+import asyncio
 import sys
+from itertools import batched
 from json import JSONDecodeError
 from pathlib import Path
 
@@ -7,6 +9,10 @@ import requests
 from aiolimiter import AsyncLimiter
 
 API = "https://api.modrinth.com/v2/"
+
+# I was told by a SWE @ Modrinth that 800 is generally the
+# limit Cloudflare allows. So, batch in 800s.
+BATCH_LIMIT = 800
 
 # The docs state that modrinth rate limits at 300 requests per minute.
 rate_limit = AsyncLimiter(300)
@@ -80,8 +86,26 @@ async def get_versions(session: aiohttp.ClientSession, version_ids: list[str]) -
         rate_limit,
         session.get("versions", params={"ids": formatted_ids}) as response,
     ):
-        versions: list = await response.json()
+        try:
+            versions: list = await response.json()
+        except aiohttp.ContentTypeError:
+            text_response = await response.text()
+            print(text_response, file=sys.stderr)
+            sys.exit(1)
     return versions
+
+
+# TODO decorate get_versions and get_project_async
+async def get_versions_batched(
+    session: aiohttp.ClientSession, version_ids: list[str]
+) -> list:
+    tasks = [
+        get_versions(session, list(batch))
+        for batch in batched(version_ids, BATCH_LIMIT, strict=False)
+    ]
+
+    results = await asyncio.gather(*tasks)
+    return [item for result in results for item in result]
 
 
 def download_jar(url: str, filename: Path):
