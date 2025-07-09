@@ -4,8 +4,12 @@ from pathlib import Path
 
 import aiohttp
 import requests
+from aiolimiter import AsyncLimiter
 
 API = "https://api.modrinth.com/v2/"
+
+# The docs state that modrinth rate limits at 300 requests per minute.
+rate_limit = AsyncLimiter(300)
 
 # TODO make this into a subclass so we can dispatch to
 # the appropriate one once curseforge is added.
@@ -25,7 +29,7 @@ def get_project(slug: str) -> dict:
 
 
 async def get_project_async(session: aiohttp.ClientSession, slug_or_id: str) -> dict:
-    async with session.get(f"project/{slug_or_id}") as response:
+    async with rate_limit, session.get(f"project/{slug_or_id}") as response:
         return await response.json()
 
 
@@ -37,7 +41,7 @@ def get_projects(slugs: list[str]) -> list[dict]:
 
 
 async def get_versions(session: aiohttp.ClientSession, slug: str) -> list:
-    async with session.get(f"project/{slug}/version") as response:
+    async with rate_limit, session.get(f"project/{slug}/version") as response:
         versions_json = await response.json()
 
     # Filter out versions which only run on a Minecraft snapshot.
