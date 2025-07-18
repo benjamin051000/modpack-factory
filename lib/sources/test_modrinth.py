@@ -53,6 +53,8 @@ async def test_get_mods_batched_one_dependency():
 
     assert sodium["slug"] == "sodium"
     assert sodium["id"] == "AANobbMI"
+    # with open("reeses.json", "w") as f:
+    #     json.dump(mods_json, f)
 
 
 @pytest.mark.asyncio
@@ -66,3 +68,5 @@ async def test_get_mods_batched_multiple_dependencies():
         "flywheel",
         "fabric-api",
     }
+    # with open("createaddition.json", "w") as f:
+    #     json.dump(mods_json, f)
