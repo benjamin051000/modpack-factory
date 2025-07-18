@@ -88,16 +88,22 @@ class Mod:
 
     @classmethod
     async def from_batched(cls, json: list) -> list[Self]:
-        raise NotImplementedError
+        mods: list[Self] = []
+        for mod_json in json:
+            mod_versions: list[ModVersion] = []
+            mod = cls(mod_json["slug"], mod_versions)
+            mods.append(mod)
+        return mods
 
 
 async def get_mods_batched(session: aiohttp.ClientSession, slugs: list[str]) -> list:
     # TODO verify this handles circular dependencies
     # (although I'd be surprised if any exist)
-    mods_json = await modrinth.get_projects(session, slugs)
+    mods_json: list = await modrinth.get_projects(session, slugs)
     all_versions: list[str] = [
         version for mod_json in mods_json for version in mod_json["versions"]
     ]
+    breakpoint()
 
     versions_json = await modrinth.get_versions_batched(session, all_versions)
     # These can be connected like so:
