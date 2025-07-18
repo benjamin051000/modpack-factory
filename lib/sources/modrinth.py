@@ -1,7 +1,6 @@
 import asyncio
 import sys
 from itertools import batched
-from json import JSONDecodeError
 from pathlib import Path
 
 import aiohttp
@@ -21,35 +20,20 @@ rate_limit = AsyncLimiter(300)
 # the appropriate one once curseforge is added.
 
 
-def search(query: str) -> dict:
-    response = requests.get(f"{API}search", params={"query": query})
-    return response.json()
-
-
-def get_project(slug: str) -> dict:
-    try:
-        return requests.get(f"{API}project/{slug}").json()
-    except JSONDecodeError:
-        print(f"Error: Mod '{slug}' not found.", file=sys.stderr)
-        sys.exit(1)
-
-
-async def get_project_async(session: aiohttp.ClientSession, slug_or_id: str) -> dict:
-    async with rate_limit, session.get(f"project/{slug_or_id}") as response:
+async def search(session: aiohttp.ClientSession, query: str) -> dict:
+    async with rate_limit, session.get("search", params={"query": query}) as response:
         return await response.json()
 
 
-def get_projects(slugs: list[str]) -> list[dict]:
-    formatted_slugs = str(slugs).replace("'", '"')  # API requires double-quotes
-    # NOTE: This skips ones that don't exist.
-    response = requests.get(f"{API}projects", params={"ids": formatted_slugs})
-    return response.json()
+async def get_project(session: aiohttp.ClientSession, slug_or_id: str) -> dict:
+    async with rate_limit, session.get(f"project/{slug_or_id}") as response:
+        # TODO JSONDecodeError?
+        return await response.json()
 
 
-async def get_projects_async(
-    session: aiohttp.ClientSession, slugs: list[str]
-) -> list[dict]:
+async def get_projects(session: aiohttp.ClientSession, slugs: list[str]) -> list[dict]:
     formatted_slugs = str(slugs).replace("'", '"')  # API requires double-quotes
+    # NOTE: This API skips ones that don't exist.
     async with (
         rate_limit,
         session.get("projects", params={"ids": formatted_slugs}) as response,

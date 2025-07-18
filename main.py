@@ -25,14 +25,23 @@ from lib.toml.toml_constraint import MinecraftVersionConstraint
 
 
 def search(args: argparse.Namespace) -> None:
-    results = modrinth.search(args.query)
+    async def _search():
+        async with aiohttp.ClientSession(modrinth.API) as session:
+            return await modrinth.search(session, args.query)
+
+    results = asyncio.run(_search())
+
     print("Results:")
     for result in results["hits"]:
         print(f"{result['title']} ({result['slug']})")
 
 
 def info(args: argparse.Namespace) -> None:
-    result = modrinth.get_project(args.slug)
+    async def _info():
+        async with aiohttp.ClientSession(modrinth.API) as session:
+            return await modrinth.get_project(session, args.slug)
+
+    result = asyncio.run(_info())
     pprint(result)
 
 

@@ -83,12 +83,18 @@ class Mod:
     async def from_modrinth(cls, session: aiohttp.ClientSession, slug_or_id: str):
         # Get info from source
         # Ensure we have the real slug, not the id.
-        slug = (await modrinth.get_project_async(session, slug_or_id))["slug"]
+        slug = (await modrinth.get_project(session, slug_or_id))["slug"]
         return cls(slug, await ModVersion.from_modrinth(session, slug))
+
+    @classmethod
+    async def from_batched(cls, json: list) -> list[Self]:
+        raise NotImplementedError
 
 
 async def get_mods_batched(session: aiohttp.ClientSession, slugs: list[str]) -> list:
-    mods_json = await modrinth.get_projects_async(session, slugs)
+    # TODO verify this handles circular dependencies
+    # (although I'd be surprised if any exist)
+    mods_json = await modrinth.get_projects(session, slugs)
     all_versions: list[str] = [
         version for mod_json in mods_json for version in mod_json["versions"]
     ]
@@ -117,3 +123,5 @@ async def get_mods_batched(session: aiohttp.ClientSession, slugs: list[str]) -> 
         )
     # TODO len(versions_json) < len(all_versions)... why?
     # Some aren't showing up with versions I guess
+
+    # TODO get this into actual Mod instances
