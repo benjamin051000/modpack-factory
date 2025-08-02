@@ -31,7 +31,7 @@ async def test_get_versions():
 @pytest.mark.asyncio
 async def test_get_mods_batched_simple():
     async with aiohttp.ClientSession(API) as session:
-        mods_json = await get_mods_batched(session, ["sodium"])
+        mods_json, versions_json = await get_mods_batched(session, ["sodium"])
 
     assert len(mods_json) == 1
     sodium = mods_json[0]
@@ -42,7 +42,9 @@ async def test_get_mods_batched_simple():
 @pytest.mark.asyncio
 async def test_get_mods_batched_one_dependency():
     async with aiohttp.ClientSession(API) as session:
-        mods_json = await get_mods_batched(session, ["reeses-sodium-options"])
+        mods_json, versions_json = await get_mods_batched(
+            session, ["reeses-sodium-options"]
+        )
 
     assert len(mods_json) == 2
 
@@ -60,7 +62,7 @@ async def test_get_mods_batched_one_dependency():
 @pytest.mark.asyncio
 async def test_get_mods_batched_multiple_dependencies():
     async with aiohttp.ClientSession(API) as session:
-        mods_json = await get_mods_batched(session, ["createaddition"])
+        mods_json, versions_json = await get_mods_batched(session, ["createaddition"])
     assert {mod["slug"] for mod in mods_json} == {
         "createaddition",
         "create",

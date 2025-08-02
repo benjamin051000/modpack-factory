@@ -96,38 +96,50 @@ class Mod:
         return mods
 
 
-async def get_mods_batched(session: aiohttp.ClientSession, slugs: list[str]) -> list:
-    # TODO verify this handles circular dependencies
-    # (although I'd be surprised if any exist)
-    mods_json: list = await modrinth.get_projects(session, slugs)
-    all_versions: list[str] = [
-        version for mod_json in mods_json for version in mod_json["versions"]
-    ]
-    breakpoint()
+# TODO verify this handles circular dependencies
+# (although I'd be surprised if any exist)
+async def get_mods_batched(
+    session: aiohttp.ClientSession, slugs: list[str]
+) -> tuple[list[dict], list[dict]]:
+    # all mods in JSON form
+    all_mods = []
+    # all versions in JSON form.
+    all_versions = []
 
-    versions_json = await modrinth.get_versions_batched(session, all_versions)
-    # These can be connected like so:
-    # i, j: int
-    # versions_json[i]['project_id'] == mods_json[j]['id']
-    # You just have to search through both to find them
-    dependencies = [
-        dep for version_json in versions_json for dep in version_json["dependencies"]
-    ]
-    required_dependencies_ids = {
-        dep["project_id"]
-        for dep in dependencies
-        if dep["dependency_type"] == "required"
-    }
+    # Start with the top-level mods. This gets rewritten in the loop
+    mod_names: list[str] = slugs
 
-    # Base case: No dependencies
-    if not required_dependencies_ids:
-        return mods_json
+    while mod_names:
+        mods_json = await modrinth.get_projects(session, mod_names)
+        all_mods.extend(mods_json)
 
-    else:
-        return mods_json + await get_mods_batched(
-            session, list(required_dependencies_ids)
-        )
-    # TODO len(versions_json) < len(all_versions)... why?
-    # Some aren't showing up with versions I guess
+        # all versions in slug form
+        version_names = [ver for mod in mods_json for ver in mod["versions"]]
 
-    # TODO get this into actual Mod instances
+        # mods and versions can be connected like so:
+        # i, j: int
+        # versions_json[i]['project_id'] == mods_json[j]['id']
+        # You just have to search through both to find them
+        versions_json = await modrinth.get_versions_batched(session, version_names)
+        all_versions.extend(versions_json)
+
+        # Now, get the dependencies
+        dependencies = [
+            dep
+            for version_json in versions_json
+            for dep in version_json["dependencies"]
+        ]
+
+        # There are no more dependencies to collect. We're done.
+        if not dependencies:
+            break
+
+        required_dependencies_ids = [
+            dep["project_id"]
+            for dep in dependencies
+            if dep["dependency_type"] == "required"
+        ]
+        # This is the new set of mods to get
+        mod_names = required_dependencies_ids
+
+    return all_mods, all_versions
