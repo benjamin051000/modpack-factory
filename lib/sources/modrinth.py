@@ -14,7 +14,8 @@ API = "https://api.modrinth.com/v2/"
 BATCH_LIMIT = 800
 
 # The docs state that modrinth rate limits at 300 requests per minute.
-rate_limit = AsyncLimiter(300)
+RATE_LIMIT_PER_MIN = 300
+rate_limit = AsyncLimiter(RATE_LIMIT_PER_MIN)
 
 # TODO make this into a subclass so we can dispatch to
 # the appropriate one once curseforge is added.

@@ -28,9 +28,36 @@ class ModVersion:
     id: str
     jar: FabricJarConstraints | None
     dependencies: list[Mod]
+    project_id: str | None = None
 
     def __hash__(self) -> int:
         return hash((self.version_number, self.version_type))
+
+    @classmethod
+    def from_json(cls, slug: str, version_json: dict) -> Self:
+        return cls(
+            slug=slug,
+            version_number=version_json["version_number"],
+            game_versions=[
+                MCVersion.from_str(s)
+                for s in version_json["game_versions"]
+                if "-" not in s and "w" not in s  # skip snapshots, pre-releases
+            ],
+            version_type=version_json["version_type"],
+            loaders=version_json["loaders"],
+            id=version_json["id"],
+            files=[
+                ModrinthFile(
+                    url=f["url"],
+                    filename=f["filename"],
+                    primary=f["primary"],
+                )
+                for f in version_json["files"]
+            ],
+            jar=None,  # TODO smart way to pull this all in?
+            dependencies=None,
+            project_id=version_json["project_id"],
+        )
 
     @classmethod
     async def from_modrinth(
@@ -78,6 +105,7 @@ class ModVersion:
 class Mod:
     slug: str
     versions: list[ModVersion]
+    id: str | None = None
 
     @classmethod
     async def from_modrinth(cls, session: aiohttp.ClientSession, slug_or_id: str):
@@ -87,13 +115,33 @@ class Mod:
         return cls(slug, await ModVersion.from_modrinth(session, slug))
 
     @classmethod
-    async def from_batched(cls, json: list) -> list[Self]:
-        mods: list[Self] = []
-        for mod_json in json:
-            mod_versions: list[ModVersion] = []
-            mod = cls(mod_json["slug"], mod_versions)
-            mods.append(mod)
-        return mods
+    def from_batched(
+        cls, mods_json: list[dict], versions_json: list[dict]
+    ) -> list[Self]:
+        # Do it in one pass
+        partial_mod_objects: list[Self] = [
+            cls(mod_json["slug"], None, id=mod_json["id"]) for mod_json in mods_json
+        ]
+
+        partial_version_objects: list[ModVersion] = [
+            ModVersion.from_json(slug=None, version_json=v) for v in versions_json
+        ]
+
+        # TODO Add its dependencies.
+        # for partial_version in partial_version_objects:
+        #     pass
+
+        # Add versions to the mods.
+        for partial_mod in partial_mod_objects:
+            partial_mod.versions = [
+                version
+                for version in partial_version_objects
+                if version.project_id == partial_mod.id
+            ]
+
+        # TODO only return root mods (not transitive deps).
+        # Is this necessary/a good idea?
+        return partial_mod_objects  # Which are now full
 
 
 # TODO verify this handles circular dependencies
@@ -116,10 +164,6 @@ async def get_mods_batched(
         # all versions in slug form
         version_names = [ver for mod in mods_json for ver in mod["versions"]]
 
-        # mods and versions can be connected like so:
-        # i, j: int
-        # versions_json[i]['project_id'] == mods_json[j]['id']
-        # You just have to search through both to find them
         versions_json = await modrinth.get_versions_batched(session, version_names)
         all_versions.extend(versions_json)
 
