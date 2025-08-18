@@ -1,7 +1,7 @@
 import pytest
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_get_project_async(aiohttp_session, modrinth_rate_limiter):
     async with (
         modrinth_rate_limiter,
@@ -12,7 +12,7 @@ async def test_get_project_async(aiohttp_session, modrinth_rate_limiter):
     assert json["slug"] == "sodium"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_get_versions(modrinth):
     # Obtained from the API/project/sodium "versions" info
     project_id = "AANobbMI"
@@ -26,7 +26,7 @@ async def test_get_versions(modrinth):
             assert key in version
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_get_mods_batched_simple(modrinth):
     mods_json, versions_json = await modrinth.get_mods_batched(["sodium"])
 
@@ -37,7 +37,7 @@ async def test_get_mods_batched_simple(modrinth):
     assert len(versions_json) >= 1
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_get_mods_batched_one_dependency(modrinth):
     mods_json, versions_json = await modrinth.get_mods_batched(
         ["reeses-sodium-options"]
@@ -56,7 +56,7 @@ async def test_get_mods_batched_one_dependency(modrinth):
     #     json.dump(mods_json, f)
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_get_mods_batched_multiple_dependencies(modrinth):
     mods_json, versions_json = await modrinth.get_mods_batched(["createaddition"])
     assert {mod["slug"] for mod in mods_json} == {

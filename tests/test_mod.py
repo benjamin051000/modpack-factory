@@ -3,14 +3,14 @@ import pytest
 from lib.mod.mod import Mod
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_mod_from_modrinth(modrinth):
     sodium = await Mod.from_modrinth(modrinth, "sodium")
 
     assert sodium.slug == "sodium"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_from_batched_simple(modrinth):
     mods_json, versions_json = await modrinth.get_mods_batched(["sodium"])
 
@@ -27,7 +27,7 @@ async def test_from_batched_simple(modrinth):
     assert len(sodium.versions) >= 1
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_from_batched_one_dependency(modrinth):
     # NOTE: Assumes test_get_mods_batched_one_dependency from test_modrinth passed.
     mods_json, versions_json = await modrinth.get_mods_batched(
