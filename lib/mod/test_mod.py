@@ -1,22 +1,38 @@
-import aiohttp
 import pytest
+import pytest_asyncio
+from aiohttp import ClientSession
+from aiolimiter import AsyncLimiter
 
-from lib.mod.mod import Mod, get_mods_batched
-from lib.sources.modrinth import API
+from lib.mod.mod import Mod
+from lib.sources.modrinth import MODRINTH_API, RATE_LIMIT_PER_MIN, Modrinth
+
+
+@pytest_asyncio.fixture  # TODO persist across session
+async def aiohttp_session():
+    async with ClientSession(MODRINTH_API) as session:
+        yield session
+
+
+@pytest.fixture  # TODO BUG does not persist across session
+def modrinth_rate_limiter():
+    return AsyncLimiter(RATE_LIMIT_PER_MIN)
+
+
+@pytest_asyncio.fixture
+async def modrinth(aiohttp_session, modrinth_rate_limiter) -> Modrinth:
+    return Modrinth(aiohttp_session, modrinth_rate_limiter)
 
 
 @pytest.mark.asyncio
-async def test_mod_from_modrinth():
-    async with aiohttp.ClientSession(API) as session:
-        sodium = await Mod.from_modrinth(session, "sodium")
+async def test_mod_from_modrinth(modrinth):
+    sodium = await Mod.from_modrinth(modrinth, "sodium")
 
     assert sodium.slug == "sodium"
 
 
 @pytest.mark.asyncio
-async def test_from_batched_simple():
-    async with aiohttp.ClientSession(API) as session:
-        mods_json, versions_json = await get_mods_batched(session, ["sodium"])
+async def test_from_batched_simple(modrinth):
+    mods_json, versions_json = await modrinth.get_mods_batched(["sodium"])
 
     assert len(mods_json) == 1
     sodium = mods_json[0]
@@ -32,12 +48,11 @@ async def test_from_batched_simple():
 
 
 @pytest.mark.asyncio
-async def test_from_batched_one_dependency():
+async def test_from_batched_one_dependency(modrinth):
     # NOTE: Assumes test_get_mods_batched_one_dependency from test_modrinth passed.
-    async with aiohttp.ClientSession(API) as session:
-        mods_json, versions_json = await get_mods_batched(
-            session, ["reeses-sodium-options"]
-        )
+    mods_json, versions_json = await modrinth.get_mods_batched(
+        ["reeses-sodium-options"]
+    )
 
     mods = Mod.from_batched(mods_json, versions_json)
     assert {mod.slug for mod in mods} == {

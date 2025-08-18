@@ -3,8 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal, Self
 
-import aiohttp
-
 from lib.jar.extract import FabricJarConstraints
 from lib.sources import modrinth
 from lib.toml.toml_constraint import MCVersion
@@ -60,17 +58,15 @@ class ModVersion:
         )
 
     @classmethod
-    async def from_modrinth(
-        cls, session: aiohttp.ClientSession, slug: str
-    ) -> list[Self]:
+    async def from_modrinth(cls, modrinth: modrinth.Modrinth, slug: str) -> list[Self]:
         # Fetch data from source
-        versions_json = await modrinth.get_version(session, slug)
+        versions_json = await modrinth.get_version(slug)
 
         dependency_lists: list[list[Mod]] = []
         # TODO wait on them all at once
         for version in versions_json:
             dep_list: list[Mod] = [
-                await Mod.from_modrinth(session, dependency["project_id"])
+                await Mod.from_modrinth(modrinth, dependency["project_id"])
                 for dependency in version["dependencies"]
                 if dependency["dependency_type"] == "required"
             ]
@@ -108,11 +104,11 @@ class Mod:
     id: str | None = None
 
     @classmethod
-    async def from_modrinth(cls, session: aiohttp.ClientSession, slug_or_id: str):
+    async def from_modrinth(cls, modrinth: modrinth.Modrinth, slug_or_id: str):
         # Get info from source
         # Ensure we have the real slug, not the id.
-        slug = (await modrinth.get_project(session, slug_or_id))["slug"]
-        return cls(slug, await ModVersion.from_modrinth(session, slug))
+        slug = (await modrinth.get_project(slug_or_id))["slug"]
+        return cls(slug, await ModVersion.from_modrinth(modrinth, slug))
 
     @classmethod
     def from_batched(
@@ -142,48 +138,3 @@ class Mod:
         # TODO only return root mods (not transitive deps).
         # Is this necessary/a good idea?
         return partial_mod_objects  # Which are now full
-
-
-# TODO verify this handles circular dependencies
-# (although I'd be surprised if any exist)
-async def get_mods_batched(
-    session: aiohttp.ClientSession, slugs: list[str]
-) -> tuple[list[dict], list[dict]]:
-    # all mods in JSON form
-    all_mods = []
-    # all versions in JSON form.
-    all_versions = []
-
-    # Start with the top-level mods. This gets rewritten in the loop
-    mod_names: list[str] = slugs
-
-    while mod_names:
-        mods_json = await modrinth.get_projects(session, mod_names)
-        all_mods.extend(mods_json)
-
-        # all versions in slug form
-        version_names = [ver for mod in mods_json for ver in mod["versions"]]
-
-        versions_json = await modrinth.get_versions_batched(session, version_names)
-        all_versions.extend(versions_json)
-
-        # Now, get the dependencies
-        dependencies = [
-            dep
-            for version_json in versions_json
-            for dep in version_json["dependencies"]
-        ]
-
-        # There are no more dependencies to collect. We're done.
-        if not dependencies:
-            break
-
-        required_dependencies_ids = [
-            dep["project_id"]
-            for dep in dependencies
-            if dep["dependency_type"] == "required"
-        ]
-        # This is the new set of mods to get
-        mod_names = required_dependencies_ids
-
-    return all_mods, all_versions

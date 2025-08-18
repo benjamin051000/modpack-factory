@@ -7,90 +7,143 @@ import aiohttp
 import requests
 from aiolimiter import AsyncLimiter
 
-API = "https://api.modrinth.com/v2/"
+MODRINTH_API = "https://api.modrinth.com/v2/"
+
+
+# The Modrinth docs state that modrinth rate limits at 300 requests per minute.
+RATE_LIMIT_PER_MIN = 300
 
 # I was told by a SWE @ Modrinth that 800 is generally the
 # limit Cloudflare allows. So, batch in 800s.
-BATCH_LIMIT = 800
-
-# The docs state that modrinth rate limits at 300 requests per minute.
-RATE_LIMIT_PER_MIN = 300
-rate_limit = AsyncLimiter(RATE_LIMIT_PER_MIN)
+HTTP_PARAMS_BATCH_LIMIT = 800
 
 # TODO make this into a subclass so we can dispatch to
 # the appropriate one once curseforge is added.
 
 
-async def search(session: aiohttp.ClientSession, query: str) -> dict:
-    async with rate_limit, session.get("search", params={"query": query}) as response:
-        return await response.json()
+class Modrinth:
+    def __init__(
+        self, session: aiohttp.ClientSession, limiter: AsyncLimiter | None = None
+    ) -> None:
+        self.session = session
 
+        if limiter is None:
+            limiter = AsyncLimiter(RATE_LIMIT_PER_MIN)
+        self.limiter = limiter
 
-async def get_project(session: aiohttp.ClientSession, slug_or_id: str) -> dict:
-    async with rate_limit, session.get(f"project/{slug_or_id}") as response:
-        # TODO JSONDecodeError?
-        return await response.json()
+    async def search(self, query: str) -> dict:
+        async with (
+            self.limiter,
+            self.session.get("search", params={"query": query}) as response,
+        ):
+            return await response.json()
 
+    async def get_project(self, slug_or_id: str) -> dict:
+        async with self.limiter, self.session.get(f"project/{slug_or_id}") as response:
+            # TODO JSONDecodeError?
+            return await response.json()
 
-async def get_projects(session: aiohttp.ClientSession, slugs: list[str]) -> list[dict]:
-    formatted_slugs = str(slugs).replace("'", '"')  # API requires double-quotes
-    # NOTE: This API skips ones that don't exist.
-    async with (
-        rate_limit,
-        session.get("projects", params={"ids": formatted_slugs}) as response,
-    ):
-        return await response.json()
+    async def get_projects(self, slugs: list[str]) -> list[dict]:
+        formatted_slugs = str(slugs).replace("'", '"')  # API requires double-quotes
+        # NOTE: This API skips ones that don't exist.
+        async with (
+            self.limiter,
+            self.session.get("projects", params={"ids": formatted_slugs}) as response,
+        ):
+            return await response.json()
 
+    async def get_version(self, slug: str) -> list:
+        async with (
+            self.limiter,
+            self.session.get(f"project/{slug}/version") as response,
+        ):
+            versions_json = await response.json()
 
-async def get_version(session: aiohttp.ClientSession, slug: str) -> list:
-    async with rate_limit, session.get(f"project/{slug}/version") as response:
-        versions_json = await response.json()
+        # Filter out versions which only run on a Minecraft snapshot.
+        # Remove snapshots for now.
+        for version in versions_json:
+            version["game_versions"] = [
+                v
+                for v in version["game_versions"]
+                # Skip snapshots, pre-releases, RCs, beta versions.
+                # Sourced from modrith web filter
+                if not any(
+                    c in v for c in ["w", "-pre", "-rc", "b", "a", "c", "rd-", "inf-"]
+                )
+            ]
 
-    # Filter out versions which only run on a Minecraft snapshot.
-    # Remove snapshots for now.
-    for version in versions_json:
-        version["game_versions"] = [
-            v
-            for v in version["game_versions"]
-            # Skip snapshots, pre-releases, RCs, beta versions.
-            # Sourced from modrith web filter
-            if not any(
-                c in v for c in ["w", "-pre", "-rc", "b", "a", "c", "rd-", "inf-"]
-            )
+        # Versions which only supported snapshots now have empty game_versions fields.
+        filtered_versions_json = [v for v in versions_json if len(v["game_versions"])]
+
+        return filtered_versions_json
+
+    async def get_versions(self, version_ids: list[str]) -> list:
+        formatted_ids = str(version_ids).replace("'", '"')
+        async with (
+            self.limiter,
+            self.session.get("versions", params={"ids": formatted_ids}) as response,
+        ):
+            try:
+                versions: list = await response.json()
+            except aiohttp.ContentTypeError:
+                text_response = await response.text()
+                print(text_response, file=sys.stderr)
+                sys.exit(1)
+        return versions
+
+    # TODO decorate get_versions and get_project_async
+    async def get_versions_batched(self, version_ids: list[str]) -> list:
+        tasks = [
+            self.get_versions(list(batch))
+            for batch in batched(version_ids, HTTP_PARAMS_BATCH_LIMIT, strict=False)
         ]
 
-    # Versions which only supported snapshots now have empty game_versions fields.
-    filtered_versions_json = [v for v in versions_json if len(v["game_versions"])]
+        results = await asyncio.gather(*tasks)
+        return [item for result in results for item in result]
 
-    return filtered_versions_json
+    # TODO verify this handles circular dependencies
+    # (although I'd be surprised if any exist)
+    async def get_mods_batched(self, slugs: list[str]) -> tuple[list[dict], list[dict]]:
+        """Use the batching APIs to get a list of mods (including recursive
+        dependencies) and versions in JSON form."""
+        # all mods in JSON form
+        all_mods = []
+        # all versions in JSON form.
+        all_versions = []
 
+        # Start with the top-level mods. This gets rewritten in the loop
+        mod_names: list[str] = slugs
 
-async def get_versions(session: aiohttp.ClientSession, version_ids: list[str]) -> list:
-    formatted_ids = str(version_ids).replace("'", '"')
-    async with (
-        rate_limit,
-        session.get("versions", params={"ids": formatted_ids}) as response,
-    ):
-        try:
-            versions: list = await response.json()
-        except aiohttp.ContentTypeError:
-            text_response = await response.text()
-            print(text_response, file=sys.stderr)
-            sys.exit(1)
-    return versions
+        while mod_names:
+            mods_json = await self.get_projects(mod_names)
+            all_mods.extend(mods_json)
 
+            # all versions in slug form
+            version_names = [ver for mod in mods_json for ver in mod["versions"]]
 
-# TODO decorate get_versions and get_project_async
-async def get_versions_batched(
-    session: aiohttp.ClientSession, version_ids: list[str]
-) -> list:
-    tasks = [
-        get_versions(session, list(batch))
-        for batch in batched(version_ids, BATCH_LIMIT, strict=False)
-    ]
+            versions_json = await self.get_versions_batched(version_names)
+            all_versions.extend(versions_json)
 
-    results = await asyncio.gather(*tasks)
-    return [item for result in results for item in result]
+            # Now, get the dependencies
+            dependencies = [
+                dep
+                for version_json in versions_json
+                for dep in version_json["dependencies"]
+            ]
+
+            # There are no more dependencies to collect. We're done.
+            if not dependencies:
+                break
+
+            required_dependencies_ids = [
+                dep["project_id"]
+                for dep in dependencies
+                if dep["dependency_type"] == "required"
+            ]
+            # This is the new set of mods to get
+            mod_names = required_dependencies_ids
+
+        return all_mods, all_versions
 
 
 def download_jar(url: str, filename: Path):
