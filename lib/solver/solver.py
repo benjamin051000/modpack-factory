@@ -84,7 +84,7 @@ def solve_mods(
             # Maybe they end up being the same variable?
             dedent(
                 f"""\
-                {release.slug}_{release.version_number}_
+                {release.mod_slug}_{release.version_number}_
                 {",".join(release.loaders)}_
                 ({release.id})"""
             ).replace("\n", "")
