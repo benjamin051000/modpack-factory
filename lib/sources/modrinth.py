@@ -115,7 +115,7 @@ class Modrinth:
         mod_names: list[str] = slugs
 
         while mod_names:
-            mods_json = await self.get_projects(mod_names)
+            mods_json: list = await self.get_projects(mod_names)
             all_mods.extend(mods_json)
 
             # all versions in slug form
@@ -126,6 +126,7 @@ class Modrinth:
             # Filter to only required dependencies (filter out, e.g., "incompatible",
             # see https://modrinth.com/mod/sodium/version/mc1.20.1-0.5.0)
             for version in versions_json:
+                # NOTE: This modifies elements in versions_json.
                 version["dependencies"] = [
                     dep
                     for dep in version["dependencies"]
