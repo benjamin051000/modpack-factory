@@ -1,18 +1,19 @@
 import pytest
 
 from lib.mod.mod import Mod
+from lib.sources.modrinth import Modrinth
 
 
 @pytest.mark.skip
 @pytest.mark.asyncio(loop_scope="session")
-async def test_mod_from_modrinth(modrinth):
+async def test_mod_from_modrinth(modrinth: Modrinth):
     sodium = await Mod.from_modrinth(modrinth, "sodium")
 
     assert sodium.slug == "sodium"
 
 
 @pytest.mark.asyncio(loop_scope="session")
-async def test_from_batched_simple(modrinth):
+async def test_from_batched_simple(modrinth: Modrinth):
     # TODO this can be a dependency of some test_modrinth test
     slugs = ["sodium"]
     mods_json, versions_json = await modrinth.get_mods_batched(slugs)
@@ -34,7 +35,7 @@ async def test_from_batched_simple(modrinth):
 # Maybe try that?
 # BUG this test is a false positive. Check the dependencies! (WIP below, now it fails)
 @pytest.mark.asyncio(loop_scope="session")
-async def test_from_batched_one_dependency(modrinth):
+async def test_from_batched_one_dependency(modrinth: Modrinth):
     # NOTE: Assumes test_get_mods_batched_one_dependency from test_modrinth passed.
     mods_json, versions_json = await modrinth.get_mods_batched(
         ["reeses-sodium-options"]
