@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Self
 
+# from lib.mod.mod import ModVersion
+
 # TODO eventually we will want to look at neo/forge as well.
 # We need to pass the Version info collected from Modrinth versions API
 # which explains which loaders work with this jar. Then, we just have a
@@ -26,6 +28,12 @@ class FabricJarConstraints:
             breaks=data["breaks"],
             recommends=data["recommends"],
         )
+
+    # def get_required_dependency_versions(
+    #     self, versions: list[ModVersion]
+    # ) -> list[ModVersion]:
+    #     # TODO unimplemented!
+    #     return versions
 
 
 def extract_fabric(path: Path) -> dict:

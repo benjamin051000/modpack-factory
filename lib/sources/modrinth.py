@@ -122,6 +122,16 @@ class Modrinth:
             version_names = [ver for mod in mods_json for ver in mod["versions"]]
 
             versions_json = await self.get_versions_batched(version_names)
+
+            # Filter to only required dependencies (filter out, e.g., "incompatible",
+            # see https://modrinth.com/mod/sodium/version/mc1.20.1-0.5.0)
+            for version in versions_json:
+                version["dependencies"] = [
+                    dep
+                    for dep in version["dependencies"]
+                    if dep["dependency_type"] == "required"
+                ]
+
             all_versions.extend(versions_json)
 
             # Now, get the dependencies
@@ -135,11 +145,7 @@ class Modrinth:
             if not dependencies:
                 break
 
-            required_dependencies_ids = [
-                dep["project_id"]
-                for dep in dependencies
-                if dep["dependency_type"] == "required"
-            ]
+            required_dependencies_ids = [dep["project_id"] for dep in dependencies]
             # This is the new set of mods to get
             mod_names = required_dependencies_ids
 
