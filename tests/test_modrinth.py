@@ -1,3 +1,6 @@
+from io import BytesIO
+from zipfile import ZipFile
+
 import pytest
 from aiohttp import ClientSession
 from aiolimiter import AsyncLimiter
@@ -83,3 +86,15 @@ async def test_get_mods_batched_multiple_dependencies(modrinth: Modrinth):
     assert {mod["slug"] for mod in mods_json} == all_mods
 
     assert len(versions_json) >= len(all_mods)
+
+
+@pytest.mark.asyncio(loop_scope="session")
+async def test_download(modrinth: Modrinth):
+    url = "https://cdn.modrinth.com/data/AANobbMI/versions/ND4ROcMQ/sodium-fabric-0.6.13%2Bmc1.21.6.jar"
+
+    with BytesIO() as file:
+        await modrinth.download(url, file)
+
+        with ZipFile(file) as zf:
+            # There should be many files in the .jar
+            assert len(zf.infolist()) >= 1

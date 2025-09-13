@@ -1,10 +1,9 @@
 import asyncio
 import sys
 from itertools import batched
-from pathlib import Path
+from typing import BinaryIO
 
 import aiohttp
-import requests
 from aiolimiter import AsyncLimiter
 
 MODRINTH_API = "https://api.modrinth.com/v2/"
@@ -19,6 +18,11 @@ HTTP_PARAMS_BATCH_LIMIT = 800
 
 # TODO make this into a subclass so we can dispatch to
 # the appropriate one once curseforge is added.
+
+
+# TODO is this a good chunk size?
+CHUNKSIZE = 10 * 1024  # 10kb
+"""Chunk size for downloading files."""
 
 
 class Modrinth:
@@ -152,9 +156,9 @@ class Modrinth:
 
         return all_mods, all_versions
 
-
-def download_jar(url: str, filename: Path):
-    response = requests.get(url, stream=True)
-    with open(filename, "wb") as f:
-        for chunk in response.iter_content(chunk_size=10 * 1024):  # 10kb
-            f.write(chunk)
+    async def download(self, url: str, file: BinaryIO) -> None:
+        """Download a release file (AKA a .jar file)."""
+        # TODO open outside this fn, accept a BytesIO-like object
+        async with self.limiter, self.session.get(url) as response:
+            async for chunk in response.content.iter_chunked(CHUNKSIZE):
+                file.write(chunk)
