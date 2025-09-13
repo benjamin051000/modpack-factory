@@ -1,47 +1,54 @@
 import json
-import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Self
+from zipfile import ZipFile
 
-# from lib.mod.mod import ModVersion
 
-# TODO eventually we will want to look at neo/forge as well.
-# We need to pass the Version info collected from Modrinth versions API
-# which explains which loaders work with this jar. Then, we just have a
-# dict that maps loader name to the file it uses for metadata.
+@dataclass
+class Constraint:
+    operand: str
+    operator: str
 
 
 @dataclass
 class FabricJarConstraints:
     """Constraints collected from a Fabric mod's .jar file."""
 
-    depends: str | None
-    breaks: str | None
-    recommends: str | None
+    depends: list[Constraint]
+    breaks: list[Constraint]
+    recommends: list[Constraint]
+    suggests: list[Constraint]
+    conflicts: list[Constraint]
+
+    @classmethod
+    def _from_json(cls, data: dict) -> Self:
+        # TODO how to make this more DRY?
+        return cls(
+            depends=[
+                Constraint(dependency, operator)
+                for dependency, operator in data.get("depends", {}).items()
+            ],
+            breaks=[
+                Constraint(dependency, operator)
+                for dependency, operator in data.get("breaks", {}).items()
+            ],
+            recommends=[
+                Constraint(dependency, operator)
+                for dependency, operator in data.get("recommends", {}).items()
+            ],
+            suggests=[
+                Constraint(dependency, operator)
+                for dependency, operator in data.get("suggests", {}).items()
+            ],
+            conflicts=[
+                Constraint(dependency, operator)
+                for dependency, operator in data.get("conflicts", {}).items()
+            ],
+        )
 
     @classmethod
     def from_jar(cls, path: Path) -> Self:
-        data = extract_fabric(path)
-        return cls(
-            depends=data["depends"],
-            breaks=data["breaks"],
-            recommends=data["recommends"],
-        )
-
-    # def get_required_dependency_versions(
-    #     self, versions: list[ModVersion]
-    # ) -> list[ModVersion]:
-    #     # TODO unimplemented!
-    #     return versions
-
-
-def extract_fabric(path: Path) -> dict:
-    """Extracts data from fabric.mod.json, found in Fabric mod .jar files."""
-    with zipfile.ZipFile(path) as archive:
-        data: dict = json.loads(archive.read("fabric.mod.json"))
-    return data
-
-
-if __name__ == "__main__":
-    extract_fabric(Path("iris-neoforge-1.8.11+mc1.21.5.jar"))
+        with ZipFile(path) as archive:
+            data: dict = json.loads(archive.read("fabric.mod.json"))
+        return cls._from_json(data)
