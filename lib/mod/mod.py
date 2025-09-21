@@ -1,11 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal, Self
-from warnings import deprecated
+from typing import Literal, Self, cast
 
-from lib.jar.extract import FabricJarConstraints
-from lib.sources import modrinth
 from lib.toml.toml_constraint import MCVersion
 
 
@@ -15,148 +12,157 @@ class ModrinthFile:
     filename: str
     primary: bool
 
+    @classmethod
+    def from_json(cls, json: dict) -> Self:
+        return cls(
+            url=json["url"],
+            filename=json["filename"],
+            primary=json["primary"],
+        )
+
 
 @dataclass
-class ModVersion:
-    # Corresponding mod's slug.
-    mod_slug: str
+class Mod:
+    """
+    Representation of a Minecraft Mod.
+
+    Primarily contains metadata about the mod, such as version constraints.
+
+    A mod can have any number of dependencies, or none.
+
+    The Modrinth equivalent of this data structure is a combination of a
+    project ("sodium") and a version ("Sodium 0.6.13 for NeoForge 1.21.7").
+
+    The project contains general info about the Mod.
+
+    The version contains specific data about a particular release of the mod,
+    e.g., v1.0.
+    """
+
+    ###############
+    # project info
+    ###############
+    slug: str
+    """short name for the mod"""
+    project_id: str
+    """UUID for the project."""
+
+    ###############
+    # version info
+    ###############
+    version_id: str
+    """UUID for this mod version."""
+
     version_number: str
-    game_versions: list[MCVersion]
+    """Essentially the slug of the mod version, but not generally 
+    unique (e.g., "mc1.21.6-0.6.13-neoforge")."""
+
+    game_versions: set[MCVersion]
+    """Versions of Minecraft.
+    Pre-releases and snapshots are not currently supported."""
+
     version_type: Literal["release", "alpha", "beta"]
-    loaders: list[str]
+    """Specifies the type of release: alpha, beta, or general release."""
+
+    loaders: set[Literal["forge", "fabric", "quilt"]]
+    """Loaders this mod supports. All mods support at least 1 loader."""
+
+    # TODO consider consolidating these fields?
     files: list[ModrinthFile]
-    id: str
-    jar: FabricJarConstraints | None  # TODO list[FabricJarConstraints]?
-    # dependencies: mod id -> set of all ModVersions that satisfy the jar constraint
-    dependencies: dict[str, set[ModVersion] | None]
-    project_id: str | None = None
+    # jar: list[FabricJarConstraints] = field(default_factory=list)
+    # """List of information from the .jar downloaded file."""
+
+    dependencies: set[Mod]
+    """Set of dependencies. There can be 0, 1, or multiple dependencies."""
+
+    json: dict
+    """JSON used to create this object. Useful for debugging."""
 
     def __hash__(self) -> int:
         return hash((self.version_number, self.version_type))
 
     # TODO once we add Curseforge support, probably turn this into a factory
     @classmethod
-    def from_json(cls, mod_slug: str, version_json: dict) -> Self:
+    def from_modrinth_json(cls, slug: str, json: dict, dependencies: set[Mod]) -> Self:
+        """Create a Mod from the project slug and modrinth version JSON."""
         return cls(
-            mod_slug=mod_slug,
-            version_number=version_json["version_number"],
-            game_versions=[
-                MCVersion.from_str(s)
-                for s in version_json["game_versions"]
-                if "-" not in s and "w" not in s  # skip snapshots, pre-releases
-            ],
-            version_type=version_json["version_type"],
-            loaders=version_json["loaders"],
-            id=version_json["id"],
-            files=[
-                ModrinthFile(
-                    url=f["url"],
-                    filename=f["filename"],
-                    primary=f["primary"],
-                )
-                for f in version_json["files"]
-            ],
-            jar=None,  # TODO smart way to pull this all in?
-            dependencies={
-                dependency["project_id"]: None
-                for dependency in version_json["dependencies"]
+            slug=slug,
+            project_id=json["project_id"],
+            version_id=json["id"],
+            version_number=json["version_number"],
+            game_versions={
+                MCVersion.from_str(v)
+                for v in json["game_versions"]
+                # Skip snapshots, pre-releases via this simple string test.
+                # TODO include these
+                if "-" not in v and "w" not in v
             },
-            project_id=version_json["project_id"],
+            version_type=json["version_type"],
+            loaders=json["loaders"],
+            files=[ModrinthFile.from_json(j) for j in json["files"]],
+            dependencies=dependencies,
+            json=json,
         )
 
     @classmethod
-    @deprecated("This will almost certainly hit a rate limit. Use batched instead")
-    async def from_modrinth(cls, modrinth: modrinth.Modrinth, slug: str) -> list[Self]:
-        # Fetch data from source
-        versions_json = await modrinth.get_version(slug)
-
-        dependency_lists: list[list[Mod]] = []
-        # TODO wait on them all at once
-        for version in versions_json:
-            dep_list: list[Mod] = [
-                await Mod.from_modrinth(modrinth, dependency["project_id"])
-                for dependency in version["dependencies"]
-                if dependency["dependency_type"] == "required"
-            ]
-            dependency_lists.append(dep_list)
-
-        objects = [
-            cls(
-                mod_slug=slug,
-                version_number=v["version_number"],
-                game_versions=[MCVersion.from_str(s) for s in v["game_versions"]],
-                version_type=v["version_type"],
-                loaders=v["loaders"],
-                id=v["id"],
-                files=[
-                    ModrinthFile(
-                        url=f["url"],
-                        filename=f["filename"],
-                        primary=f["primary"],
-                    )
-                    for f in v["files"]
-                ],
-                jar=None,  # TODO smart way to pull this all in?
-                dependencies=dep_list,
-            )
-            for v, dep_list in zip(versions_json, dependency_lists, strict=False)
-        ]
-
-        return objects
-
-
-# TODO this class is useless. Combine it with ModVersion... unless Curseforge does
-# things differently and it suddenly makes more sense to keep these separate.
-# Right now this is modeled after the Modrinth API, though, which is suboptimal.
-@dataclass
-class Mod:
-    # HACK: None means "not yet known". They should never actually be None post-setup
-    slug: str
-    versions: set[ModVersion]
-    id: str | None = None  # TODO FIXME why is this = None
-
-    @classmethod
-    @deprecated("Use the batched version or be rate-limited")
-    async def from_modrinth(cls, modrinth: modrinth.Modrinth, slug_or_id: str):
-        # Get info from source
-        # Ensure we have the real slug, not the id.
-        slug = (await modrinth.get_project(slug_or_id))["slug"]
-        return cls(slug, await ModVersion.from_modrinth(modrinth, slug))
-
-    @classmethod
     def from_batched(
-        cls, mods_json: list[dict], versions_json: list[dict]
+        cls, raw_projects_json: list[dict], raw_versions_json: list[dict]
     ) -> list[Self]:
+        # Combine mods_json and versions_json so all of a mod's info is
+        # in the same place.
+        # mod slug -> project/version -> mod's project/version info
+        json_by_mod: dict[str, dict[Literal["project", "version"], dict | list]] = {
+            project_json["slug"]: {
+                "project": project_json,
+                "version": [
+                    v
+                    for v in raw_versions_json
+                    if v["project_id"] == project_json["id"]
+                ],
+            }
+            for project_json in raw_projects_json
+        }
+
         mods: list[Self] = []
 
-        # Add versions to the mods.
-        for mod_json in mods_json:
-            versions: set[ModVersion] = {
-                ModVersion.from_json(mod_json["slug"], version)
-                for version in versions_json
-                if version["project_id"] == mod_json["id"]
-            }
+        def is_dep_in_mods(dep_id: str) -> Self | None:
+            for mod in mods:
+                if mod.project_id == dep_id:
+                    return mod
+            return None
 
-            mod = cls(mod_json["slug"], versions, mod_json["id"])
-            mods.append(mod)
+        while True:  # TODO condition: Not all of them are done yet
+            # Find a mod that has no dependencies.
+            # for project, version in json_by_mod.values().values():
+            # pass
+            for slug, proj_ver in json_by_mod.items():
+                version_json = proj_ver["version"]
+                for v_json in version_json:
+                    if len(v_json["dependencies"]) == 0:
+                        mods.append(cls.from_modrinth_json(slug, v_json, set()))
+                    else:
+                        # Are ALL the dependencies already in mods?
+                        # BUG This will basically just pick the first candidate.
+                        # We probably need all candidates here
+                        # (TODO filter by fabric manifest)
+                        dep_ids = {
+                            dep["project_id"]
+                            for dep in v_json["dependencies"]
+                            if dep["dependency_type"] == "required"
+                        }
 
-        for mod in mods:
-            for version in mod.versions:
-                # type == ModVersion id
-                dependency_mod_ids = version.dependencies.keys()
+                        dependencies = cast(
+                            set[Mod], {is_dep_in_mods(dep) for dep in dep_ids}
+                        )
 
-                for dependency_id in dependency_mod_ids:
-                    dependent_mod = next(mod for mod in mods if mod.id == dependency_id)
+                        if all(dependencies):
+                            mods.append(
+                                cls.from_modrinth_json(slug, v_json, dependencies)
+                            )
+                            breakpoint()
 
-                    # TODO actually get the constraint from the jar manifest file,
-                    # and filter dependent_mod.versions to ones that satisfy it.
-                    # Until then, just set it to all candidates as a proof-of-concept.
-                    version.dependencies[dependency_id] = dependent_mod.versions
-
-        # TODO consider post-validation that all fields are not None
-        # TODO only return root mods (not transitive deps).
-        # Is this necessary/a good idea?
-        return mods  # Which are now full
+        return mods
 
 
+# Words to live by:
 # ~ The dependent depends on the dependency. ~
