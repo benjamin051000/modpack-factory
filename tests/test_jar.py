@@ -1,6 +1,6 @@
 import pytest
 
-from lib.jar.extract import FabricJarConstraints
+from lib.jar import FabricJarConstraints
 from lib.sources.modrinth import Modrinth
 
 mock_json = {
