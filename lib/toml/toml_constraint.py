@@ -19,7 +19,7 @@ class Relationship(Enum):
     # ne = 6  # !=
 
 
-@dataclass(order=True)
+@dataclass(order=True, frozen=True)
 class MCVersion:
     major: int
     minor: int
