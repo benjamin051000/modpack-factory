@@ -1,0 +1,66 @@
+"""
+Create and populate the database.
+"""
+
+import asyncio
+import sqlite3
+from io import BytesIO
+
+from aiohttp import ClientSession
+
+from lib.sources.modrinth import MODRINTH_API, Modrinth
+
+DB_NAME = "mods.db"
+
+SLUGS = ["fabric-api"]
+"""List of slugs to populate the db with. 
+Currently popular mods & mods with lots of releases.
+NOTE: Their dependencies are also fetched.
+"""
+
+
+async def download_task(
+    conn: sqlite3.Connection,
+    cursor: sqlite3.Cursor,
+    modrinth: Modrinth,
+    name: str,
+    url: str,
+) -> None:
+    with BytesIO() as f:
+        await modrinth.download(url, f)
+        cursor.execute("INSERT INTO mods VALUES (?, ?, ?)", (url, name, f.getvalue()))
+        conn.commit()
+
+
+async def main():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS mods (
+            url,
+            name,
+            jar
+        )
+    """)
+    # name is the name of the file
+
+    async with ClientSession(MODRINTH_API) as session:
+        modrinth = Modrinth(session)
+        mods_json, versions_json = await modrinth.get_mods_batched(SLUGS)
+
+        print(f"num mods to download: {len(versions_json)}")
+
+        tasks = [
+            download_task(conn, cursor, modrinth, f["filename"], f["url"])
+            for v in versions_json
+            for f in v["files"]
+        ]
+
+        await asyncio.gather(*tasks)
+
+    conn.close()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
