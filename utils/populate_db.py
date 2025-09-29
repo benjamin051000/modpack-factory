@@ -7,12 +7,13 @@ import sqlite3
 from io import BytesIO
 
 from aiohttp import ClientSession
+from tqdm.asyncio import tqdm
 
 from lib.sources.modrinth import MODRINTH_API, Modrinth
 
 DB_NAME = "mods.db"
 
-SLUGS = ["fabric-api"]
+SLUGS = ["fabric-api", "sodium"]
 """List of slugs to populate the db with. 
 Currently popular mods & mods with lots of releases.
 NOTE: Their dependencies are also fetched.
@@ -26,9 +27,13 @@ async def download_task(
     name: str,
     url: str,
 ) -> None:
+    # Skip if it's already in the table.
+    if cursor.execute("SELECT name FROM mods WHERE name=?", (name,)).fetchone():
+        return
+
     with BytesIO() as f:
         await modrinth.download(url, f)
-        cursor.execute("INSERT INTO mods VALUES (?, ?, ?)", (url, name, f.getvalue()))
+        cursor.execute("INSERT INTO mods VALUES (?, ?, ?)", (name, url, f.getvalue()))
         conn.commit()
 
 
@@ -38,8 +43,8 @@ async def main():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS mods (
-            url,
             name,
+            url,
             jar
         )
     """)
@@ -57,7 +62,7 @@ async def main():
             for f in v["files"]
         ]
 
-        await asyncio.gather(*tasks)
+        await tqdm.gather(*tasks)
 
     conn.close()
 
