@@ -13,27 +13,26 @@ from lib.sources.modrinth import MODRINTH_API, Modrinth
 
 DB_NAME = "mods.db"
 
-SLUGS = ["fabric-api", "sodium"]
-"""List of slugs to populate the db with. 
-Currently popular mods & mods with lots of releases.
-NOTE: Their dependencies are also fetched.
-"""
+MOD_LIMIT = 10
 
 
 async def download_task(
     conn: sqlite3.Connection,
     cursor: sqlite3.Cursor,
     modrinth: Modrinth,
+    sha1: str,
     name: str,
     url: str,
 ) -> None:
     # Skip if it's already in the table.
-    if cursor.execute("SELECT name FROM mods WHERE name=?", (name,)).fetchone():
+    if cursor.execute("SELECT sha1 FROM mods WHERE sha1=?", (sha1,)).fetchone():
         return
 
     with BytesIO() as f:
         await modrinth.download(url, f)
-        cursor.execute("INSERT INTO mods VALUES (?, ?, ?)", (name, url, f.getvalue()))
+        cursor.execute(
+            "INSERT INTO mods VALUES (?, ?, ?)", (sha1, name, url, f.getvalue())
+        )
         conn.commit()
 
 
@@ -43,6 +42,7 @@ async def main():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS mods (
+            sha1,
             name,
             url,
             jar
@@ -52,12 +52,19 @@ async def main():
 
     async with ClientSession(MODRINTH_API) as session:
         modrinth = Modrinth(session)
-        mods_json, versions_json = await modrinth.get_mods_batched(SLUGS)
+
+        # Get the 100 top mods
+        slugs = [
+            j["slug"] for j in (await modrinth.search("", limit=MOD_LIMIT))["hits"]
+        ]
+        _, versions_json = await modrinth.get_mods_batched(slugs)
 
         print(f"num mods to download: {len(versions_json)}")
 
         tasks = [
-            download_task(conn, cursor, modrinth, f["filename"], f["url"])
+            download_task(
+                conn, cursor, modrinth, f["hashes"]["sha1"], f["filename"], f["url"]
+            )
             for v in versions_json
             for f in v["files"]
         ]

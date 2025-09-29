@@ -35,10 +35,14 @@ class Modrinth:
             limiter = AsyncLimiter(RATE_LIMIT_PER_MIN)
         self.limiter = limiter
 
-    async def search(self, query: str) -> dict:
+    async def search(self, query: str, limit: int | None = None) -> dict:
+        params = {"query": query}
+        if limit:
+            params["limit"] = str(limit)
+
         async with (
             self.limiter,
-            self.session.get("search", params={"query": query}) as response,
+            self.session.get("search", params=params) as response,
         ):
             return await response.json()
 
