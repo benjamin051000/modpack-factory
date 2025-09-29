@@ -9,6 +9,7 @@ dependencies = [
     "aiolimiter>=1.2.1",
     "semver>=3.0.4",
     "tomlkit>=0.13.2",
+    "tqdm>=4.67.1",
     "z3-solver>=4.15.0.0",
 ]
 
