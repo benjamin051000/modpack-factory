@@ -20,18 +20,18 @@ async def download_task(
     conn: sqlite3.Connection,
     cursor: sqlite3.Cursor,
     modrinth: Modrinth,
-    sha1: str,
+    sha512: str,
     name: str,
     url: str,
 ) -> None:
     # Skip if it's already in the table.
-    if cursor.execute("SELECT sha1 FROM mods WHERE sha1=?", (sha1,)).fetchone():
+    if cursor.execute("SELECT sha512 FROM mods WHERE sha512=?", (sha512,)).fetchone():
         return
 
     with BytesIO() as f:
         await modrinth.download(url, f)
         cursor.execute(
-            "INSERT INTO mods VALUES (?, ?, ?)", (sha1, name, url, f.getvalue())
+            "INSERT INTO mods VALUES (?, ?, ?, ?)", (sha512, name, url, f.getvalue())
         )
         conn.commit()
 
@@ -42,7 +42,7 @@ async def main():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS mods (
-            sha1,
+            sha512,
             name,
             url,
             jar
@@ -63,7 +63,7 @@ async def main():
 
         tasks = [
             download_task(
-                conn, cursor, modrinth, f["hashes"]["sha1"], f["filename"], f["url"]
+                conn, cursor, modrinth, f["hashes"]["sha512"], f["filename"], f["url"]
             )
             for v in versions_json
             for f in v["files"]
