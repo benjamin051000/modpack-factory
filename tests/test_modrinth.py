@@ -91,13 +91,13 @@ async def test_get_mods_batched_multiple_dependencies(modrinth: Modrinth):
 @pytest.mark.asyncio(loop_scope="session")
 async def test_duplicate_slugs(modrinth: Modrinth):
     """Test that duplicate slugs don't result in duplicate json entries."""
-    mods = ["sodium"]  # Depends on fabric-api
+    mods = ["appleskin"]  # Depends on fabric-api
     just_sodium_mods_json, just_sodium_versions_json = await modrinth.get_mods_batched(
         mods
     )
 
     # Explicit fabric-api is a duplicate here, as it is also found through sodium.
-    mods = ["sodium", "fabric-api"]
+    mods = ["appleskin", "fabric-api"]
     both_mods_json, both_versions_json = await modrinth.get_mods_batched(mods)
 
     assert len(just_sodium_mods_json) == len(both_mods_json)

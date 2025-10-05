@@ -119,20 +119,30 @@ class Modrinth:
         # all versions in JSON form.
         all_versions = []
 
+        # Keep track of entries to avoid duplicates.
+        all_mod_ids = set()
+        all_version_names = set()
+
         # Start with the top-level mods. This gets rewritten in the loop
         mod_names: list[str] = slugs
 
         while mod_names:
             mods_json: list = await self.get_projects(mod_names)
-            all_mods.extend(mods_json)
+            all_mods.extend(mod for mod in mods_json if mod["id"] not in all_mod_ids)
+            all_mod_ids.update(mod["id"] for mod in mods_json)
 
             # all versions in slug form
-            version_names = [ver for mod in mods_json for ver in mod["versions"]]
+            version_names: list[str] = [
+                ver
+                for mod in mods_json
+                for ver in mod["versions"]
+                if ver not in all_version_names
+            ]
 
             versions_json = await self.get_versions_batched(version_names)
 
             # Filter to only required dependencies (filter out, e.g., "incompatible",
-            # see https://modrinth.com/mod/sodium/version/mc1.20.1-0.5.0)
+            # see https://modrinth.com/mod/sodium/version/mc1.20.1-0.5.0
             for version in versions_json:
                 # NOTE: This modifies elements in versions_json.
                 version["dependencies"] = [
@@ -142,6 +152,8 @@ class Modrinth:
                 ]
 
             all_versions.extend(versions_json)
+            assert len(version_names) == len(set(version_names))
+            all_version_names.update(version_names)
 
             # Now, get the dependencies
             dependencies = [
@@ -157,6 +169,12 @@ class Modrinth:
             required_dependencies_ids = [dep["project_id"] for dep in dependencies]
             # This is the new set of mods to get
             mod_names = required_dependencies_ids
+
+        # Check that there are no duplicates.
+        # Use the id field, which is the UUID for each version/mod.
+        # WARNING: asserts are not always checked!
+        assert len(all_versions) == len({v["id"] for v in all_versions})
+        assert len(all_mods) == len({m["id"] for m in all_mods})
 
         return all_mods, all_versions
 
