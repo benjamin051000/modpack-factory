@@ -115,13 +115,13 @@ class Modrinth:
         """Use the batching APIs to get a list of mods (including recursive
         dependencies) and versions in JSON form."""
         # all mods in JSON form
-        all_mods = []
+        all_mods: list[dict] = []
         # all versions in JSON form.
-        all_versions = []
+        all_versions: list[dict] = []
 
         # Keep track of entries to avoid duplicates.
-        all_mod_ids = set()
-        all_version_names = set()
+        all_mod_ids: set[str] = set()
+        all_version_names: set[str] = set()
 
         # Start with the top-level mods. This gets rewritten in the loop
         mod_names: list[str] = slugs
