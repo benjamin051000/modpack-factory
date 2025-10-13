@@ -23,6 +23,7 @@ def modrinth_rate_limiter() -> AsyncLimiter:
 def db_conn():
     with sqlite3.connect("test_mods.db") as conn:
         yield conn
+    # TODO delete test_mods.db
 
 
 @pytest_asyncio.fixture(scope="session", loop_scope="session")
