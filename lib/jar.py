@@ -15,6 +15,10 @@ class Constraint:
     operator: str
 
 
+class JarError(Exception):
+    pass
+
+
 @dataclass
 class FabricJarConstraints:
     """Constraints collected from a Fabric mod's .jar file."""
@@ -54,11 +58,22 @@ class FabricJarConstraints:
     @classmethod
     def from_jar(cls, path: Path | BinaryIO) -> Self:
         with ZipFile(path) as archive:
-            data: dict = json.loads(archive.read("fabric.mod.json"))
+            try:
+                manifest = archive.read("fabric.mod.json")
+            except KeyError as e:
+                # Some really old ones like fabric-api 0.0.2
+                # use "mod.json", not "fabric.mod.json".
+                # TODO figure out how to handle this. My guess is just exclude
+                # it since there's basically 0 chance anyone uses this old of a version
+                raise JarError from e
+
+        data: dict = json.loads(manifest)
+
         return cls._from_json(data)
 
     @classmethod
     async def from_modrinth(cls, modrinth: Modrinth, url: str) -> Self:
+        # TODO cache the downloads to avoid downloading again later.
         with BytesIO() as f:
             await modrinth.download(url, f)
             return cls.from_jar(f)
@@ -75,4 +90,7 @@ class FabricJarConstraints:
                 print(f"downloading {file['filename']}...")
                 download_tasks.append(cls.from_modrinth(modrinth, file["url"]))
 
-        return await asyncio.gather(*download_tasks)
+        print(f"{len(download_tasks)=}")
+        # WARNING: Takes a long time (~2GB download)
+        results = await asyncio.gather(*download_tasks, return_exceptions=True)
+        return [result for result in results if not isinstance(result, Exception)]

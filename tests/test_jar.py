@@ -95,3 +95,17 @@ async def test_from_modrinth(modrinth: Modrinth):
 
     # TODO I'm not sure what "provides" does but may be worth testing later.
     # correct_provides = ["indium"]
+
+
+@pytest.mark.asyncio(loop_scope="session")
+async def test_from_modrinth_batched(modrinth: Modrinth):
+    # sodium does not depend on anything, according to Modrinth's website...
+    _, versions_json = await modrinth.get_mods_batched(["sodium"])
+
+    constraints = await FabricJarConstraints.from_modrinth_batched(
+        modrinth, versions_json
+    )
+
+    # But it turns out, every version of sodium has dependencies!
+    for constraint in constraints:
+        assert len(constraint.depends) >= 1
