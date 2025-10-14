@@ -1,4 +1,5 @@
 import asyncio
+import sqlite3
 import sys
 from itertools import batched
 from typing import BinaryIO
@@ -21,15 +22,20 @@ HTTP_PARAMS_BATCH_LIMIT = 800
 
 
 # TODO is this a good chunk size?
-CHUNKSIZE = 10 * 1024  # 10kb
+CHUNKSIZE = 100 * 1024  # 100KB
 """Chunk size for downloading files."""
 
 
 class Modrinth:
     def __init__(
-        self, session: aiohttp.ClientSession, limiter: AsyncLimiter | None = None
+        self,
+        session: aiohttp.ClientSession,
+        conn: sqlite3.Connection,
+        limiter: AsyncLimiter | None = None,
     ) -> None:
         self.session = session
+        self.conn = conn
+        self.cursor = self.conn.cursor()
 
         if limiter is None:
             limiter = AsyncLimiter(RATE_LIMIT_PER_MIN)
@@ -51,6 +57,7 @@ class Modrinth:
             # TODO JSONDecodeError?
             return await response.json()
 
+    # TODO use the HTTP_PARAMS_BATCH_LIMIT here, too, just in case
     async def get_projects(self, slugs: list[str]) -> list[dict]:
         formatted_slugs = str(slugs).replace("'", '"')  # API requires double-quotes
         # NOTE: This API skips ones that don't exist.
@@ -58,7 +65,12 @@ class Modrinth:
             self.limiter,
             self.session.get("projects", params={"ids": formatted_slugs}) as response,
         ):
-            return await response.json()
+            try:
+                return await response.json()
+            except aiohttp.ContentTypeError:
+                print(await response.text())
+                raise
+                # sys.exit(1)
 
     async def get_version(self, slug: str) -> list:
         async with (
@@ -106,6 +118,7 @@ class Modrinth:
             for batch in batched(version_ids, HTTP_PARAMS_BATCH_LIMIT, strict=False)
         ]
 
+        # TODO consider a TaskGroup?
         results = await asyncio.gather(*tasks)
         return [item for result in results for item in result]
 
@@ -124,6 +137,7 @@ class Modrinth:
         all_version_names: set[str] = set()
 
         # Start with the top-level mods. This gets rewritten in the loop
+        # TODO set()? See how it's updated below
         mod_names: list[str] = slugs
 
         while mod_names:
@@ -168,7 +182,8 @@ class Modrinth:
 
             required_dependencies_ids = [dep["project_id"] for dep in dependencies]
             # This is the new set of mods to get
-            mod_names = required_dependencies_ids
+            # NOTE I am removing duplicates here, for better or worse...
+            mod_names = list(set(required_dependencies_ids))
 
         # Check that there are no duplicates.
         # Use the id field, which is the UUID for each version/mod.
@@ -178,9 +193,22 @@ class Modrinth:
 
         return all_mods, all_versions
 
-    async def download(self, url: str, file: BinaryIO) -> None:
+    async def download(self, url: str, file: BinaryIO) -> bool:
         """Download a release file (AKA a .jar file)."""
-        # TODO open outside this fn, accept a BytesIO-like object
-        async with self.limiter, self.session.get(url) as response:
+        # First, check if it's in the database.
+        try:
+            result = self.cursor.execute(
+                "SELECT url FROM mods WHERE url=?", (url,)
+            ).fetchone()
+            if result:
+                # We've already got it downloaded. Do nothing.
+                return False
+        except sqlite3.OperationalError:
+            # No worries, for now just download it normally
+            pass
+
+        # NOTE: No self.limiter here. This is a CDN so we can blast it, apparently.
+        async with self.session.get(url) as response:
             async for chunk in response.content.iter_chunked(CHUNKSIZE):
                 file.write(chunk)
+        return True
