@@ -17,6 +17,6 @@ def test_version_interval_contains(
 ):
     vi = VersionInterval.from_str(s)
 
-    assert vi.contains(Version.parse("0.9.0")) == contains_0
-    assert vi.contains(Version.parse("1.0.0")) == contains_1
-    assert vi.contains(Version.parse("2.0.0")) == contains_2
+    assert (Version.parse("0.9.0") in vi) == contains_0
+    assert (Version.parse("1.0.0") in vi) == contains_1
+    assert (Version.parse("2.0.0") in vi) == contains_2
