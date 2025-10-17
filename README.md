@@ -1,10 +1,7 @@
 # Modpack Factory 🏭
 
-> [!CAUTION]
-> This tool currently makes a large number of modrinth API requests. Use at your own discretion and be prepared to be rate-limited!
-
 > [!NOTE]
-> This tool is currently in a pre-alpha state.
+> This tool is currently in a pre-alpha state. Here be dragons! 🐉
 
 This project is a command-line tool to assist in creating minecraft modpacks.
 
