@@ -6,6 +6,7 @@ from typing import Literal, Self, cast
 from lib.toml.toml_constraint import MCVersion
 
 
+# TODO move this to modrinth.py
 @dataclass
 class ModrinthFile:
     url: str
@@ -72,8 +73,21 @@ class Mod:
     # jar: list[FabricJarConstraints] = field(default_factory=list)
     # """List of information from the .jar downloaded file."""
 
-    dependencies: set[Mod]
-    """Set of dependencies. There can be 0, 1, or multiple dependencies."""
+    ##############################
+    # Relationships to other mods
+    ##############################
+    # TODO slowly incorporate all of them
+    # There can be 0, 1, or more in these sets.
+    depends: set[Mod]
+    """Mods this one depends on. If this mod is installed, they must be, too."""
+    # breaks: set[Mod]
+    # """Mods that break this one. They should not be installed together."""
+    # recommends: set[Mod]
+    # """Mods this one recommends. Install if user agrees."""
+    # suggests: set[Mod]
+    # """Mods this one suggests. Install if user agrees."""
+    # conflicts: set[Mod]
+    # """Mods this one conflicts with. They should not be installed together."""
 
     json: dict
     """JSON used to create this object. Useful for debugging."""
@@ -100,7 +114,7 @@ class Mod:
             version_type=json["version_type"],
             loaders=json["loaders"],
             files=[ModrinthFile.from_json(j) for j in json["files"]],
-            dependencies=dependencies,
+            depends=dependencies,
             json=json,
         )
 
@@ -132,6 +146,7 @@ class Mod:
             return None
 
         while True:  # TODO condition: Not all of them are done yet
+            # raise NotImplementedError
             # Find a mod that has no dependencies.
             # for project, version in json_by_mod.values().values():
             # pass
