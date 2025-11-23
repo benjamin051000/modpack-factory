@@ -23,6 +23,8 @@ class JarError(Exception):
 class FabricJarConstraints:
     """Constraints collected from a Fabric mod's .jar file."""
 
+    id: str
+    version: str
     depends: list[Constraint]
     breaks: list[Constraint]
     recommends: list[Constraint]
@@ -33,6 +35,8 @@ class FabricJarConstraints:
     def _from_json(cls, data: dict) -> Self:
         # TODO how to make this more DRY?
         return cls(
+            id=data["id"],
+            version=data["version"],
             depends=[
                 Constraint(dependency, operator)
                 for dependency, operator in data.get("depends", {}).items()

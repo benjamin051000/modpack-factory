@@ -32,6 +32,9 @@ mock_json = {
 def test_from_json():
     constraints = FabricJarConstraints._from_json(mock_json)
 
+    assert constraints.id == "sodium"
+    assert constraints.version == "0.5.0"
+
     assert len(constraints.depends) == 3
     assert constraints.depends[0].operand == "fabricloader"
     assert constraints.depends[0].operator == ">=0.12.0"
@@ -58,6 +61,8 @@ async def test_from_modrinth(modrinth: Modrinth):
         "fabricloader": ">=0.16.0",
     }
 
+    assert constraints.id == "sodium"
+    assert constraints.version == "0.6.13+mc1.21.6"
     correct_depends_names = set(correct_depends.keys())
     constraint_depends_names = set(dep.operand for dep in constraints.depends)
     assert correct_depends_names == constraint_depends_names
