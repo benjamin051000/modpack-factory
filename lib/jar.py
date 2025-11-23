@@ -3,7 +3,7 @@ import json
 from dataclasses import dataclass
 from io import BytesIO
 from pathlib import Path
-from typing import BinaryIO, Self
+from typing import BinaryIO, Self, cast
 from zipfile import ZipFile
 
 from lib.sources.modrinth import Modrinth
@@ -34,29 +34,22 @@ class FabricJarConstraints:
     @classmethod
     def _from_json(cls, data: dict) -> Self:
         # TODO how to make this more DRY?
+        def parse_constraints(keyword: str) -> list[Constraint]:
+            return [
+                Constraint(dependency, operator)
+                for dependency, operator in data.get(keyword, {}).items()
+            ]
+
         return cls(
             id=data["id"],
-            version=data["version"],
-            depends=[
-                Constraint(dependency, operator)
-                for dependency, operator in data.get("depends", {}).items()
-            ],
-            breaks=[
-                Constraint(dependency, operator)
-                for dependency, operator in data.get("breaks", {}).items()
-            ],
-            recommends=[
-                Constraint(dependency, operator)
-                for dependency, operator in data.get("recommends", {}).items()
-            ],
-            suggests=[
-                Constraint(dependency, operator)
-                for dependency, operator in data.get("suggests", {}).items()
-            ],
-            conflicts=[
-                Constraint(dependency, operator)
-                for dependency, operator in data.get("conflicts", {}).items()
-            ],
+            # HACK: modrinth uses - but fabric.mod.json uses + in the version number.
+            # Just do this for now to make them the same.
+            version=cast(str, data["version"]).replace("+", "-"),
+            depends=parse_constraints("depends"),
+            breaks=parse_constraints("breaks"),
+            recommends=parse_constraints("recommends"),
+            suggests=parse_constraints("suggests"),
+            conflicts=parse_constraints("conflicts"),
         )
 
     @classmethod
