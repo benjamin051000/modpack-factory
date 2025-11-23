@@ -1,6 +1,6 @@
 import asyncio
 import json
-from dataclasses import dataclass, fields
+from dataclasses import dataclass
 from io import BytesIO
 from pathlib import Path
 from typing import BinaryIO, Self
@@ -31,14 +31,28 @@ class FabricJarConstraints:
 
     @classmethod
     def _from_json(cls, data: dict) -> Self:
+        # TODO how to make this more DRY?
         return cls(
-            **{
-                field.name: [
-                    Constraint(dependency, operator)
-                    for dependency, operator in data.get(field.name, {}).items()
-                ]
-                for field in fields(cls)
-            }
+            depends=[
+                Constraint(dependency, operator)
+                for dependency, operator in data.get("depends", {}).items()
+            ],
+            breaks=[
+                Constraint(dependency, operator)
+                for dependency, operator in data.get("breaks", {}).items()
+            ],
+            recommends=[
+                Constraint(dependency, operator)
+                for dependency, operator in data.get("recommends", {}).items()
+            ],
+            suggests=[
+                Constraint(dependency, operator)
+                for dependency, operator in data.get("suggests", {}).items()
+            ],
+            conflicts=[
+                Constraint(dependency, operator)
+                for dependency, operator in data.get("conflicts", {}).items()
+            ],
         )
 
     @classmethod
