@@ -62,7 +62,9 @@ async def test_from_modrinth(modrinth: Modrinth):
     }
 
     assert constraints.id == "sodium"
-    assert constraints.version == "0.6.13+mc1.21.6"
+    # HACK: See FabricJarConstraints._from_json(), we also do this string replace there.
+    # This should match that.
+    assert constraints.version == "0.6.13+mc1.21.6".replace("+", "-")
     correct_depends_names = set(correct_depends.keys())
     constraint_depends_names = set(dep.operand for dep in constraints.depends)
     assert correct_depends_names == constraint_depends_names
@@ -112,5 +114,11 @@ async def test_from_modrinth_batched(modrinth: Modrinth):
     )
 
     # But it turns out, every version of sodium has dependencies!
-    for constraint in constraints:
-        assert len(constraint.depends) >= 1
+    # TODO when ready to add non-fabric, remove this if
+    ids = [v["id"] for v in versions_json if v["loaders"] == ["fabric"]]
+    for id in ids:
+        constraint = constraints[id]
+        jar_constraints = list(constraint.values())
+        for jar_constraint in jar_constraints:
+            fjc = jar_constraint.result()
+            assert len(fjc.depends) >= 1

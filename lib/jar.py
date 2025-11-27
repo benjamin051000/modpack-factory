@@ -1,5 +1,6 @@
 import asyncio
 import json
+from collections import defaultdict
 from dataclasses import dataclass
 from io import BytesIO
 from pathlib import Path
@@ -21,15 +22,23 @@ class JarError(Exception):
 
 @dataclass
 class FabricJarConstraints:
-    """Constraints collected from a Fabric mod's .jar file."""
+    """Constraints collected from a Fabric mod's metadata file, fabric.mod.json."""
 
     id: str
+    """Appears to be the mod slug"""
     version: str
+    """Version number. 
+    At least in some cases, different syntactic conventions 
+    may be used compared to what's on Modrinth."""
+
     depends: list[Constraint]
     breaks: list[Constraint]
     recommends: list[Constraint]
     suggests: list[Constraint]
     conflicts: list[Constraint]
+
+    json: dict
+    """json used to construct this object."""
 
     @classmethod
     def _from_json(cls, data: dict) -> Self:
@@ -50,6 +59,7 @@ class FabricJarConstraints:
             recommends=parse_constraints("recommends"),
             suggests=parse_constraints("suggests"),
             conflicts=parse_constraints("conflicts"),
+            json=data,
         )
 
     @classmethod
@@ -78,16 +88,36 @@ class FabricJarConstraints:
     @classmethod
     async def from_modrinth_batched(
         cls, modrinth: Modrinth, versions_json: list[dict]
-    ) -> list[Self]:
+    ) -> dict[str, dict]:
+        """Return dict mapping versions_json version -> constraints"""
+        results: defaultdict[str, dict[str, asyncio.Task]] = defaultdict(dict)
         download_tasks = []
 
         for version_json in versions_json:
+            # HACK: Skip non-fabric until we have more Jar Constraints representations.
+            # TODO remove this when we're ready for Forge and others.
+            if version_json["loaders"] != ["fabric"]:
+                print(f"skipping {version_json['id']}")
+                continue
+
             files = version_json["files"]
             for file in files:
                 print(f"downloading {file['filename']}...")
-                download_tasks.append(cls.from_modrinth(modrinth, file["url"]))
+                results[version_json["id"]][file["filename"]] = (
+                    # TODO AI told me to make this a Task object,
+                    # which apparently will fix the problem
+                    asyncio.create_task(cls.from_modrinth(modrinth, file["url"]))
+                )
+                download_tasks.append(results[version_json["id"]][file["filename"]])
 
         print(f"{len(download_tasks)=}")
         # WARNING: Takes a long time (~2GB download)
-        results = await asyncio.gather(*download_tasks, return_exceptions=True)
-        return [result for result in results if not isinstance(result, Exception)]
+        # I guess I don't need the return value because they're already
+        # referenced by the results dict?
+        await asyncio.gather(*download_tasks, return_exceptions=True)
+
+        # TODO unwrap Tasks into their results? It's pretty annoying
+
+        # Cast back to a dict so you get KeyErrors again
+        return dict(results)
+        # return [result for result in results if not isinstance(result, Exception)]
