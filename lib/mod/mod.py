@@ -1,8 +1,11 @@
-from __future__ import annotations
+from __future__ import annotations  # TODO remove, it's deprecated
 
+import asyncio
 from dataclasses import dataclass
-from typing import Literal, Self, cast
+from typing import Literal, Self
 
+from lib.jar import FabricJarConstraints
+from lib.sources.modrinth import Modrinth
 from lib.toml.toml_constraint import MCVersion
 
 
@@ -78,8 +81,11 @@ class Mod:
     ##############################
     # TODO slowly incorporate all of them
     # There can be 0, 1, or more in these sets.
-    depends: set[Mod]
-    """Mods this one depends on. If this mod is installed, they must be, too."""
+    depends: set[dict[str, set[Mod]]]
+    """Set of candidate Mods this Mod depends on. 
+    Any one Mod in each dict can satisfy this Mod's dependency constraint.
+    During locking, for each dict, a candidate mod will be selected.
+    """
     # breaks: set[Mod]
     # """Mods that break this one. They should not be installed together."""
     # recommends: set[Mod]
@@ -120,12 +126,16 @@ class Mod:
 
     @classmethod
     def from_batched(
-        cls, raw_projects_json: list[dict], raw_versions_json: list[dict]
+        cls,
+        modrinth: Modrinth,
+        raw_projects_json: list[dict],
+        raw_versions_json: list[dict],
+        constraints: dict[str, dict[str, asyncio.Task]],
     ) -> list[Self]:
         # Combine mods_json and versions_json so all of a mod's info is
         # in the same place.
-        # mod slug -> project/version -> mod's project/version info
-        json_by_mod: dict[str, dict[Literal["project", "version"], dict | list]] = {
+        # mod slug -> 'project'/'version' -> mod's project/version info
+        slug_to_jsons: dict[str, dict[Literal["project", "version"], dict | list]] = {
             project_json["slug"]: {
                 "project": project_json,
                 "version": [
@@ -139,42 +149,37 @@ class Mod:
 
         mods: list[Self] = []
 
-        def is_dep_in_mods(dep_id: str) -> Self | None:
-            for mod in mods:
-                if mod.project_id == dep_id:
-                    return mod
-            return None
+        # def is_dep_in_mods(dep_id: str) -> Self | None:
+        #     for mod in mods:
+        #         if mod.project_id == dep_id:
+        #             return mod
+        #     return None
 
-        while True:  # TODO condition: Not all of them are done yet
-            # raise NotImplementedError
-            # Find a mod that has no dependencies.
-            # for project, version in json_by_mod.values().values():
-            # pass
-            for slug, proj_ver in json_by_mod.items():
-                version_json = proj_ver["version"]
-                for v_json in version_json:
-                    if len(v_json["dependencies"]) == 0:
-                        mods.append(cls.from_modrinth_json(slug, v_json, set()))
-                    else:
-                        # Are ALL the dependencies already in mods?
-                        # BUG This will basically just pick the first candidate.
-                        # We probably need all candidates here
-                        # (TODO filter by fabric manifest)
-                        dep_ids = {
-                            dep["project_id"]
-                            for dep in v_json["dependencies"]
-                            if dep["dependency_type"] == "required"
-                        }
+        for slug, proj_ver in slug_to_jsons.items():
+            project = proj_ver["project"]
+            versions = proj_ver["version"]
 
-                        dependencies = cast(
-                            set[Mod], {is_dep_in_mods(dep) for dep in dep_ids}
-                        )
+            for version in versions:
+                constraints_for_this_version = constraints[version["id"]]
 
-                        if all(dependencies):
-                            mods.append(
-                                cls.from_modrinth_json(slug, v_json, dependencies)
-                            )
-                            breakpoint()
+                for files in version["files"]:
+                    constraint_for_this_file: FabricJarConstraints = (
+                        constraints_for_this_version[files["filename"]].result()
+                    )
+                    depends = constraint_for_this_file.depends
+                    for dependency in depends:
+                        if dependency.operand in {"minecraft", "fabricloader"}:
+                            # TODO implement this one eventually!
+                            continue
+                        dep_json = slug_to_jsons[dependency.operand]
+                        breakpoint()
+
+                        # Search through the modlist and find it
+                        # dependency_mod = next(s for s in raw_projects_json)
+
+        # For each mod b...
+        # If b satisfied a's constraints,
+        # Add b to a
 
         return mods
 
