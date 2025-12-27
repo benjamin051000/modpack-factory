@@ -32,6 +32,10 @@ class MCVersion:
         """
         return cls(*[int(v) for v in value.split(".")])
 
+    @classmethod
+    def from_json(cls, json: list[str]) -> set[Self]:
+        return {cls.from_str(s) for s in json}
+
     def __str__(self) -> str:
         if self.patch == 0:
             # Minecraft convention is to omit the patch when it's 0.
