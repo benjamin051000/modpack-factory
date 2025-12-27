@@ -79,23 +79,7 @@ class Modrinth:
         ):
             versions_json = await response.json()
 
-        # Filter out versions which only run on a Minecraft snapshot.
-        # Remove snapshots for now.
-        for version in versions_json:
-            version["game_versions"] = [
-                v
-                for v in version["game_versions"]
-                # Skip snapshots, pre-releases, RCs, beta versions.
-                # Sourced from modrith web filter
-                if not any(
-                    c in v for c in ["w", "-pre", "-rc", "b", "a", "c", "rd-", "inf-"]
-                )
-            ]
-
-        # Versions which only supported snapshots now have empty game_versions fields.
-        filtered_versions_json = [v for v in versions_json if len(v["game_versions"])]
-
-        return filtered_versions_json
+        return versions_json
 
     async def get_versions(self, version_ids: list[str]) -> list:
         formatted_ids = str(version_ids).replace("'", '"')
@@ -120,7 +104,9 @@ class Modrinth:
 
         # TODO consider a TaskGroup?
         results = await asyncio.gather(*tasks)
-        return [item for result in results for item in result]
+        return self._filter_unsupported_versions(
+            [item for result in results for item in result]
+        )
 
     # TODO verify this handles circular dependencies
     # (although I'd be surprised if any exist)
@@ -212,3 +198,38 @@ class Modrinth:
             async for chunk in response.content.iter_chunked(CHUNKSIZE):
                 file.write(chunk)
         return True
+
+    @staticmethod
+    def _filter_unsupported_versions(raw_versions_json: list[dict]) -> list[dict]:
+        name = raw_versions_json[0]["name"]
+        print(f"HACK: Filtering unsupported versions for {name}...")
+
+        # HACK currently, unsupported entries are
+        # - forge, neoforge
+        # - optional dependencies
+        # - snapshots, pre-releases, RCs, beta versions of minecraft.
+        def is_forge(version_json: dict) -> bool:
+            # HACK: Skip non-fabric until we have more Jar Constraints representations.
+            # TODO remove this when we're ready for Forge and others.
+            return set(version_json["loaders"]) - {"forge", "neoforge"} == set()
+
+        def is_unsupported_release(version_json: dict) -> bool:
+            # Skip snapshots, pre-releases, RCs, beta versions.
+            # Sourced from modrith web filter
+            kw_substring = {"w", "-pre", "-rc", "b", "a", "c", "rd-", "inf-"}
+            return any(
+                keyword in version
+                for keyword in kw_substring
+                for version in version_json["game_versions"]
+            )
+
+        new = [
+            version
+            for version in raw_versions_json
+            if not any([is_forge(version), is_unsupported_release(version)])
+        ]
+
+        diff = len(raw_versions_json) - len(new)
+
+        print(f"{diff} (out of {len(raw_versions_json)}) versions filtered.")
+        return new

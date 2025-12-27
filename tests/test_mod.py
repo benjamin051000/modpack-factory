@@ -1,5 +1,6 @@
 import pytest
 
+from lib.jar import FabricJarConstraints
 from lib.mod.mod import Mod
 from lib.sources.modrinth import Modrinth
 
@@ -56,7 +57,10 @@ async def test_from_batched_simple(modrinth: Modrinth):
     assert sodium["slug"] == "sodium"
     assert sodium["id"] == "AANobbMI"
 
-    mods = Mod.from_batched(mods_json, versions_json)
+    constraints = await FabricJarConstraints.from_modrinth_batched(
+        modrinth, versions_json
+    )
+    mods = Mod.from_batched(modrinth, mods_json, versions_json, constraints)
 
     # There should be at least one Mod per slug. Likely far more.
     assert len(mods) >= len(slugs)
@@ -72,7 +76,10 @@ async def test_from_batched_one_dependency(modrinth: Modrinth):
         ["reeses-sodium-options"]
     )
 
-    mods = Mod.from_batched(mods_json, versions_json)
+    constraints = await FabricJarConstraints.from_modrinth_batched(
+        modrinth, versions_json
+    )
+    mods = Mod.from_batched(modrinth, mods_json, versions_json, constraints)
 
     assert {mod.slug for mod in mods} == {
         "reeses-sodium-options",

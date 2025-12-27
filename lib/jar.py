@@ -94,12 +94,6 @@ class FabricJarConstraints:
         download_tasks = []
 
         for version_json in versions_json:
-            # HACK: Skip non-fabric until we have more Jar Constraints representations.
-            # TODO remove this when we're ready for Forge and others.
-            if version_json["loaders"] != ["fabric"]:
-                print(f"skipping {version_json['id']}")
-                continue
-
             files = version_json["files"]
             for file in files:
                 print(f"downloading {file['filename']}...")
