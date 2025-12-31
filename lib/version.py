@@ -29,13 +29,21 @@ class VersionInterval:
         if s == "*":  # Match all versions.
             return cls(True, None, None, True)
         elif s.startswith(">="):
-            return cls(True, Version.parse(s[2:]), None, True)
+            return cls(
+                True, Version.parse(s[2:], optional_minor_and_patch=True), None, True
+            )
         elif s.startswith("<="):
-            return cls(True, None, Version.parse(s[2:]), True)
+            return cls(
+                True, None, Version.parse(s[2:], optional_minor_and_patch=True), True
+            )
         elif s.startswith(">"):
-            return cls(False, Version.parse(s[1:]), None, True)
+            return cls(
+                False, Version.parse(s[1:], optional_minor_and_patch=True), None, True
+            )
         elif s.startswith("<"):
-            return cls(True, None, Version.parse(s[1:]), False)
+            return cls(
+                True, None, Version.parse(s[1:], optional_minor_and_patch=True), False
+            )
         else:
             raise ValueError(f"Invalid version constraint: {s}")
 
