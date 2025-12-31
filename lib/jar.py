@@ -8,12 +8,13 @@ from typing import BinaryIO, Self, cast
 from zipfile import ZipFile
 
 from lib.sources.modrinth import Modrinth
+from lib.version import VersionInterval
 
 
 @dataclass
 class Constraint:
     operand: str
-    operator: str
+    operator: VersionInterval
 
 
 class JarError(Exception):
@@ -45,7 +46,7 @@ class FabricJarConstraints:
         # TODO how to make this more DRY?
         def parse_constraints(keyword: str) -> list[Constraint]:
             return [
-                Constraint(dependency, operator)
+                Constraint(dependency, VersionInterval.from_str(operator))
                 for dependency, operator in data.get(keyword, {}).items()
             ]
 
