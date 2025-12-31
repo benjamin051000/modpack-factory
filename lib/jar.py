@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import BinaryIO, Self, cast
 from zipfile import ZipFile
 
+from semver import Version
+
 from lib.sources.modrinth import Modrinth
 from lib.version import VersionInterval
 
@@ -15,6 +17,9 @@ from lib.version import VersionInterval
 class Constraint:
     operand: str
     operator: VersionInterval
+
+    def __contains__(self, version: Version) -> bool:
+        return version in self.operator
 
 
 class JarError(Exception):
