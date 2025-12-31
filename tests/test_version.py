@@ -4,7 +4,7 @@ from lib.version import Version, VersionInterval
 
 
 @pytest.mark.parametrize(
-    "s, contains_0, contains_1, contains_2",
+    "s, contains_0_9_0, contains_1_0_0, contains_2_0_0",
     [
         (">1.0.0", False, False, True),
         (">=1.0.0", False, True, True),
@@ -13,10 +13,10 @@ from lib.version import Version, VersionInterval
     ],
 )
 def test_version_interval_contains(
-    s: str, contains_0: bool, contains_1: bool, contains_2: bool
+    s: str, contains_0_9_0: bool, contains_1_0_0: bool, contains_2_0_0: bool
 ):
     vi = VersionInterval.from_str(s)
 
-    assert (Version.parse("0.9.0") in vi) == contains_0
-    assert (Version.parse("1.0.0") in vi) == contains_1
-    assert (Version.parse("2.0.0") in vi) == contains_2
+    assert (Version.parse("0.9.0") in vi) == contains_0_9_0
+    assert (Version.parse("1.0.0") in vi) == contains_1_0_0
+    assert (Version.parse("2.0.0") in vi) == contains_2_0_0
