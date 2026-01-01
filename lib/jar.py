@@ -21,6 +21,12 @@ class Constraint:
     def __contains__(self, version: Version) -> bool:
         return version in self.operator
 
+    def __str__(self) -> str:
+        return f"{self.operand}{self.operator}"
+
+    def __repr__(self) -> str:
+        return str(self)
+
 
 class JarError(Exception):
     pass
