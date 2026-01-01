@@ -4,7 +4,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from io import BytesIO
 from pathlib import Path
-from typing import BinaryIO, Self, cast
+from typing import BinaryIO, Self
 from zipfile import ZipFile
 
 from semver import Version
@@ -32,7 +32,7 @@ class FabricJarConstraints:
 
     id: str
     """Appears to be the mod slug"""
-    version: str
+    version: Version
     """Version number. 
     At least in some cases, different syntactic conventions 
     may be used compared to what's on Modrinth."""
@@ -57,9 +57,7 @@ class FabricJarConstraints:
 
         return cls(
             id=data["id"],
-            # HACK: modrinth uses - but fabric.mod.json uses + in the version number.
-            # Just do this for now to make them the same.
-            version=cast(str, data["version"]).replace("+", "-"),
+            version=Version.parse(data["version"], optional_minor_and_patch=True),
             depends=parse_constraints("depends"),
             breaks=parse_constraints("breaks"),
             recommends=parse_constraints("recommends"),
