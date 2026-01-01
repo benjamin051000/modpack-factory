@@ -50,7 +50,12 @@ class Modrinth:
             self.limiter,
             self.session.get("search", params=params) as response,
         ):
-            return await response.json()
+            try:
+                return await response.json()
+            except aiohttp.ContentTypeError:
+                text_response = await response.text()
+                print(text_response, file=sys.stderr)
+                sys.exit(1)
 
     async def get_project(self, slug_or_id: str) -> dict:
         async with self.limiter, self.session.get(f"project/{slug_or_id}") as response:
