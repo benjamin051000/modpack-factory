@@ -24,6 +24,14 @@ class VersionInterval:
         )
         self.max_inclusive = max_inclusive
 
+    def __str__(self) -> str:
+        front = "[" if self.min_inclusive else "("
+        back = "]" if self.max_inclusive else ")"
+        return f"{front}{self.min}, {self.max}{back}"
+
+    def __repr__(self) -> str:
+        return str(self)
+
     @classmethod
     def from_str(cls, s: str) -> Self:
         if s == "*":  # Match all versions.
