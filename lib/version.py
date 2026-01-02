@@ -33,7 +33,25 @@ class VersionInterval:
         return str(self)
 
     @classmethod
-    def from_str(cls, s: str) -> Self:
+    def from_str(cls, s: str | list[str]) -> Self:
+        # Some of them come in as lists.
+        if isinstance(s, list):
+            if len(s) == 1:
+                # Unwrap list
+                s = s[0]
+            # elif len(s) == 2:
+            #     return cls(
+            #         True,
+            #         Version.parse(s[0], optional_minor_and_patch=True),
+            #         Version.parse(s[1], optional_minor_and_patch=True),
+            #         True,
+            #     )
+            else:
+                raise ValueError(f"Invalid version constraint: {s}")
+
+        # Remove things like 1.2.* or 1.2.x, we just represent those as 1.2. I guess?
+        s = s.replace(".*", "").replace(".x", "")
+
         if s == "*":  # Match all versions.
             return cls(True, None, None, True)
         elif s.startswith(">="):
@@ -53,7 +71,12 @@ class VersionInterval:
                 True, None, Version.parse(s[1:], optional_minor_and_patch=True), False
             )
         else:
-            raise ValueError(f"Invalid version constraint: {s}")
+            # There is no comparison operator. It's exactly this version number.
+            try:
+                v = Version.parse(s, optional_minor_and_patch=True)
+                return cls(True, v, v, True)
+            except ValueError as e:
+                raise ValueError(f"Invalid version constraint: {s}") from e
 
     def __contains__(self, version: Version) -> bool:
         """Whether the interval contains version."""
