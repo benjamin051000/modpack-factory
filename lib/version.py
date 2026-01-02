@@ -1,85 +1,88 @@
-from operator import ge, gt, le, lt
+from collections.abc import Callable
+from operator import eq, ge, gt, le, lt
 from typing import Self
 
 from semver import Version
 
-MAX_VERSION_NUM = 999_999
+OPERATOR_STR_TO_FN: dict[str, Callable] = {">": gt, ">=": ge, "<": lt, "<=": le, "": eq}
 
 
-# NOTE: This cannot be a dataclass unless you're willing to change the variable order.
 class VersionInterval:
-    def __init__(
-        self,
-        min_inclusive: bool,
-        min: Version | None,
-        max: Version | None,
-        max_inclusive: bool,
-    ) -> None:
-        self.min_inclusive = min_inclusive
-        self.min = min if min is not None else Version(0)
-        self.max = (
-            max
-            if max is not None
-            else Version(MAX_VERSION_NUM, MAX_VERSION_NUM, MAX_VERSION_NUM)
-        )
-        self.max_inclusive = max_inclusive
+    """Represents a single version interval, which is an operator and a version.
+
+    Note that versions with ^, ~, or X-ranges (xX*) cannot be represented by a single
+    VersionInterval. They require multiple VersionInterval objects.
+    However, this class will strip the string of these characters for convenience.
+    """
+
+    def __init__(self, operator: str, version: Version, s: str = "") -> None:
+        self.operator = OPERATOR_STR_TO_FN[operator]
+        self.version = version
+        self._s = s
 
     def __str__(self) -> str:
-        front = "[" if self.min_inclusive else "("
-        back = "]" if self.max_inclusive else ")"
-        return f"{front}{self.min}, {self.max}{back}"
+        if self._s:
+            return self._s
+
+        return f"{self.operator.__name__}{self.version}"
 
     def __repr__(self) -> str:
-        return str(self)
+        return (
+            f"VersionInterval({self.operator.__name__}, {self.version!r}, {self._s!r})"
+        )
+
+    def __eq__(self, other: object, /) -> bool:
+        return (
+            isinstance(other, VersionInterval)
+            and self.operator == other.operator
+            and self.version == other.version
+        )
+
+    def __hash__(self) -> int:
+        return hash((self.operator, self.version))
 
     @classmethod
-    def from_str(cls, s: str | list[str]) -> Self:
-        # Some of them come in as lists.
-        if isinstance(s, list):
-            if len(s) == 1:
-                # Unwrap list
-                s = s[0]
-            # elif len(s) == 2:
-            #     return cls(
-            #         True,
-            #         Version.parse(s[0], optional_minor_and_patch=True),
-            #         Version.parse(s[1], optional_minor_and_patch=True),
-            #         True,
-            #     )
-            else:
-                raise ValueError(f"Invalid version constraint: {s}")
+    def from_str(cls, s: str) -> list[Self]:
+        """
+        Given the version range string, produce a list of VersionIntervals
+        that represent it.
+        """
+        # Match all versions.
+        if s == "*":
+            return [cls(">=", Version(0, 0, 0), s)]
 
-        # Remove things like 1.2.* or 1.2.x, we just represent those as 1.2. I guess?
-        s = s.replace(".*", "").replace(".x", "")
+        # The default case, which covers <, >, ^, ~
+        operator = s[0]
+        version = s[1:]
 
-        if s == "*":  # Match all versions.
-            return cls(True, None, None, True)
-        elif s.startswith(">="):
-            return cls(
-                True, Version.parse(s[2:], optional_minor_and_patch=True), None, True
-            )
-        elif s.startswith("<="):
-            return cls(
-                True, None, Version.parse(s[2:], optional_minor_and_patch=True), True
-            )
-        elif s.startswith(">"):
-            return cls(
-                False, Version.parse(s[1:], optional_minor_and_patch=True), None, True
-            )
-        elif s.startswith("<"):
-            return cls(
-                True, None, Version.parse(s[1:], optional_minor_and_patch=True), False
-            )
-        else:
-            # There is no comparison operator. It's exactly this version number.
-            try:
-                v = Version.parse(s, optional_minor_and_patch=True)
-                return cls(True, v, v, True)
-            except ValueError as e:
-                raise ValueError(f"Invalid version constraint: {s}") from e
+        # Check if it's <= or >=
+        if operator in {"<", ">"} and s[1] == "=":
+            operator = s[:2]
+            version = s[2:]
+
+        # Check if it starts with the number
+        elif s[0] in [str(s) for s in range(10)]:
+            operator = ""
+            version = s
+
+        # Handle ^ and ~, which create two VersionIntervals.
+        # I *think* that this cannot be combined with X-ranges.
+        if operator == "^":
+            low = Version.parse(version, optional_minor_and_patch=True)
+            high = low.bump_major()
+            return [cls(">=", low), cls("<", high)]
+        elif operator == "~":
+            low = Version.parse(version, optional_minor_and_patch=True)
+            high = low.bump_minor()
+            return [cls(">=", low), cls("<", high)]
+
+        # Handle X-ranges in the minor or patch.
+        # TODO "Additional trailing .x/.X/.* are allowed but have no effect"
+        if any(version.endswith(c) for c in ["x", "X", "*"]):
+            version = version.replace(".x", "").replace(".X", "").replace(".*", "")
+
+        return [cls(operator, Version.parse(version, optional_minor_and_patch=True), s)]
 
     def __contains__(self, version: Version) -> bool:
-        """Whether the interval contains version."""
-        min_op = ge if self.min_inclusive else gt  # above the min
-        max_op = le if self.max_inclusive else lt  # below the max
-        return min_op(version, self.min) and max_op(version, self.max)
+        """Whether the interval contains a version."""
+        return self.operator(version, self.version)
