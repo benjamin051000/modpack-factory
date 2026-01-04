@@ -16,10 +16,12 @@ from lib.version import VersionInterval
 @dataclass
 class FabricVersionRange:
     operand: str
-    operator: VersionInterval
+    """A mod slug, or "minecraft", etc."""
+
+    operators: list[VersionInterval]
 
     def __contains__(self, version: Version) -> bool:
-        return version in self.operator
+        return all(version in operator for operator in self.operators)
 
     def __str__(self) -> str:
         return f"{self.operand}{self.operator}"

@@ -1,4 +1,5 @@
 import pytest
+from semver import Version
 
 from lib.jar import FabricJarConstraints
 from lib.sources.modrinth import Modrinth
@@ -37,11 +38,15 @@ def test_from_json():
 
     assert len(constraints.depends) == 3
     assert constraints.depends[0].operand == "fabricloader"
-    assert constraints.depends[0].operator == ">=0.12.0"
+    assert constraints.depends[0].operators[0]._s == ">=0.12.0"
+    assert Version(0, 12, 0) in constraints.depends[0]
+    assert Version(0, 1, 0) not in constraints.depends[0]
 
     assert len(constraints.breaks) == 3
     assert constraints.breaks[0].operand == "optifabric"
-    assert constraints.breaks[0].operator == "*"
+    assert constraints.breaks[0].operators[0]._s == "*"
+    assert Version(0, 12, 0) in constraints.breaks[0]
+    assert Version(0, 1, 0) in constraints.breaks[0]
 
     assert len(constraints.recommends) == 0
     assert len(constraints.suggests) == 0
@@ -64,7 +69,7 @@ async def test_from_modrinth(modrinth: Modrinth):
     assert constraints.id == "sodium"
     # HACK: See FabricJarConstraints._from_json(), we also do this string replace there.
     # This should match that.
-    assert constraints.version == "0.6.13+mc1.21.6".replace("+", "-")
+    assert constraints.version == Version(0, 6, 13, build="mc1.21.6")
     correct_depends_names = set(correct_depends.keys())
     constraint_depends_names = set(dep.operand for dep in constraints.depends)
     assert correct_depends_names == constraint_depends_names
@@ -106,6 +111,8 @@ async def test_from_modrinth(modrinth: Modrinth):
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_from_modrinth_batched(modrinth: Modrinth):
+    # TODO pick something with less versions than sodium.
+    # We download every jar of it and it takes forever lol
     # sodium does not depend on anything, according to Modrinth's website...
     _, versions_json = await modrinth.get_mods_batched(["sodium"])
 
