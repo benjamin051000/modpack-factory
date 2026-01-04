@@ -23,12 +23,6 @@ class FabricVersionRange:
     def __contains__(self, version: Version) -> bool:
         return all(version in operator for operator in self.operators)
 
-    def __str__(self) -> str:
-        return f"{self.operand}{self.operator}"
-
-    def __repr__(self) -> str:
-        return str(self)
-
 
 class JarError(Exception):
     pass
