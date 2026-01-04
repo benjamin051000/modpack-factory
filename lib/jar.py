@@ -14,7 +14,7 @@ from lib.version import VersionInterval
 
 
 @dataclass
-class Constraint:
+class FabricVersionRange:
     operand: str
     operator: VersionInterval
 
@@ -43,11 +43,11 @@ class FabricJarConstraints:
     At least in some cases, different syntactic conventions 
     may be used compared to what's on Modrinth."""
 
-    depends: list[Constraint]
-    breaks: list[Constraint]
-    recommends: list[Constraint]
-    suggests: list[Constraint]
-    conflicts: list[Constraint]
+    depends: list[FabricVersionRange]
+    breaks: list[FabricVersionRange]
+    recommends: list[FabricVersionRange]
+    suggests: list[FabricVersionRange]
+    conflicts: list[FabricVersionRange]
 
     json: dict
     """json used to construct this object."""
@@ -55,9 +55,9 @@ class FabricJarConstraints:
     @classmethod
     def _from_json(cls, data: dict) -> Self:
         # TODO how to make this more DRY?
-        def parse_constraints(keyword: str) -> list[Constraint]:
+        def parse_constraints(keyword: str) -> list[FabricVersionRange]:
             return [
-                Constraint(dependency, VersionInterval.from_str(operator))
+                FabricVersionRange(dependency, VersionInterval.from_str(operator))
                 for dependency, operator in data.get(keyword, {}).items()
             ]
 
