@@ -1,5 +1,6 @@
 from collections.abc import Callable
 from contextlib import suppress
+from itertools import chain
 from operator import eq, ge, gt, le, lt
 from typing import Self
 
@@ -48,6 +49,7 @@ class VersionInterval:
         Given the version range string, produce a list of VersionIntervals
         that represent it.
         """
+        assert isinstance(s, str)
         # Match all versions.
         if s == "*":
             return [cls(">=", Version(0, 0, 0), s)]
@@ -102,6 +104,13 @@ class VersionInterval:
             return [cls(">=", low), cls("<", high)]
 
         return [cls(operator, Version.parse(version, optional_minor_and_patch=True), s)]
+
+    @classmethod
+    def from_json(cls, json: str | list[str]) -> list[Self]:
+        if isinstance(json, str):
+            json = [json]
+        # Flatten the final list with chain
+        return list(chain.from_iterable(cls.from_str(s) for s in json))
 
     def __contains__(self, version: Version) -> bool:
         """Whether the interval contains a version."""

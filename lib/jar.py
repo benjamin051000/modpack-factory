@@ -53,7 +53,7 @@ class FabricJarConstraints:
         # TODO how to make this more DRY?
         def parse_constraints(keyword: str) -> list[FabricVersionRange]:
             return [
-                FabricVersionRange(dependency, VersionInterval.from_str(operator))
+                FabricVersionRange(dependency, VersionInterval.from_json(operator))
                 for dependency, operator in data.get(keyword, {}).items()
             ]
 
