@@ -144,6 +144,11 @@ class Modrinth:
                 if ver not in all_version_names
             ]
 
+            if len(version_names) == 0:
+                # The only remaining ones are already in all_version_names,
+                # Which means we already got them. We're done
+                break
+
             versions_json = await self.get_versions_batched(version_names)
 
             # Filter to only required dependencies (filter out, e.g., "incompatible",
