@@ -79,7 +79,11 @@ async def test_get_mods_batched_multiple_dependencies(modrinth: Modrinth):
         "createaddition",
         "create",
         "create-fabric",
-        "flywheel",
+        # NOTE: Removed from this list because it comes from create version id 5qZVd4uA,
+        # which is forge. We simply delete all forge mods at this time, so flywheel
+        # doesn't actually get discovered. When forge mods come back, you'll need to
+        # re-include flywheel, assuming that Version still exists on modrinth
+        # "flywheel",
         "fabric-api",
     }
 
