@@ -81,12 +81,15 @@ class Mod:
     ##############################
     # TODO slowly incorporate all of them
     # There can be 0, 1, or more in these sets.
-    depends: dict[str, set[Mod]]
+    # TODO consider making this dict[str, set[Mod]], which references the other objects
+    # and basically constructs a tree of dependencies. It would make finding the objs a
+    # little easier at the cost of a more complex constructor.
+    depends: dict[str, set[str]]
     """Set of candidate Mods this Mod depends on. 
     Any one Mod in each dict can satisfy this Mod's dependency constraint.
     During locking, for each dict, a candidate mod will be selected.
 
-    Data structure: slug -> set(version, version, ...)
+    Data structure: slug of dependency -> {version_id, version_id, ...}
     """
     # breaks: set[Mod]
     # """Mods that break this one. They should not be installed together."""
@@ -106,7 +109,7 @@ class Mod:
     # TODO once we add Curseforge support, probably turn this into a factory
     @classmethod
     def from_modrinth_json(
-        cls, slug: str, json: dict, dependencies: dict[str, set[Mod]]
+        cls, slug: str, json: dict, dependencies: dict[str, set[str]]
     ) -> Self:
         """Create a Mod from the project slug and modrinth version JSON."""
         return cls(
@@ -167,7 +170,7 @@ class Mod:
 
                 # TODO probably doesn't need to be defaultdict because we don't
                 # really update entries, they're always new, in theory.
-                dependencies: dict[str, list] = {}
+                dependencies: dict[str, set[str]] = {}
 
                 # NOTE: Emma from modrinth team sent me this regarding additional files:
                 # https://support.modrinth.com/en/articles/8793363-additional-files
@@ -254,11 +257,11 @@ class Mod:
                         dep_slug = cast(str, dep_project["slug"])
                         dep_versions = dep_proj_ver["version"]
 
-                        valid_versions = [
-                            dep_version
+                        valid_versions = {
+                            dep_version["id"]
                             for dep_version in dep_versions
                             if version_is_candidate(dep_version, dependency)
-                        ]
+                        }
 
                         dependencies[dep_slug] = valid_versions
 
