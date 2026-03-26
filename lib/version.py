@@ -68,6 +68,10 @@ class VersionInterval:
             operator = ""
             version = s
 
+        # Strip trailing -, which can pop up
+        # TODO implement this properly when we support prereleases
+        version = version.rstrip("-")
+
         # Handle ^ and ~, which create two VersionIntervals.
         # I *think* that this cannot be combined with X-ranges.
         if operator == "^":
@@ -107,8 +111,11 @@ class VersionInterval:
 
     @classmethod
     def from_json(cls, json: str | list[str]) -> list[Self]:
+        # TODO maybe just make this the default constructor? :shrug:
         if isinstance(json, str):
-            json = [json]
+            # Also handles multiple words
+            json = json.split(" ") if " " in json else [json]
+
         # Flatten the final list with chain
         return list(chain.from_iterable(cls.from_str(s) for s in json))
 

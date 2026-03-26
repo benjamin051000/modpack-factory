@@ -113,3 +113,35 @@ def test_version_x_range_minor_double_x(s: str):
         VersionInterval("<", Version(2, 0, 0)),
     }
     assert vis == correct
+
+
+def test_version_trailing_dash():
+    # Seen in the fabric.mod.json for fabric-api:
+    # 'depends': {'fabricloader': '>=0.14.10',
+    #         'java': '>=17',
+    #         'minecraft': '>=1.19.3- <1.19.4-'},
+    # TODO this should fail when we start supporting prereleases.
+    # Right now, we basically ignore the trailing -
+    s = ">=1.19.3-"
+
+    vis = set(VersionInterval.from_str(s))
+    correct = {VersionInterval(">=", Version(1, 19, 3))}
+
+    assert vis == correct
+
+
+def test_multiple_versions_in_one_str():
+    s = ">=1.19.3 <1.19.4"
+    vis = set(VersionInterval.from_json(s))
+    correct = {
+        VersionInterval(">=", Version(1, 19, 3)),
+        VersionInterval("<", Version(1, 19, 4)),
+    }
+
+    assert vis == correct
+
+    s += " >2.0"  # Nonsensical but should work
+    correct.add(VersionInterval(">", Version(2, 0)))
+    vis = set(VersionInterval.from_json(s))
+
+    assert vis == correct
