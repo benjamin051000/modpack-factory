@@ -68,10 +68,9 @@ async def test_from_batched_simple(modrinth: Modrinth):
 
 # TODO we can probably verify the batched constructors work AGAINST the original ones!
 # Maybe try that?
-# BUG this test is a false positive. Check the dependencies! (WIP below, now it fails)
+# TODO: Assumes test_get_mods_batched_one_dependency from test_modrinth passed.
 @pytest.mark.asyncio(loop_scope="session")
 async def test_from_batched_one_dependency(modrinth: Modrinth):
-    # NOTE: Assumes test_get_mods_batched_one_dependency from test_modrinth passed.
     mods_json, versions_json = await modrinth.get_mods_batched(
         ["reeses-sodium-options"]
     )
@@ -93,6 +92,29 @@ async def test_from_batched_one_dependency(modrinth: Modrinth):
         if mod.slug == "reeses-sodium-options":
             assert len(mod.depends) == 1
             assert set(mod.depends.keys()) == {"sodium"}
+            assert len(mod.depends.values()) >= 1
 
     # Test case: mc1.17.1-1.4.4 has 0 deps
     # So does mc1.16.5-1.4.7
+
+
+# TODO: Assumes test_get_mods_batched_multiple_dependencies from test_modrinth passed.
+@pytest.mark.asyncio(loop_scope="session")
+async def test_from_batched_two_dependencies(modrinth: Modrinth):
+    mods_json, versions_json = await modrinth.get_mods_batched(["createaddition"])
+
+    constraints = await FabricJarConstraints.from_modrinth_batched(
+        modrinth, versions_json
+    )
+    mods = Mod.from_batched(mods_json, versions_json, constraints)
+
+    assert {mod.slug for mod in mods} == {
+        "createaddition",
+        "create-fabric",
+        # NOTE: Removed from this list because it comes from create version id 5qZVd4uA,
+        # which is forge. We simply delete all forge mods at this time, so flywheel
+        # doesn't actually get discovered. When forge mods come back, you'll need to
+        # re-include flywheel, assuming that Version still exists on modrinth
+        # "flywheel",
+        "fabric-api",
+    }

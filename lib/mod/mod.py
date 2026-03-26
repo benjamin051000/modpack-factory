@@ -212,15 +212,32 @@ class Mod:
                             in {
                                 "minecraft",
                                 "fabricloader",
+                                "fabric",
+                                "registrate-fabric",
+                                # TODO HACK investigate flywheel.
+                                # It's needed by ykMIV3rU (createaddition)
+                                # but only shows up in the fabric.mod.json, not
+                                # the modrinth. flywheel is intended to be embedded
+                                # into its consumers, so maybe that happens in create?
+                                # how does the modloader see this?
+                                "flywheel",
+                                "forge_tags",
+                                "forgeconfigapiport",
+                                "milk",
+                                "reach-entity-attributes",
+                                "java",
                             }
                             or dependency.operand.startswith("fabric-rendering-")
                             or dependency.operand.startswith("fabric-block-")
                             or dependency.operand.startswith("fabric-renderer-")
                             or dependency.operand.startswith("fabric-resource-")
+                            or dependency.operand.startswith("porting_lib")
                         ):
                             # Skip these as they are all "built-in".
                             # TODO eventually probably add them anyway, as it'll
                             # probably simplify the solver stage.
+                            # or maybe TODO we could just print a warning when an
+                            # unknown dependency shows up... and get rid of this block
                             continue
 
                         def version_is_candidate(
