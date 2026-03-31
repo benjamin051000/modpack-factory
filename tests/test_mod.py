@@ -1,7 +1,7 @@
 import pytest
 
 from lib.jar import FabricJarConstraints
-from lib.mod.mod import Mod
+from lib.mod import Mod
 from lib.sources.modrinth import Modrinth
 
 

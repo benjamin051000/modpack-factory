@@ -7,7 +7,7 @@ from pprint import pprint
 import aiohttp
 import tomlkit
 
-from lib.mod.mod import Mod
+from lib.mod import Mod
 from lib.solver.solver import NoSolutionError, get_all_mods, solve_mods
 from lib.sources import modrinth
 from lib.toml import lock as lockfile
