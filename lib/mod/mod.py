@@ -275,7 +275,7 @@ class Mod:
                         version_type=version["version_type"],
                         loaders=version["loaders"],
                         files=version["files"],
-                        depends=dependencies,  # TODO fix this member
+                        depends=dependencies,
                         json=proj_ver,
                     )
                 )
