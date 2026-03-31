@@ -4,23 +4,8 @@ from dataclasses import dataclass, field
 from typing import Literal, Self, cast
 
 from lib.jar import FabricJarConstraints, FabricVersionRange
+from lib.sources.modrinth import ModrinthFile
 from lib.toml.toml_constraint import MCVersion
-
-
-# TODO move this to modrinth.py
-@dataclass
-class ModrinthFile:
-    url: str
-    filename: str
-    primary: bool
-
-    @classmethod
-    def from_json(cls, json: dict) -> Self:
-        return cls(
-            url=json["url"],
-            filename=json["filename"],
-            primary=json["primary"],
-        )
 
 
 @dataclass

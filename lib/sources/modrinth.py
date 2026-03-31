@@ -1,8 +1,9 @@
 import asyncio
 import sqlite3
 import sys
+from dataclasses import dataclass
 from itertools import batched
-from typing import BinaryIO
+from typing import BinaryIO, Self
 
 import aiohttp
 from aiolimiter import AsyncLimiter
@@ -243,3 +244,18 @@ class Modrinth:
 
         print(f"{diff} (out of {len(raw_versions_json)}) versions filtered.")
         return new
+
+
+@dataclass
+class ModrinthFile:
+    url: str
+    filename: str
+    primary: bool
+
+    @classmethod
+    def from_json(cls, json: dict) -> Self:
+        return cls(
+            url=json["url"],
+            filename=json["filename"],
+            primary=json["primary"],
+        )
