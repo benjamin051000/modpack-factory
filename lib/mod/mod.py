@@ -1,5 +1,3 @@
-from __future__ import annotations  # TODO remove, it's deprecated
-
 import asyncio
 import sys
 from dataclasses import dataclass, field
