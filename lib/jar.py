@@ -1,7 +1,7 @@
 import asyncio
 import json
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from io import BytesIO
 from pathlib import Path
 from typing import BinaryIO, Self
@@ -45,7 +45,7 @@ class FabricJarConstraints:
     suggests: list[FabricVersionRange]
     conflicts: list[FabricVersionRange]
 
-    json: dict
+    json: dict = field(repr=False)
     """json used to construct this object."""
 
     @classmethod

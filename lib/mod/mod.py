@@ -2,7 +2,7 @@ from __future__ import annotations  # TODO remove, it's deprecated
 
 import asyncio
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Literal, Self, cast
 
 from lib.jar import FabricJarConstraints, FabricVersionRange
@@ -100,7 +100,7 @@ class Mod:
     # conflicts: set[Mod]
     # """Mods this one conflicts with. They should not be installed together."""
 
-    json: dict
+    json: dict = field(repr=False)
     """JSON used to create this object. Useful for debugging."""
 
     def __hash__(self) -> int:
