@@ -38,7 +38,7 @@ def test_from_modrinth_json():
         ],
         "dependencies": [],
     }
-    mod = Mod.from_modrinth_json(slug, sodium_json, set())
+    mod = Mod.from_modrinth_json(slug, sodium_json, {})
     assert mod.slug == slug
     assert mod.project_id == sodium_json["project_id"]
     for version in mod.game_versions:
