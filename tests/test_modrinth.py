@@ -25,6 +25,16 @@ async def test_raw_api(
 
 
 @pytest.mark.asyncio(loop_scope="session")
+async def test_search(modrinth: Modrinth):
+    query = "create"
+    results = (await modrinth.search(query, limit=5))["hits"]
+    assert len(results) == 5
+
+    for result in results:
+        assert "create" in result["title"].lower()
+
+
+@pytest.mark.asyncio(loop_scope="session")
 async def test_get_versions_sodium(modrinth: Modrinth):
     """Test versions endpoint against known values."""
     # Obtained from the API/project/sodium "versions" info
