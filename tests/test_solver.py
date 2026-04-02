@@ -1,6 +1,6 @@
 import pytest
 
-from lib.mod.mod import Mod, ModVersion
+from lib.mod import Mod
 from lib.solver.solver import NoSolutionError, get_all_mods, solve_mods
 from lib.toml.toml_constraint import MCVersion
 

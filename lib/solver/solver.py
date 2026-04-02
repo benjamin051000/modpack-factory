@@ -3,7 +3,7 @@ from textwrap import dedent
 
 import z3
 
-from lib.mod.mod import Mod, ModVersion
+from lib.mod import Mod
 from lib.toml.toml_constraint import MCVersion, MinecraftVersionConstraint
 
 
