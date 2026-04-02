@@ -38,6 +38,11 @@ class Modrinth:
         self.conn = conn
         self.cursor = self.conn.cursor()
 
+        # These collect statistics about db usage.
+        self.lock = asyncio.Lock()
+        self.total_db_queries = 0
+        self.db_hits = 0
+
         if limiter is None:
             limiter = AsyncLimiter(RATE_LIMIT_PER_MIN)
         self.limiter = limiter
@@ -199,6 +204,9 @@ class Modrinth:
             ).fetchone()
             if result:
                 # We've already got it downloaded. Do nothing.
+                async with self.lock:
+                    self.total_db_queries += 1
+                    self.db_hits += 1
                 return False
         except sqlite3.OperationalError:
             # No worries, for now just download it normally
@@ -208,6 +216,10 @@ class Modrinth:
         async with self.session.get(url) as response:
             async for chunk in response.content.iter_chunked(CHUNKSIZE):
                 file.write(chunk)
+
+        async with self.lock:
+            self.total_db_queries += 1
+
         return True
 
     @staticmethod
@@ -244,6 +256,11 @@ class Modrinth:
 
         print(f"{diff} (out of {len(raw_versions_json)}) versions filtered.")
         return new
+
+    def __del__(self):
+        print(
+            f"Modrinth stats: {self.db_hits}/{self.total_db_queries} DB hits on jar downloads."  # noqa: E501
+        )
 
 
 @dataclass
