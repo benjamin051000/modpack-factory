@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import sqlite3
 import sys
 from pathlib import Path
 from pprint import pprint
@@ -26,20 +27,26 @@ from lib.toml.toml_constraint import MinecraftVersionConstraint
 
 def search(args: argparse.Namespace) -> None:
     async def _search():
-        async with aiohttp.ClientSession(modrinth.API) as session:
-            return await modrinth.search(session, args.query)
+        async with (
+            aiohttp.ClientSession(modrinth.MODRINTH_API) as session,
+        ):
+            with sqlite3.connect("mods.db") as conn:
+                m = modrinth.Modrinth(session, conn)
+                return await m.search(args.query)
 
     results = asyncio.run(_search())
 
     print("Results:")
     for result in results["hits"]:
-        print(f"{result['title']} ({result['slug']})")
+        print(f"- {result['title']} ({result['slug']})")
 
 
 def info(args: argparse.Namespace) -> None:
     async def _info():
-        async with aiohttp.ClientSession(modrinth.API) as session:
-            return await modrinth.get_project(session, args.slug)
+        async with aiohttp.ClientSession(modrinth.MODRINTH_API) as session:
+            with sqlite3.connect("mods.db") as conn:
+                m = modrinth.Modrinth(session, conn)
+                return await m.get_project(args.slug)
 
     result = asyncio.run(_info())
     pprint(result)
