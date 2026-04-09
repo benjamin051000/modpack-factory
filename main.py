@@ -1,7 +1,6 @@
 import argparse
 import asyncio
 import sqlite3
-import sys
 from pathlib import Path
 from pprint import pprint
 
@@ -9,7 +8,7 @@ import aiohttp
 import tomlkit
 
 from lib.mod import Mod
-from lib.solver.solver import NoSolutionError, get_all_mods, solve_mods
+from lib.solver.solver import get_all_mods, solve_mods
 from lib.sources import modrinth
 from lib.toml import lock as lockfile
 from lib.toml import mcproject
@@ -64,44 +63,45 @@ async def get_mods(slugs: list[str]):
 
 
 def add(args: argparse.Namespace) -> None:
-    # Verify the mods exist
-    print(f"Getting info for {','.join(args.mod)}...")
-    mods_info = modrinth.get_projects(args.mod)
-    assert len(mods_info) == len(args.mod), (
-        "One of the mods you entered does not exist."
-    )
+    async def _get_mods_batched():
+        async with aiohttp.ClientSession(modrinth.MODRINTH_API) as session:
+            with sqlite3.connect("mods.db") as conn:
+                m = modrinth.Modrinth(session, conn)
+
+                print(f"Getting info for {','.join(args.mod)}...")
+                mods_json, versions_json = await m.get_mods_batched(args.mod)
+                return mods_json, versions_json
 
     try:
         toml = mcproject.read_mcproject_toml(args.path)
     except FileNotFoundError:
         toml = mcproject.read_mcproject_toml(mcproject.init_mcproject_toml(args.path))
 
-    for mod_info in mods_info:
+    mods_json, _versions_json = asyncio.run(_get_mods_batched())
+
+    for mod_info in mods_json:
         if mcproject.add_mod(toml, mod_info["slug"]):
             print(f"Adding {mod_info['title']} ({mod_info['slug']})")
         else:
             print(f"{mod_info['title']} ({mod_info['slug']}) already added.")
 
-    mods = asyncio.run(get_mods(toml["project"]["mods"]))
+    # try:
+    #     mc_version = MinecraftVersionConstraint.from_str(
+    #         toml["project"]["minecraft-version"]  # type: ignore
+    #     )
+    # except tomlkit.exceptions.NonExistentKey:  # pyright: ignore [reportAttributeAccessIssue] # noqa: E501
+    #     mc_version = None
 
-    mods_and_deps = get_all_mods(mods)
-
-    try:
-        mc_version = MinecraftVersionConstraint.from_str(
-            toml["project"]["minecraft-version"]
-        )
-    except tomlkit.exceptions.NonExistentKey:
-        mc_version = None
-
-    print("Finding a compatible set of mods...")
-    try:
-        lock_mods(args.path, mods_and_deps, mc_version)
-    except NoSolutionError:
-        print(
-            f"Error: No solution found when trying to add {','.join(args.mod)}.",
-            file=sys.stderr,
-        )
-        return
+    # TODO solving is totally broken at this point.
+    # print("Finding a compatible set of mods...")
+    # try:
+    #     lock_mods(args.path, mods_and_deps, mc_version)
+    # except NoSolutionError:
+    #     print(
+    #         f"Error: No solution found when trying to add {','.join(args.mod)}.",
+    #         file=sys.stderr,
+    #     )
+    #     return
 
     mcproject.write_mcproject_toml(toml, args.path)
 
