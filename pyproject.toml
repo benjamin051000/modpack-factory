@@ -42,3 +42,6 @@ select = [
 	# ruff-specific
 	"RUF",
 ]
+
+[tool.pyrefly]
+python-interpreter-path = ".venv/bin/python3"
