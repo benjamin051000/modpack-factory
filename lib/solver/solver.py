@@ -47,27 +47,6 @@ class NoSolutionError(Exception):
     """Could not find a solution."""
 
 
-def get_all_mods(root_mods: list[Mod]) -> list[Mod]:
-    """Recursively get all mod releases, and their dependencies' releases."""
-
-    visited: list[Mod] = []
-
-    # Do a depth-first search to get all the ModVersions.
-    def dfs(root_mod: Mod) -> None:
-        if root_mod not in visited:
-            visited.append(root_mod)
-
-            for version in root_mod.versions:
-                # Get all its dependencies, too
-                for dependency in version.dependencies:
-                    dfs(dependency)
-
-    for root_mod in root_mods:
-        dfs(root_mod)
-
-    return visited
-
-
 def solve_mods(
     mods: list[Mod],
     mc_version_constraint: MinecraftVersionConstraint | None = None,
