@@ -10,35 +10,27 @@ def test_simple_resolve():
     mods = [
         Mod(
             slug="foo",
-            versions={
-                ModVersion(
-                    mod_slug="foo",
-                    version_number="foo v2",
-                    game_versions=[MCVersion.from_str("1.21.5")],
-                    version_type="release",
-                    loaders=["forge"],
-                    files=[],
-                    id="",
-                    jar=None,
-                    dependencies={},
-                )
-            },
+            project_id="fooproj",
+            version_id="abc123",
+            version_number="foo v2",
+            game_versions={MCVersion.from_str("1.21.5")},
+            version_type="release",
+            loaders={"forge"},
+            files=[],
+            depends={"bar": {"def456"}},
+            json={},
         ),
         Mod(
             slug="bar",
-            versions={
-                ModVersion(
-                    mod_slug="bar",
-                    version_number="bar v1",
-                    game_versions=[MCVersion.from_str("1.21.5")],
-                    version_type="release",
-                    loaders=["forge"],
-                    files=[],
-                    id="",
-                    jar=None,
-                    dependencies={},
-                )
-            },
+            project_id="barproj",
+            version_id="def456",
+            version_number="bar v1",
+            game_versions={MCVersion.from_str("1.21.5")},
+            version_type="release",
+            loaders={"forge"},
+            files=[],
+            depends={},
+            json={},
         ),
     ]
 
@@ -53,35 +45,27 @@ def test_no_compatible_version():
     mods = [
         Mod(
             slug="foo",
-            versions={
-                ModVersion(
-                    mod_slug="foo",
-                    version_number="foo v2",
-                    game_versions=[MCVersion.from_str("1.21.5")],
-                    version_type="release",
-                    loaders=["forge"],
-                    files=[],
-                    id="",
-                    jar=None,
-                    dependencies={},
-                )
-            },
+            project_id="fooproj",
+            version_id="abc123",
+            version_number="foo v2",
+            game_versions={MCVersion.from_str("1.21.5")},
+            version_type="release",
+            loaders={"forge"},
+            files=[],
+            depends={},
+            json={},
         ),
         Mod(
             slug="bar",
-            versions={
-                ModVersion(
-                    mod_slug="bar",
-                    version_number="bar v1",
-                    game_versions=[MCVersion.from_str("1.21.4")],
-                    version_type="release",
-                    loaders=["forge"],
-                    files=[],
-                    id="",
-                    jar=None,
-                    dependencies={},
-                )
-            },
+            project_id="barproj",
+            version_id="def456",
+            version_number="bar v1",
+            game_versions={MCVersion.from_str("1.21.4")},  # incompatible version
+            version_type="release",
+            loaders={"forge"},
+            files=[],
+            depends={},
+            json={},
         ),
     ]
 
@@ -94,35 +78,27 @@ def test_no_compatible_loader():
     mods = [
         Mod(
             slug="foo",
-            versions={
-                ModVersion(
-                    mod_slug="foo",
-                    version_number="foo v2",
-                    game_versions=[MCVersion.from_str("1.21.5")],
-                    version_type="release",
-                    loaders=["forge"],
-                    files=[],
-                    id="",
-                    jar=None,
-                    dependencies={},
-                )
-            },
+            project_id="fooproj",
+            version_id="abc123",
+            version_number="foo v2",
+            game_versions={MCVersion.from_str("1.21.5")},
+            version_type="release",
+            loaders={"forge"},
+            files=[],
+            depends={"bar": {"def456"}},
+            json={},
         ),
         Mod(
             slug="bar",
-            versions={
-                ModVersion(
-                    mod_slug="bar",
-                    version_number="bar v1",
-                    game_versions=[MCVersion.from_str("1.21.5")],
-                    version_type="release",
-                    loaders=["fabric"],
-                    files=[],
-                    id="",
-                    jar=None,
-                    dependencies={},
-                )
-            },
+            project_id="barproj",
+            version_id="def456",
+            version_number="bar v1",
+            game_versions={MCVersion.from_str("1.21.5")},
+            version_type="release",
+            loaders={"fabric"},
+            files=[],
+            depends={},
+            json={},
         ),
     ]
 
