@@ -106,49 +106,6 @@ def test_no_compatible_loader():
         solve_mods(mods)
 
 
-@pytest.mark.skip("Dependencies are now ModVersions.")
-def test_dependency_dfs():
-    """Test one mod that has a required dependency."""
-    dependency = Mod(
-        slug="bar",
-        versions={
-            ModVersion(
-                mod_slug="bar",
-                version_number="bar v1",
-                game_versions=[MCVersion.from_str("1.21.5")],
-                version_type="release",
-                loaders=["forge"],
-                files=[],
-                id="",
-                jar=None,
-                dependencies={},
-            )
-        },
-    )
-
-    mods = [
-        Mod(
-            slug="foo",
-            versions={
-                ModVersion(
-                    mod_slug="foo",
-                    version_number="foo v2",
-                    game_versions=[MCVersion.from_str("1.21.5")],
-                    version_type="release",
-                    loaders=["forge"],
-                    files=[],
-                    id="",
-                    jar=None,
-                    dependencies=[dependency],  # type: ignore FIXME
-                )
-            },
-        ),
-    ]
-
-    all_mods = get_all_mods(mods)
-    assert len(all_mods) == 2
-
-
 # TODO is this still a useful test now that get_all_mods is pulled out of solve_mods?
 @pytest.mark.skip("Dependencies are now ModVersions.")
 def test_simple_dependency():
