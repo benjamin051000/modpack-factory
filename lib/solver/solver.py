@@ -27,37 +27,44 @@ class NoSolutionError(Exception):
 def solve_mods(
     mods: list[Mod],
     mc_version_constraint: MinecraftVersionConstraint | None = None,
-    dump_model=False,
-) -> tuple[MCVersion, str, list[ModVersion]]:
+    dump_model: bool = False,
+) -> tuple[MCVersion, str, list[Mod]]:
     """From chatgippity"""
 
     s = z3.Solver()
 
     # Map each mod release to a Boolean variable.
+    # TODO consider merging this into the Mod class?
+    # then you could just mod.z3_repr() or whatever
     release_vars = {
         release: z3.Bool(
             # NOTE TODO research this: do duplicate names mess up the solver?
             # Maybe they end up being the same variable?
             dedent(
                 f"""\
-                {release.mod_slug}_{release.version_number}_
+                {release.slug}_{release.version_number}_
                 {",".join(release.loaders)}_
-                ({release.id})"""
+                ({release.version_id})"""
             ).replace("\n", "")
         )
-        for mod in mods
-        for release in mod.versions
+        for release in mods
     }
 
     # Exactly one release selected per mod.
-    for mod in mods:
-        s.add(z3.AtMost(*[release_vars[r] for r in mod.versions], 1))
-        s.add(z3.AtLeast(*[release_vars[r] for r in mod.versions], 1))
+    # Group the mods by their slug, so we can enforce only one of each slug.
+    unique_slugs = {mod.slug for mod in mods}
+    mods_by_unique_slug = {
+        # TODO should we just make the value here release_vars[m] ? Maybe not necessary
+        # if we incorporate the z3 bool into the Mod class
+        slug: {mod for mod in mods if mod.slug == slug}
+        for slug in unique_slugs
+    }
+    for unique_mods in mods_by_unique_slug.values():
+        s.add(z3.AtMost(*[release_vars[m] for m in unique_mods], 1))
+        s.add(z3.AtLeast(*[release_vars[m] for m in unique_mods], 1))
 
     # If a release is selected, the minecraft version and loader should match it.
-    mc_major = z3.Int("mc_major")
-    mc_minor = z3.Int("mc_minor")
-    mc_patch = z3.Int("mc_patch")
+    mc_major, mc_minor, mc_patch = z3.Ints("mc_major mc_minor mc_patch")
 
     if mc_version_constraint:
         if mc_version_constraint.relationship == ">=":
@@ -68,23 +75,20 @@ def solve_mods(
     loader = z3.String("loader")
 
     for mod in mods:
-        for release in mod.versions:
-            s.add(
-                z3.Implies(
-                    release_vars[release],
-                    z3.And(
-                        z3.Or(
-                            *[
-                                v.z3_eq(mc_major, mc_minor, mc_patch)
-                                for v in release.game_versions
-                            ]
-                        ),
-                        z3.Or(
-                            *[loader == z3.StringVal(ldr) for ldr in release.loaders]
-                        ),
+        s.add(
+            z3.Implies(
+                release_vars[mod],
+                z3.And(
+                    z3.Or(
+                        *[
+                            v.z3_eq(mc_major, mc_minor, mc_patch)
+                            for v in mod.game_versions
+                        ]
                     ),
+                    z3.Or(*[loader == z3.StringVal(ldr) for ldr in mod.loaders]),
                 ),
-            )
+            ),
+        )
 
     if dump_model:
         for a in s.assertions():
@@ -106,7 +110,7 @@ def solve_mods(
 
     backwards_map = {v: k for k, v in release_vars.items()}
 
-    selected_mods: list[ModVersion] = []
+    selected_mods: list[Mod] = []
     selected_loader = solution[loader].as_string()
 
     selected_mc_version = MCVersion(
