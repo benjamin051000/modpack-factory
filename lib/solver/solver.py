@@ -20,29 +20,6 @@ def find_all_solutions(s: z3.Solver, block: Callable) -> set:
     return solutions
 
 
-def _gen_game_version_clauses(mods: list[Mod]):
-    """For a list of mods, determine the list of minecraft versions they all support."""
-    minecraft_version = z3.String("minecraft_version")
-
-    supported_game_versions = [
-        # This Or represents all the MC versions a mod can use.
-        # TODO: Keep track of which mod versions satisfy.
-        z3.Or(
-            [
-                minecraft_version == z3.StringVal(game_version)
-                for mod_version in mod.versions
-                for game_version in mod_version.game_versions
-            ]
-        )
-        for mod in mods
-    ]
-
-    # Return the list of clauses + the block function.
-    return supported_game_versions, lambda model: minecraft_version != model[
-        minecraft_version
-    ]
-
-
 class NoSolutionError(Exception):
     """Could not find a solution."""
 
